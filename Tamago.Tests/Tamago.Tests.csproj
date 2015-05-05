@@ -45,6 +45,7 @@
     <Compile Include="Helpers\TestManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestBase.cs" />
+    <Compile Include="WaitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

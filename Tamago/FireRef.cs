@@ -87,13 +87,14 @@ namespace Tamago
         /// Fires this bullet in the context of the parent bullet.
         /// </summary>
         /// <param name="bullet">The parent bullet firing this bullet.</param>
-        public void Run(Bullet bullet)
+        /// <returns>True always</returns>
+        public bool Run(Bullet bullet)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
 
             if (IsCompleted)
-                return;
+                return true;
 
             // create bullet from definition
             var newBullet = BulletRef.Create(parent: bullet);
@@ -105,6 +106,7 @@ namespace Tamago
                 newBullet.Direction = Direction.Evaluate(bullet);
 
             IsCompleted = true;
+            return true;
         }
     }
 }

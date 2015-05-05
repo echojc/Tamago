@@ -13,6 +13,8 @@ namespace Tamago
         Absolute = 0,
         /// <summary>
         /// The value is relative to the speed of the parent bullet.
+        ///
+        /// In ABA compatibility mode, this is treated identically to <see cref="SpeedType.Sequence"/>.
         /// </summary>
         Relative,
         /// <summary>

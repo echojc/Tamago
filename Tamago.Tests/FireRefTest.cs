@@ -31,7 +31,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void RequiresBulletNode()
+        public void ThrowsParseExceptionIfNoBulletNode()
         {
             var node = XElement.Parse(@"
               <fire/>
@@ -252,14 +252,46 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
         public void UsesBulletSettingsIfSpeedAndDirectionAreNotSet()
-        { }
+        {
+            var node = XElement.Parse(@"
+              <fire label=""my label &amp;"">
+                <bullet>
+                  <speed>4.2</speed>
+                  <direction type=""absolute"">123</direction>
+                </bullet>
+              </fire>
+            ");
+
+            var fireRef = new FireRef(node);
+            fireRef.Run(TestBullet);
+
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(4.2f, bullet.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(123), bullet.Direction, 0.00001f);
+        }
 
         [Test]
-        [Ignore]
         public void OverridesBulletSettingsIfSpeedAndDirectionAreSet()
-        { }
+        {
+            var node = XElement.Parse(@"
+              <fire label=""my label &amp;"">
+                <speed>2.3</speed>
+                <direction type=""absolute"">234</direction>
+                <bullet>
+                  <speed>4.2</speed>
+                  <direction type=""absolute"">123</direction>
+                </bullet>
+              </fire>
+            ");
+
+            var fireRef = new FireRef(node);
+            fireRef.Run(TestBullet);
+
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(2.3f, bullet.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(234), bullet.Direction, 0.00001f);
+        }
 
         [Test]
         [Ignore]
