@@ -4,47 +4,38 @@ using System.Xml.Linq;
 namespace Tamago
 {
     /// <summary>
-    /// Represents a &lt;fire&gt; node.
+    /// Represents a &lt;bullet&gt; node.
     /// </summary>
-    public class FireRef : Task
+    public class BulletRef
     {
         /// <summary>
-        /// The bullet to fire.
+        /// The actions performed by this bullet.
         /// </summary>
-        public BulletRef BulletRef { get; private set; }
+        public ActionRef Action { get; private set; }
 
         /// <summary>
-        /// The speed at which to fire the bullet. Overrides any settings specified by the bullet.
+        /// The default speed for this bullet. Can be overidden by a parent &lt;fire&rt; node.
         /// </summary>
         public Speed Speed { get; private set; }
 
         /// <summary>
-        /// The direction at which to fire the bullet. Overrides any settings specified by the bullet.
+        /// The default direction for this bullet. Can be overidden by a parent &lt;fire&rt; node.
         /// </summary>
         public Direction Direction { get; private set; }
 
         /// <summary>
-        /// Name of this node that can be referenced using &lt;fireRef&gt;.
+        /// Name of this node that can be referenced using &lt;bulletRef&gt;.
         /// </summary>
         public string Label { get; private set; }
 
         /// <summary>
-        /// True if the bullet has been fired.
+        /// Parses a &lt;bullet&gt; node into an object representation.
         /// </summary>
-        public bool IsCompleted { get; private set; }
-
-        /// <summary>
-        /// Parses a &lt;fire&gt; node into an object representation.
-        /// </summary>
-        /// <param name="node">The &lt;fire&gt; node.</param>
-        public FireRef(XElement node)
+        /// <param name="node">The &lt;bullet&gt; node.</param>
+        public BulletRef(XElement node)
         {
             if (node == null)
                 throw new ArgumentNullException("node");
-
-            var bulletRef = node.Element("bullet");
-            if (bulletRef == null)
-                throw new ParseException("<fire> node requires a <bullet> node.");
 
             var speed = node.Element("speed");
             if (speed != null)
@@ -59,6 +50,10 @@ namespace Tamago
                     type = default(SpeedType);
 
                 Speed = new Speed(type, magnitude);
+            }
+            else
+            {
+                Speed = Speed.Default;
             }
 
             var direction = node.Element("direction");
@@ -75,36 +70,40 @@ namespace Tamago
 
                 Direction = new Direction(type, radians);
             }
+            else
+            {
+                Direction = Direction.Default;
+            }
 
             var label = node.Attribute("label");
             if (label != null)
                 Label = label.Value;
 
-            BulletRef = new BulletRef(bulletRef);
+            var actionRef = node.Element("action");
+            if (actionRef != null)
+                Action = new ActionRef(actionRef);
+            else
+                Action = ActionRef.Default;
         }
 
         /// <summary>
-        /// Fires this bullet in the context of the parent bullet.
+        /// Creates a bullet from the context of the parent bullet.
         /// </summary>
-        /// <param name="bullet">The parent bullet firing this bullet.</param>
-        public void Run(Bullet bullet)
+        /// <param name="bullet">The parent bullet to create this bullet from.</param>
+        public Bullet Create(Bullet parent)
         {
-            if (bullet == null)
-                throw new ArgumentNullException("bullet");
+            if (parent == null)
+                throw new ArgumentNullException("parent");
 
-            if (IsCompleted)
-                return;
+            var newBullet = parent.BulletManager.CreateBullet();
+            newBullet.SetPattern(Action, isTopLevel: false);
 
-            // create bullet from definition
-            var newBullet = BulletRef.Create(parent: bullet);
+            newBullet.Speed = Speed.Evaluate(parent);
+            newBullet.Direction = Direction.Evaluate(parent);
+            newBullet.X = parent.X;
+            newBullet.Y = parent.Y;
 
-            // override with fire attributes
-            if (Speed != null)
-                newBullet.Speed = Speed.Evaluate(bullet);
-            if (Direction != null)
-                newBullet.Direction = Direction.Evaluate(bullet);
-
-            IsCompleted = true;
+            return newBullet;
         }
     }
 }

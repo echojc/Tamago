@@ -47,7 +47,18 @@ namespace Tamago
 
     public class ActionRef : Task
     {
-        private List<Task> Tasks = new List<Task>();
+        private List<Task> _tasks = new List<Task>();
+
+        /// <summary>
+        /// A read-only view of all tasks this action performs.
+        /// </summary>
+        /// <remarks>
+        /// You can still force underlying tasks to run but that's not recommended.
+        /// </remarks>
+        public IList<Task> Tasks
+        {
+            get { return _tasks.AsReadOnly(); }
+        }
 
         /// <summary>
         /// The name of this action.
@@ -55,13 +66,32 @@ namespace Tamago
         public string Label { get; private set; }
 
         /// <summary>
+        /// True if every nested task has completed.
+        /// </summary>
+        public bool IsCompleted
+        {
+            get { return _tasks.TrueForAll(t => t.IsCompleted); }
+        }
+
+        private static ActionRef _default = new ActionRef(XElement.Parse("<action/>"));
+
+        /// <summary>
+        /// A static instance for a no-op action.
+        /// </summary>
+        public static ActionRef Default
+        {
+            get { return _default; }
+        }
+
+
+        /// <summary>
         /// Creates a new representation of an &lt;action&gt; node.
         /// </summary>
         /// <param name="node">The node this instance should base itself on. If null, creates an empty action (equivalent to &lt;action/&gt;).</param>
-        public ActionRef(XElement node = null)
+        public ActionRef(XElement node)
         {
             if (node == null)
-                return;
+                throw new ArgumentNullException("node");
 
             var label = node.Attribute("label");
             if (label != null)
@@ -72,7 +102,7 @@ namespace Tamago
                 switch (child.Name.LocalName)
                 {
                     case "fire":
-                        Tasks.Add(new FireRef(child));
+                        _tasks.Add(new FireRef(child));
                         break;
                 }
             }
@@ -80,9 +110,9 @@ namespace Tamago
 
         public void Run(Bullet bullet)
         {
-            for (int i = 0; i < Tasks.Count; i++)
+            for (int i = 0; i < _tasks.Count; i++)
             {
-                Tasks[i].Run(bullet);
+                _tasks[i].Run(bullet);
             }
         }
     }
@@ -90,27 +120,15 @@ namespace Tamago
     public interface Task
     {
         /// <summary>
+        /// True if this task has completed.
+        /// </summary>
+        bool IsCompleted { get; }
+
+        /// <summary>
         /// Runs this task on the given bullet. This should be called at 60 fps.
         /// </summary>
         /// <param name="bullet">The bullet to run this task on.</param>
         void Run(Bullet bullet);
     }
 
-    public class BulletRef
-    {
-        public ActionRef Action { get; private set; }
-
-        public BulletRef(XElement node)
-        {
-            var actionRef = node.Element("action");
-            Action = new ActionRef(actionRef);
-        }
-
-        public void InitializeBullet(Bullet bullet)
-        {
-            bullet.SetPattern(Action, isTopLevel: false);
-            bullet.Speed = 1;
-            bullet.Direction = bullet.AimDirection;
-        }
-    }
 }

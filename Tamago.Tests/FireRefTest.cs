@@ -107,7 +107,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void UsesFireSpeedRelativeIfSet()
+        public void UsesFireSpeedRelativeIfSetABA()
         {
             var node = XElement.Parse(@"
               <fire>
@@ -120,7 +120,7 @@ namespace Tamago.Tests
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
-            Assert.AreEqual(4.5f, bullet.Speed);
+            Assert.AreEqual(3.5f, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150), bullet.Direction);
         }
 
@@ -290,6 +290,41 @@ namespace Tamago.Tests
             
             var fireRef = new FireRef(node);
             Assert.Null(fireRef.Label);
+        }
+
+        [Test]
+        public void CompletesAfterFiringBullet()
+        {
+            var node = XElement.Parse(@"
+              <fire>
+                <bullet/>
+              </fire>
+            ");
+            
+            var fireRef = new FireRef(node);
+            Assert.False(fireRef.IsCompleted);
+
+            fireRef.Run(TestBullet);
+            Assert.True(fireRef.IsCompleted);
+        }
+
+        [Test]
+        public void OnlyFiresBulletOnce()
+        {
+            var node = XElement.Parse(@"
+              <fire>
+                <bullet/>
+              </fire>
+            ");
+            
+            var fireRef = new FireRef(node);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            fireRef.Run(TestBullet);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            fireRef.Run(TestBullet);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
         }
     }
 }
