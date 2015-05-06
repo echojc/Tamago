@@ -37,7 +37,7 @@ ABA treats speed type `relative` identically to `sequence`, such that
 
 ```
 <fire>
-  <speed>4</speed>
+  <speed type="absolute">4</speed>
   <bullet>
     <action>
       <fire>
@@ -95,7 +95,7 @@ aim direction is 180),
   <bullet>
     <action>
       <changeDirection>
-        <direction>0</direction>
+        <direction type="aim">0</direction>
         <term>2</term>
       </changeDirection>
     </action>
@@ -103,5 +103,5 @@ aim direction is 180),
 </fire>
 ```
 
-completes with the bullet's direction set to -45 degrees (`180 + 45 + 180`). In
-this implementation the bullet ends up pointing at 180 degrees.
+completes with the bullet's direction set to -45 degrees (`90 + 45 + 180`). In
+this implementation, the bullet ends up pointing at 180 degrees.
