@@ -8,9 +8,9 @@ namespace Tamago
 {
     public class Bullet
     {
-        private ActionRef Action;
         internal IBulletManager BulletManager;
 
+        public ActionRef Action { get; protected set; }
         public bool IsTopLevel { get; protected set; }
         public bool IsVanished { get; protected set; }
 
@@ -55,11 +55,18 @@ namespace Tamago
 
         public void Update()
         {
+            if (IsVanished)
+                return;
+
+            // actions are run before bullets move
+            Action.Run(this);
+
             // formulae are atypical because of non-standard coordinate system
 			X += (float)(Math.Sin(Direction) * Speed);
 			Y += (float)(-Math.Cos(Direction) * Speed);
 
-            Action.Run(this);
+            if (IsTopLevel && Action.IsCompleted)
+                Vanish();
         }
 
         /// <summary>
