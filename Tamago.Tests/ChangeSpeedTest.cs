@@ -106,7 +106,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void DoesNotRunIfTermIsZero()
+        public void SetsSpeedToFinalSpeedIfTermIsZero()
         {
             var node = XElement.Parse(@"
               <changeSpeed>
@@ -119,11 +119,12 @@ namespace Tamago.Tests
             Assert.True(change.IsCompleted);
 
             change.Run(TestBullet);
-            Assert.AreEqual(DefaultSpeed, TestBullet.Speed);
+            TestBullet.Update();
+            Assert.AreEqual(2.5f, TestBullet.Speed);
         }
 
         [Test]
-        public void DoesNotRunIfTermIsLessThanZero()
+        public void SetsSpeedToFinalSpeedIfTermIsLessThanZero()
         {
             var node = XElement.Parse(@"
               <changeSpeed>
@@ -136,7 +137,8 @@ namespace Tamago.Tests
             Assert.True(change.IsCompleted);
 
             change.Run(TestBullet);
-            Assert.AreEqual(DefaultSpeed, TestBullet.Speed);
+            TestBullet.Update();
+            Assert.AreEqual(2.5f, TestBullet.Speed);
         }
 
         [Test]

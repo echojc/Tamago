@@ -66,7 +66,7 @@ namespace Tamago
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
 
-            if (IsCompleted)
+            if (!isFirstRun && IsCompleted)
                 return true;
             
             if (isFirstRun)
@@ -90,7 +90,8 @@ namespace Tamago
             }
 
             framesRunCount++;
-            bullet.NewSpeed = initialSpeed + (targetSpeed - initialSpeed) / Term * framesRunCount;
+            var ratio = Term <= 0 ? framesRunCount : (float)framesRunCount / Term;
+            bullet.NewSpeed = initialSpeed + (targetSpeed - initialSpeed) * ratio;
 
             return true;
         }

@@ -21,6 +21,7 @@ namespace Tamago
         public float FireDirection { get; set; }
         public float FireSpeed { get; set; }
 
+        public float? NewDirection { get; protected internal set; }
         public float? NewSpeed { get; protected internal set; }
 
         public Bullet(IBulletManager manager)
@@ -34,6 +35,7 @@ namespace Tamago
             FireDirection = 0;
             FireSpeed = 1;
 
+            NewDirection = null;
             NewSpeed = null;
         }
 
@@ -65,11 +67,16 @@ namespace Tamago
             // actions are run before bullets move
             Action.Run(this);
 
-            // apply speed changes if they exist
+            // apply queued changes if they exist
             if (NewSpeed != null)
             {
                 Speed = NewSpeed.Value;
                 NewSpeed = null;
+            }
+            if (NewDirection != null)
+            {
+                Direction = NewDirection.Value;
+                NewDirection = null;
             }
             
             // formulae are atypical because of non-standard coordinate system

@@ -88,6 +88,11 @@ namespace Tamago
 
         #region Boilerplate
 
+        public override string ToString()
+        {
+            return "Direction [Type=" + Type + ",Value=" + Value + "]";
+        }
+
         public override bool Equals(object obj)
         {
             return obj is Direction && this == (Direction)obj;

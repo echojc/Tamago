@@ -81,7 +81,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void Boilerplate()
+        public void BoilerplateDirection()
         {
             var a = new Direction(DirectionType.Absolute, 1.23f);
             var b = new Direction(DirectionType.Relative, 1.23f);

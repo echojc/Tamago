@@ -42,6 +42,7 @@
     <Compile Include="ActionRefTest.cs" />
     <Compile Include="BasicTest.cs" />
     <Compile Include="BulletRefTest.cs" />
+    <Compile Include="ChangeDirectionTest.cs" />
     <Compile Include="ChangeSpeedTest.cs" />
     <Compile Include="DirectionTest.cs" />
     <Compile Include="FireRefTest.cs" />

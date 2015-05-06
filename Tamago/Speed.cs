@@ -88,6 +88,11 @@ namespace Tamago
 
         #region Boilerplate
 
+        public override string ToString()
+        {
+            return "Speed [Type=" + Type + ",Value=" + Value + "]";
+        }
+
         public override bool Equals(object obj)
         {
             return obj is Speed && this == (Speed)obj;

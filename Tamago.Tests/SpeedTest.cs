@@ -70,7 +70,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void Boilerplate()
+        public void BoilerplateSpeed()
         {
             var a = new Speed(SpeedType.Absolute, 1.23f);
             var b = new Speed(SpeedType.Relative, 1.23f);
