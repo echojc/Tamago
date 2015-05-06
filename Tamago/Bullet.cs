@@ -11,10 +11,11 @@ namespace Tamago
         private ActionRef Action;
         internal IBulletManager BulletManager;
 
-        public bool IsTopLevel { get; private set; }
+        public bool IsTopLevel { get; protected set; }
+        public bool IsVanished { get; protected set; }
 
-        public float X { get; set; }
-        public float Y { get; set; }
+        public virtual float X { get; set; }
+        public virtual float Y { get; set; }
         public float Direction { get; set; }
         public float Speed { get; set; }
         public float FireDirection { get; set; }
@@ -41,10 +42,11 @@ namespace Tamago
         {
             Action = action;
             IsTopLevel = isTopLevel;
+            IsVanished = false;
         }
 
         /// <summary>
-        /// Gets the bearing in radians to point at the player position.
+        /// Gets the angle in radians to point at the player.
         /// </summary>
         public float AimDirection
         {
@@ -58,6 +60,16 @@ namespace Tamago
 			Y += (float)(-Math.Cos(Direction) * Speed);
 
             Action.Run(this);
+        }
+
+        /// <summary>
+        /// Called when the bullet encounters a &lt;vanish&gt; node, or when a top level bullet completes its action.
+        /// 
+        /// <code>base.Vanish()</code> should be called if this is overridden.
+        /// </summary>
+        public virtual void Vanish()
+        {
+            IsVanished = true;
         }
     }
 }

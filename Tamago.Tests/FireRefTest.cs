@@ -336,7 +336,7 @@ namespace Tamago.Tests
             var fireRef = new FireRef(node);
             Assert.False(fireRef.IsCompleted);
 
-            fireRef.Run(TestBullet);
+            Assert.True(fireRef.Run(TestBullet));
             Assert.True(fireRef.IsCompleted);
         }
 
