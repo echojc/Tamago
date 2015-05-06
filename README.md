@@ -37,11 +37,11 @@ ABA treats speed type `relative` identically to `sequence`, such that
 
 ```
 <fire>
-  <direction type="absolute">180</direction>
+  <speed>4</speed>
   <bullet>
     <action>
       <fire>
-        <direction type="relative">90</direction>
+        <speed type="relative">2</speed>
         <bullet/>
       </fire>
     </action>
@@ -49,8 +49,8 @@ ABA treats speed type `relative` identically to `sequence`, such that
 </fire>
 ```
 
-fires the second bullet to the right (`0 + 90`). This implementation instead
-fires the second bullet to the left (`180 + 90`).
+fires the second bullet at 3 pixels/frame (initial fire speed of `1` + `2`).
+This implementation instead fires the second bullet at 6 pixels/frame (`4 + 2`).
 
 ### `<changeSpeed>`
 
