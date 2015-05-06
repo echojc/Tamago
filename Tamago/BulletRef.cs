@@ -38,42 +38,10 @@ namespace Tamago
                 throw new ArgumentNullException("node");
 
             var speed = node.Element("speed");
-            if (speed != null)
-            {
-                var magnitude = float.Parse(speed.Value);
-                var typeAttr = speed.Attribute("type");
-
-                SpeedType type;
-                if (typeAttr != null)
-                    Enum.TryParse(typeAttr.Value, true, out type);
-                else
-                    type = default(SpeedType);
-
-                Speed = new Speed(type, magnitude);
-            }
-            else
-            {
-                Speed = Speed.Default;
-            }
+            Speed = speed != null ? new Speed(speed) : Speed.Default;
 
             var direction = node.Element("direction");
-            if (direction != null)
-            {
-                var radians = MathHelper.ToRadians(float.Parse(direction.Value));
-                var typeAttr = direction.Attribute("type");
-
-                DirectionType type;
-                if (typeAttr != null)
-                    Enum.TryParse(typeAttr.Value, true, out type);
-                else
-                    type = default(DirectionType);
-
-                Direction = new Direction(type, radians);
-            }
-            else
-            {
-                Direction = Direction.Default;
-            }
+            Direction = direction != null ? new Direction(direction) : Direction.Default;
 
             var label = node.Attribute("label");
             if (label != null)
@@ -98,8 +66,40 @@ namespace Tamago
             var newBullet = parent.BulletManager.CreateBullet();
             newBullet.SetPattern(Action, isTopLevel: false);
 
-            newBullet.Speed = Speed.Evaluate(parent);
-            newBullet.Direction = Direction.Evaluate(parent);
+            switch (Speed.Type)
+            {
+                // ABA compatibility
+                // 'relative' speed behaves like 'sequence'
+                case SpeedType.Relative:
+                case SpeedType.Sequence:
+                    newBullet.Speed = parent.FireSpeed + Speed.Value;
+                    break;
+                case SpeedType.Absolute:
+                default:
+                    newBullet.Speed = Speed.Value;
+                    break;
+            }
+
+            float direction;
+            switch (Direction.Type)
+            {
+                case DirectionType.Relative:
+                    direction = parent.Direction + Direction.Value;
+                    break;
+                case DirectionType.Sequence:
+                    direction = parent.FireDirection + Direction.Value;
+                    break;
+                case DirectionType.Absolute:
+                    direction = Direction.Value;
+                    break;
+                case DirectionType.Aim:
+                default:
+                    direction = parent.AimDirection + Direction.Value;
+                    break;
+            }
+
+            newBullet.Direction = MathHelper.WrapAngle(direction);
+
             newBullet.X = parent.X;
             newBullet.Y = parent.Y;
 

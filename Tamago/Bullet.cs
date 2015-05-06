@@ -21,6 +21,8 @@ namespace Tamago
         public float FireDirection { get; set; }
         public float FireSpeed { get; set; }
 
+        public float? NewSpeed { get; protected internal set; }
+
         public Bullet(IBulletManager manager)
         {
             BulletManager = manager;
@@ -31,6 +33,8 @@ namespace Tamago
             Speed = 0;
             FireDirection = 0;
             FireSpeed = 1;
+
+            NewSpeed = null;
         }
 
         /// <summary>
@@ -61,6 +65,13 @@ namespace Tamago
             // actions are run before bullets move
             Action.Run(this);
 
+            // apply speed changes if they exist
+            if (NewSpeed != null)
+            {
+                Speed = NewSpeed.Value;
+                NewSpeed = null;
+            }
+            
             // formulae are atypical because of non-standard coordinate system
 			X += (float)(Math.Sin(Direction) * Speed);
 			Y += (float)(-Math.Cos(Direction) * Speed);

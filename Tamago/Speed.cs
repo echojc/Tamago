@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 
 namespace Tamago
 {
@@ -26,7 +27,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;speed&gt; node. Speed values are measured in pixel per frame.
     /// </summary>
-    public class Speed
+    public struct Speed
     {
         private static Speed _default = new Speed(SpeedType.Absolute, 1);
 
@@ -54,29 +55,57 @@ namespace Tamago
         /// <param name="type">Specifies how to interpret the given value.</param>
         /// <param name="value">The value or offset for the speed type.</param>
         public Speed(SpeedType type, float value)
+            : this()
         {
             Type = type;
             Value = value;
         }
 
         /// <summary>
-        /// Calculates the absolute speed for this instance against the given bullet.
+        /// Represents a &lt;speed&gt; node.
         /// </summary>
-        /// <param name="bullet">The bullet to base calculations on.</param>
-        /// <returns>The speed as an absolute value.</returns>
-        public float Evaluate(Bullet bullet)
+        /// <param name="node">The node to construct this instance from.</param>
+        public Speed(XElement node)
+            : this()
         {
-            switch (Type)
+            if (node == null)
+                throw new ArgumentNullException("node");
+
+            var typeAttr = node.Attribute("type");
+            if (typeAttr != null)
             {
-                // ABA compatibility
-                // 'relative' speed behaves like 'sequence'
-                case SpeedType.Relative:
-                case SpeedType.Sequence:
-                    return bullet.FireSpeed + Value;
-                case SpeedType.Absolute:
-                default:
-                    return Value;
+                SpeedType type;
+                Enum.TryParse(typeAttr.Value, true, out type);
+                Type = type;
             }
+            else
+                Type = default(SpeedType);
+
+            Value = float.Parse(node.Value);
         }
+
+        #region Boilerplate
+
+        public override bool Equals(object obj)
+        {
+            return obj is Speed && this == (Speed)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return (527 + Type.GetHashCode()) * 31 + Value.GetHashCode();
+        }
+
+        public static bool operator ==(Speed x, Speed y)
+        {
+            return x.Type == y.Type && x.Value == y.Value;
+        }
+
+        public static bool operator !=(Speed x, Speed y)
+        {
+            return !(x == y);
+        }
+
+        #endregion
     }
 }

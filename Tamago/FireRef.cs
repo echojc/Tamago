@@ -16,12 +16,12 @@ namespace Tamago
         /// <summary>
         /// The speed at which to fire the bullet. Overrides any settings specified by the bullet.
         /// </summary>
-        public Speed Speed { get; private set; }
+        public Speed? Speed { get; private set; }
 
         /// <summary>
         /// The direction at which to fire the bullet. Overrides any settings specified by the bullet.
         /// </summary>
-        public Direction Direction { get; private set; }
+        public Direction? Direction { get; private set; }
 
         /// <summary>
         /// Name of this node that can be referenced using &lt;fireRef&gt;.
@@ -48,33 +48,11 @@ namespace Tamago
 
             var speed = node.Element("speed");
             if (speed != null)
-            {
-                var magnitude = float.Parse(speed.Value);
-                var typeAttr = speed.Attribute("type");
-
-                SpeedType type;
-                if (typeAttr != null)
-                    Enum.TryParse(typeAttr.Value, true, out type);
-                else
-                    type = default(SpeedType);
-
-                Speed = new Speed(type, magnitude);
-            }
+                Speed = new Speed(speed);
 
             var direction = node.Element("direction");
             if (direction != null)
-            {
-                var radians = MathHelper.ToRadians(float.Parse(direction.Value));
-                var typeAttr = direction.Attribute("type");
-
-                DirectionType type;
-                if (typeAttr != null)
-                    Enum.TryParse(typeAttr.Value, true, out type);
-                else
-                    type = default(DirectionType);
-
-                Direction = new Direction(type, radians);
-            }
+                Direction = new Direction(direction);
 
             var label = node.Attribute("label");
             if (label != null)
@@ -101,9 +79,47 @@ namespace Tamago
 
             // override with fire attributes
             if (Speed != null)
-                newBullet.Speed = Speed.Evaluate(bullet);
+            {
+                Speed s = Speed.Value;
+                switch (s.Type)
+                {
+                    // ABA compatibility
+                    // 'relative' speed behaves like 'sequence'
+                    case SpeedType.Relative:
+                    case SpeedType.Sequence:
+                        newBullet.Speed = bullet.FireSpeed + s.Value;
+                        break;
+                    case SpeedType.Absolute:
+                    default:
+                        newBullet.Speed = s.Value;
+                        break;
+                }
+            }
+
             if (Direction != null)
-                newBullet.Direction = Direction.Evaluate(bullet);
+            {
+                Direction d = Direction.Value;
+
+                float result;
+                switch (d.Type)
+                {
+                    case DirectionType.Relative:
+                        result = bullet.Direction + d.Value;
+                        break;
+                    case DirectionType.Sequence:
+                        result = bullet.FireDirection + d.Value;
+                        break;
+                    case DirectionType.Absolute:
+                        result = d.Value;
+                        break;
+                    case DirectionType.Aim:
+                    default:
+                        result = bullet.AimDirection + d.Value;
+                        break;
+                }
+
+                newBullet.Direction = MathHelper.WrapAngle(result);
+            }
 
             IsCompleted = true;
             return true;

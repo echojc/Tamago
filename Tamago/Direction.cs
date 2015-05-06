@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 
 namespace Tamago
 {
@@ -28,7 +29,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;direction&gt; node. Direction values are measured in radians, clockwise.
     /// </summary>
-    public class Direction
+    public struct Direction
     {
         private static Direction _default = new Direction(DirectionType.Aim, 0);
 
@@ -46,7 +47,7 @@ namespace Tamago
         public DirectionType Type { get; private set; }
 
         /// <summary>
-        /// The magnitude of this direction instance.
+        /// The angle in radians, measured from directly up as 0, clockwise.
         /// </summary>
         public float Value { get; private set; }
 
@@ -54,38 +55,59 @@ namespace Tamago
         /// Represents a &lt;direction&gt; node.
         /// </summary>
         /// <param name="type">Specifies how to interpret the given value.</param>
-        /// <param name="value">The value or offset for the direction type.</param>
+        /// <param name="value">The angle offset or value.</param>
         public Direction(DirectionType type, float value)
+            : this()
         {
             Type = type;
             Value = value;
         }
 
         /// <summary>
-        /// Calculates the absolute direction for this instance against the given bullet.
+        /// Represents a &lt;direction&gt; node.
         /// </summary>
-        /// <param name="bullet">The bullet to base calculations on.</param>
-        /// <returns>The direction as an absolute value.</returns>
-        public float Evaluate(Bullet bullet)
+        /// <param name="node">The node to construct this instance from.</param>
+        public Direction(XElement node)
+            : this()
         {
-            float result;
-            switch (Type)
+            if (node == null)
+                throw new ArgumentNullException();
+
+            var typeAttr = node.Attribute("type");
+            if (typeAttr != null)
             {
-                case DirectionType.Relative:
-                    result = bullet.Direction + Value;
-                    break;
-                case DirectionType.Sequence:
-                    result = bullet.FireDirection + Value;
-                    break;
-                case DirectionType.Absolute:
-                    result = Value;
-                    break;
-                case DirectionType.Aim:
-                default:
-                    result = bullet.AimDirection + Value;
-                    break;
+                DirectionType type;
+                Enum.TryParse(typeAttr.Value, true, out type);
+                Type = type;
             }
-            return MathHelper.WrapAngle(result);
+            else
+                Type = default(DirectionType);
+
+            Value = MathHelper.ToRadians(float.Parse(node.Value));
         }
+
+        #region Boilerplate
+
+        public override bool Equals(object obj)
+        {
+            return obj is Direction && this == (Direction)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return (527 + Type.GetHashCode()) * 31 + Value.GetHashCode();
+        }
+
+        public static bool operator ==(Direction x, Direction y)
+        {
+            return x.Type == y.Type && x.Value == y.Value;
+        }
+
+        public static bool operator !=(Direction x, Direction y)
+        {
+            return !(x == y);
+        }
+
+        #endregion
     }
 }
