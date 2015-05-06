@@ -12,8 +12,6 @@ namespace Tamago
 
         /// <summary>
         /// How many frames to wait for.
-        /// 
-        /// In ABA compatibility mode, the actual frames waited is <code>Duration + 1</code>.
         /// </summary>
         public int Duration { get; private set; }
 
@@ -42,7 +40,7 @@ namespace Tamago
         /// Prevents further task execution until <code>Duration</code> frames have passed.
         /// </summary>
         /// <param name="bullet">The bullet doing the waiting.</param>
-        /// <returns>True if IsCompleted is true before this method is run.</returns>
+        /// <returns>True if this has been run 
         public bool Run(Bullet bullet)
         {
             if (bullet == null)
@@ -51,10 +49,9 @@ namespace Tamago
             if (IsCompleted)
                 return true;
 
-            // ABA compatibility
-            // we wait for duration + 1 frames
-            IsCompleted = framesRunCount >= Duration;
             framesRunCount++;
+            IsCompleted = framesRunCount >= Duration;
+
             return false;
         }
     }

@@ -15,11 +15,13 @@ namespace Tamago
         /// <summary>
         /// The value is relative to the speed of the parent bullet.
         ///
-        /// In ABA compatibility mode, this is treated identically to <see cref="SpeedType.Sequence"/>.
+        /// If used with &lt;changeSpeed&gt;, the value is relative to the current speed of the bullet.
         /// </summary>
         Relative,
         /// <summary>
         /// The value is relative to the speed of the last executed &lt;fire&gt; node.
+        /// 
+        /// If used with &lt;changeSpeed&gt;, the value is added to the current speed once per frame.
         /// </summary>
         Sequence
     }

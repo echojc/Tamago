@@ -119,7 +119,7 @@ namespace Tamago.Tests
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
-            Assert.AreEqual(3.5f, bullet.Speed);
+            Assert.AreEqual(4.5f, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150), bullet.Direction);
         }
 

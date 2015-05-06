@@ -66,16 +66,13 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void CompletesAfterExecutingRunXPlusOneTimesABA()
+        public void CompletesAfterExecutingRunXTimes()
         {
             var node = XElement.Parse(@"
               <wait>2</wait>
             ");
 
             var wait = new Wait(node);
-            Assert.False(wait.IsCompleted);
-
-            Assert.False(wait.Run(TestBullet));
             Assert.False(wait.IsCompleted);
 
             Assert.False(wait.Run(TestBullet));

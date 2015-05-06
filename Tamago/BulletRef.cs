@@ -68,9 +68,9 @@ namespace Tamago
 
             switch (Speed.Type)
             {
-                // ABA compatibility
-                // 'relative' speed behaves like 'sequence'
                 case SpeedType.Relative:
+                    newBullet.Speed = parent.Speed + Speed.Value;
+                    break;
                 case SpeedType.Sequence:
                     newBullet.Speed = parent.FireSpeed + Speed.Value;
                     break;

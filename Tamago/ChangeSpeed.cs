@@ -57,8 +57,7 @@ namespace Tamago
         /// <remarks>
         /// This updates <see cref="Bullet.NewSpeed"/> which copies over to
         /// <see cref="Bullet.Speed"/> after all tasks are run. This is done
-        /// to replicate ABA behaviour where having multiple &lt;changeSpeed&gt;s
-        /// won't stack their effects.
+        /// to prevent multiple &lt;changeSpeed&gt;s from stacking their effects.
         /// </remarks>
         /// <param name="bullet">The bullet to change the speed of.</param>
         /// <returns>True always</returns>

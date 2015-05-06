@@ -107,7 +107,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void UsesFireSpeedRelativeIfSetABA()
+        public void UsesFireSpeedRelativeIfSet()
         {
             var node = XElement.Parse(@"
               <fire>
@@ -120,7 +120,7 @@ namespace Tamago.Tests
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
-            Assert.AreEqual(3.5f, bullet.Speed);
+            Assert.AreEqual(4.5f, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150), bullet.Direction);
         }
 
