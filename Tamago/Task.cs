@@ -17,6 +17,12 @@ namespace Tamago
         bool IsCompleted { get; }
 
         /// <summary>
+        /// Place this task back into its pre-run state.
+        /// Used primarily for &lt;repeat&gt; nodes.
+        /// </summary>
+        void Reset();
+
+        /// <summary>
         /// Runs this task on the given bullet. This should be called at 60 fps.
         /// </summary>
         /// <param name="bullet">The bullet to run this task on.</param>

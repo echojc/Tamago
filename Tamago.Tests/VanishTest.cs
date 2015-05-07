@@ -60,5 +60,42 @@ namespace Tamago.Tests
             Assert.True(vanish.Run(TestBullet));
             Assert.True(vanish.IsCompleted);
         }
+
+        [Test]
+        public void RunsExactlyOnce()
+        {
+            var node = XElement.Parse(@"
+              <vanish/>
+            ");
+
+            var vanish = new Vanish(node);
+            Assert.False(vanish.IsCompleted);
+
+            vanish.Run(TestBullet);
+            Assert.True(TestBullet.IsVanished);
+
+            TestBullet.IsVanished = false;
+            vanish.Run(TestBullet);
+            Assert.False(TestBullet.IsVanished);
+        }
+
+        [Test]
+        public void CanBeReset()
+        {
+            var node = XElement.Parse(@"
+              <vanish/>
+            ");
+
+            var vanish = new Vanish(node);
+            Assert.False(vanish.IsCompleted);
+
+            vanish.Run(TestBullet);
+            Assert.True(TestBullet.IsVanished);
+
+            vanish.Reset();
+            TestBullet.IsVanished = false;
+            vanish.Run(TestBullet);
+            Assert.True(TestBullet.IsVanished);
+        }
     }
 }

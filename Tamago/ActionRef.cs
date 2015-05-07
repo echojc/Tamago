@@ -42,7 +42,6 @@ namespace Tamago
             get { return _default; }
         }
 
-
         /// <summary>
         /// Creates a new representation of an &lt;action&gt; node.
         /// </summary>
@@ -65,6 +64,14 @@ namespace Tamago
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Resets all nested tasks to their pre-run state.
+        /// </summary>
+        public void Reset()
+        {
+            _tasks.ForEach(t => t.Reset());
         }
 
         public bool Run(Bullet bullet)

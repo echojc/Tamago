@@ -358,5 +358,28 @@ namespace Tamago.Tests
             fireRef.Run(TestBullet);
             Assert.AreEqual(2, TestManager.Bullets.Count);
         }
+
+        [Test]
+        public void CanBeReset()
+        {
+            var node = XElement.Parse(@"
+              <fire>
+                <bullet/>
+              </fire>
+            ");
+            
+            var fireRef = new FireRef(node);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            fireRef.Run(TestBullet);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            fireRef.Reset();
+            fireRef.Run(TestBullet);
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+
+            fireRef.Run(TestBullet);
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
     }
 }

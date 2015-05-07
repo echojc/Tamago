@@ -83,5 +83,35 @@ namespace Tamago.Tests
 
             Assert.True(wait.Run(TestBullet));
         }
+
+        [Test]
+        public void CanBeReset()
+        {
+            var node = XElement.Parse(@"
+              <wait>2</wait>
+            ");
+
+            var wait = new Wait(node);
+            Assert.False(wait.IsCompleted);
+
+            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.IsCompleted);
+
+            Assert.False(wait.Run(TestBullet));
+            Assert.True(wait.IsCompleted);
+
+            Assert.True(wait.Run(TestBullet));
+
+            wait.Reset();
+            Assert.False(wait.IsCompleted);
+
+            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.IsCompleted);
+
+            Assert.False(wait.Run(TestBullet));
+            Assert.True(wait.IsCompleted);
+
+            Assert.True(wait.Run(TestBullet));
+        }
     }
 }

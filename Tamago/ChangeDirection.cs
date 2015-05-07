@@ -8,9 +8,10 @@ namespace Tamago
     /// </summary>
     public class ChangeDirection : Task
     {
-        private bool isFirstRun = true;
         private float initialDirection;
         private float targetDirection;
+
+        private bool isFirstRun = true;
         private int framesRunCount = 0;
 
         /// <summary>
@@ -49,6 +50,17 @@ namespace Tamago
             if (term == null)
                 throw new ParseException("<changeDirection> node requires a <term> node.");
             Term = (int)float.Parse(term.Value);
+
+            Reset();
+        }
+
+        /// <summary>
+        /// Resets this task to its pre-run state.
+        /// </summary>
+        public void Reset()
+        {
+            isFirstRun = true;
+            framesRunCount = 0;
         }
 
         /// <summary>

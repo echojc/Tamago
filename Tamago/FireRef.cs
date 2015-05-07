@@ -59,6 +59,16 @@ namespace Tamago
                 Label = label.Value;
 
             BulletRef = new BulletRef(bulletRef);
+
+            Reset();
+        }
+
+        /// <summary>
+        /// Resets this task to its pre-run state.
+        /// </summary>
+        public void Reset()
+        {
+            IsCompleted = false;
         }
 
         /// <summary>

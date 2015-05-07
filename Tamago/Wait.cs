@@ -18,7 +18,10 @@ namespace Tamago
         /// <summary>
         /// True if we have waited <code>Duration</code> number of frames.
         /// </summary>
-        public bool IsCompleted { get; private set; }
+        public bool IsCompleted
+        {
+            get { return framesRunCount >= Duration; }
+        }
 
         /// <summary>
         /// Parses a &lt;wait&gt; node into an object representation.
@@ -34,6 +37,16 @@ namespace Tamago
                 throw new ParseException("wait node without duration");
 
             Duration = (int)float.Parse(duration);
+
+            Reset();
+        }
+
+        /// <summary>
+        /// Resets this task to its pre-run state.
+        /// </summary>
+        public void Reset()
+        {
+            framesRunCount = 0;
         }
 
         /// <summary>
@@ -50,8 +63,6 @@ namespace Tamago
                 return true;
 
             framesRunCount++;
-            IsCompleted = framesRunCount >= Duration;
-
             return false;
         }
     }

@@ -488,5 +488,99 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
         }
+
+        [Test]
+        public void CanBeReset()
+        {
+            var node = XElement.Parse(@"
+              <accel>
+                <horizontal type=""sequence"">0.3</horizontal>
+                <vertical type=""sequence"">0.7</vertical>
+                <term>3</term>
+              </accel>
+            ");
+
+            var accel = new Accel(node);
+            Assert.False(accel.IsCompleted);
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(
+                DefaultVelocityX + 0.3,
+                TestBullet.VelocityX,
+                0.00001f);
+            Assert.AreEqual(
+                DefaultVelocityY + 0.7,
+                TestBullet.VelocityY,
+                0.00001f);
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(
+                DefaultVelocityX + 0.6,
+                TestBullet.VelocityX,
+                0.00001f);
+            Assert.AreEqual(
+                DefaultVelocityY + 1.4,
+                TestBullet.VelocityY,
+                0.00001f);
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(
+                DefaultVelocityX + 0.9f,
+                TestBullet.VelocityX,
+                0.00001f);
+            Assert.AreEqual(
+                DefaultVelocityY + 2.1f,
+                TestBullet.VelocityY,
+                0.00001f);
+
+            accel.Reset();
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(
+                DefaultVelocityX + 1.2f,
+                TestBullet.VelocityX,
+                0.00001f);
+            Assert.AreEqual(
+                DefaultVelocityY + 2.8f,
+                TestBullet.VelocityY,
+                0.00001f);
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(
+                DefaultVelocityX + 1.5f,
+                TestBullet.VelocityX,
+                0.00001f);
+            Assert.AreEqual(
+                DefaultVelocityY + 3.5f,
+                TestBullet.VelocityY,
+                0.00001f);
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(
+                DefaultVelocityX + 1.8f,
+                TestBullet.VelocityX,
+                0.00001f);
+            Assert.AreEqual(
+                DefaultVelocityY + 4.2f,
+                TestBullet.VelocityY,
+                0.00001f);
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(
+                DefaultVelocityX + 1.8f,
+                TestBullet.VelocityX,
+                0.00001f);
+            Assert.AreEqual(
+                DefaultVelocityY + 4.2f,
+                TestBullet.VelocityY,
+                0.00001f);
+        }
     }
 }

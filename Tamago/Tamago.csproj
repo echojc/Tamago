@@ -48,6 +48,7 @@
     <Compile Include="MathHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Direction.cs" />
+    <Compile Include="Repeat.cs" />
     <Compile Include="Speed.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="Vanish.cs" />

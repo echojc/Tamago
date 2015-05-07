@@ -331,5 +331,50 @@ namespace Tamago.Tests
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(39), TestBullet.Direction);
         }
+
+        [Test]
+        public void CanBeReset()
+        {
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""sequence"">13</direction>
+                <term>3</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(13), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(26), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(39), TestBullet.Direction, 0.00001f);
+
+            change.Reset();
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(52), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(65), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(78), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(78), TestBullet.Direction, 0.00001f);
+        }
+
     }
 }

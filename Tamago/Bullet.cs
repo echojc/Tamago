@@ -12,7 +12,7 @@ namespace Tamago
 
         public ActionRef Action { get; protected set; }
         public bool IsTopLevel { get; protected set; }
-        public bool IsVanished { get; protected set; }
+        public bool IsVanished { get; set; }
 
         public virtual float X { get; set; }
         public virtual float Y { get; set; }

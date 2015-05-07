@@ -49,6 +49,7 @@
     <Compile Include="FireRefTest.cs" />
     <Compile Include="Helpers\TestManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepeatTest.cs" />
     <Compile Include="SpeedTest.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="VanishTest.cs" />

@@ -8,12 +8,13 @@ namespace Tamago
     /// </summary>
     public class Accel : Task
     {
-        private bool isFirstRun = true;
         private float initialVelocityX;
         private float targetVelocityX;
         private float initialVelocityY;
         private float targetVelocityY;
-        private int framesRunCount = 0;
+
+        private bool isFirstRun;
+        private int framesRunCount;
 
         /// <summary>
         /// The horizontal velocity to change to.
@@ -59,6 +60,17 @@ namespace Tamago
             var vertical = node.Element("vertical");
             if (vertical != null)
                 VelocityY = new Speed(vertical);
+
+            Reset();
+        }
+
+        /// <summary>
+        /// Resets this task to its pre-run state.
+        /// </summary>
+        public void Reset()
+        {
+            isFirstRun = true;
+            framesRunCount = 0;
         }
 
         /// <summary>

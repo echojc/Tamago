@@ -21,6 +21,16 @@ namespace Tamago
         {
             if (node == null)
                 throw new ArgumentNullException("node");
+
+            Reset();
+        }
+
+        /// <summary>
+        /// Resets this task to its pre-run state.
+        /// </summary>
+        public void Reset()
+        {
+            IsCompleted = false;
         }
 
         /// <summary>
@@ -32,6 +42,9 @@ namespace Tamago
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
+
+            if (IsCompleted)
+                return true;
 
             bullet.Vanish();
 

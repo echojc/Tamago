@@ -304,5 +304,49 @@ namespace Tamago.Tests
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 2.4f, TestBullet.Speed);
         }
+
+        [Test]
+        public void CanBeReset()
+        {
+            var node = XElement.Parse(@"
+              <changeSpeed>
+                <speed type=""sequence"">0.8</speed>
+                <term>3</term>
+              </changeSpeed>
+            ");
+
+            var change = new ChangeSpeed(node);
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultSpeed + 0.8f, TestBullet.Speed, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultSpeed + 1.6f, TestBullet.Speed, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultSpeed + 2.4f, TestBullet.Speed, 0.00001f);
+
+            change.Reset();
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultSpeed + 3.2f, TestBullet.Speed, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultSpeed + 4.0f, TestBullet.Speed, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultSpeed + 4.8f, TestBullet.Speed, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(DefaultSpeed + 4.8f, TestBullet.Speed, 0.00001f);
+        }
     }
 }
