@@ -17,8 +17,8 @@ installed, you can run all tests by choosing *Test -> Run -> All Tests*.
 
 There is a
 [demo applet](http://www.asahi-net.or.jp/~cs8k-cyu/bulletml/bulletml_applet_e.html)
-on the official BulletML reference site. This implementation differs from that
-of the demo slightly to correct perceived bugs in the reference implementation.
+on the official BulletML reference site. This implementation handles several
+cases differently from that of the reference implementation.
 
 ### `<wait>`
 
