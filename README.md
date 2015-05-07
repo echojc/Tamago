@@ -52,11 +52,11 @@ ABA treats speed type `relative` identically to `sequence`, such that
 fires the second bullet at 3 pixels/frame (initial fire speed of `1` + `2`).
 This implementation instead fires the second bullet at 6 pixels/frame (`4 + 2`).
 
-### `<changeSpeed>`
+### `<changeSpeed>`/`<accel>`
 
-ABA treats this task as a no-op if `<term>` is less than or equal to zero. This
-implementation will always set the speed to the final value when a
-`<changeSpeed>` task completes.
+ABA treats these tasks as no-ops if `<term>` is less than or equal to zero. This
+implementation will always set values to the final value when one of these tasks
+complete.
 
 ### `<changeDirection>`
 
