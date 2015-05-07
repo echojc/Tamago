@@ -105,3 +105,41 @@ aim direction is 180),
 
 completes with the bullet's direction set to -45 degrees (`90 + 45 + 180`). In
 this implementation, the bullet ends up pointing at 180 degrees.
+
+### `<repeat>`
+
+ABA waits for one frame whenever it encounters a `<repeat>` node, such that the
+following patterns are identical.
+
+```
+<repeat>
+  <times>36</times>
+  <action>
+    <fire>
+      <direction type="sequence">10</direction>
+      <bullet/>
+    </fire>
+    <wait>0</wait> <!-- this waits for 1 frame; see the <wait> section -->
+  </action>
+</repeat>
+
+<repeat>
+  <times>36</times>
+  <action>
+    <repeat>
+      <times>1</times>
+      <action>
+        <fire>
+          <direction type="sequence">10</direction>
+          <bullet/>
+        </fire>
+      </action>
+    </repeat> <!-- implicitly waits for 1 frame here -->
+  </action>
+</repeat>
+```
+
+This implementation does not introduce the extra one frame of delay. In fact,
+accounting for both this behaviour and the behaviour of `<wait>`, in this 
+implementation both these patterns will produce an instantaneous circular spread
+of bullets while the ABA implementation produces a clockwise spiral of bullets.
