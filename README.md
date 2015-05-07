@@ -13,7 +13,7 @@ Tests are written using NUnit. If you are using Visual Studio and have the
 [NUnit test adapter](https://www.nuget.org/packages/NUnitTestAdapter/)
 installed, you can run all tests by choosing *Test -> Run -> All Tests*.
 
-## Differences with ABA Games implementation
+## Differences from the ABA Games implementation
 
 There is a
 [demo applet](http://www.asahi-net.or.jp/~cs8k-cyu/bulletml/bulletml_applet_e.html)
