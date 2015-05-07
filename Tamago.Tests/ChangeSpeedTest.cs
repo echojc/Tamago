@@ -142,6 +142,24 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void SetsSpeedToFinalSpeedIfTermIsLessThanZeroSequence()
+        {
+            var node = XElement.Parse(@"
+              <changeSpeed>
+                <speed type=""sequence"">2.5</speed>
+                <term>-42</term>
+              </changeSpeed>
+            ");
+
+            var change = new ChangeSpeed(node);
+            Assert.True(change.IsCompleted);
+
+            change.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(DefaultSpeed, TestBullet.Speed);
+        }
+
+        [Test]
         public void SetsIsCompletedWhenRunXTimes()
         {
             var node = XElement.Parse(@"

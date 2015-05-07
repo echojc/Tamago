@@ -36,6 +36,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Accel.cs" />
     <Compile Include="ActionRef.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="BulletPattern.cs" />

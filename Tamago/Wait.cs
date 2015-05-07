@@ -33,7 +33,7 @@ namespace Tamago
             if (duration == string.Empty)
                 throw new ParseException("wait node without duration");
 
-            Duration = (int)decimal.Parse(duration);
+            Duration = (int)float.Parse(duration);
         }
 
         /// <summary>

@@ -16,13 +16,19 @@ namespace Tamago
 
         public virtual float X { get; set; }
         public virtual float Y { get; set; }
+
         public float Direction { get; set; }
         public float Speed { get; set; }
+        public float VelocityX { get; set; }
+        public float VelocityY { get; set; }
+
         public float FireDirection { get; set; }
         public float FireSpeed { get; set; }
 
-        public float? NewDirection { get; protected internal set; }
-        public float? NewSpeed { get; protected internal set; }
+        public float? NewDirection { get; set; }
+        public float? NewSpeed { get; set; }
+        public float? NewVelocityX { get; set; }
+        public float? NewVelocityY { get; set; }
 
         public Bullet(IBulletManager manager)
         {
@@ -30,13 +36,19 @@ namespace Tamago
 
             X = 0;
             Y = 0;
+
             Direction = 0;
             Speed = 0;
+            VelocityX = 0;
+            VelocityY = 0;
+
             FireDirection = 0;
             FireSpeed = 1;
 
             NewDirection = null;
             NewSpeed = null;
+            NewVelocityX = null;
+            NewVelocityY = null;
         }
 
         /// <summary>
@@ -78,10 +90,20 @@ namespace Tamago
                 Direction = NewDirection.Value;
                 NewDirection = null;
             }
+            if (NewVelocityX != null)
+            {
+                VelocityX = NewVelocityX.Value;
+                NewVelocityX = null;
+            }
+            if (NewVelocityY != null)
+            {
+                VelocityY = NewVelocityY.Value;
+                NewVelocityY = null;
+            }
             
             // formulae are atypical because of non-standard coordinate system
-			X += (float)(Math.Sin(Direction) * Speed);
-			Y += (float)(-Math.Cos(Direction) * Speed);
+			X += (float)(Math.Sin(Direction) * Speed) + VelocityX;
+			Y += (float)(-Math.Cos(Direction) * Speed) + VelocityY;
 
             if (IsTopLevel && Action.IsCompleted)
                 Vanish();

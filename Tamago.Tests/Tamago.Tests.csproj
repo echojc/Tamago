@@ -39,8 +39,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccelTest.cs" />
     <Compile Include="ActionRefTest.cs" />
-    <Compile Include="BasicTest.cs" />
+    <Compile Include="BulletTest.cs" />
     <Compile Include="BulletRefTest.cs" />
     <Compile Include="ChangeDirectionTest.cs" />
     <Compile Include="ChangeSpeedTest.cs" />

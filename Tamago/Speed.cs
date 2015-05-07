@@ -31,14 +31,23 @@ namespace Tamago
     /// </summary>
     public struct Speed
     {
-        private static Speed _default = new Speed(SpeedType.Absolute, 1);
+        private static Speed _zero = new Speed(SpeedType.Absolute, 0);
+        private static Speed _one = new Speed(SpeedType.Absolute, 1);
 
         /// <summary>
-        /// A static instance for a default absolute speed of 1.
+        /// A static instance for an absolute speed of 0.
         /// </summary>
-        public static Speed Default
+        public static Speed Zero
         {
-            get { return _default; }
+            get { return _zero; }
+        }
+
+        /// <summary>
+        /// A static instance for an absolute speed of 1.
+        /// </summary>
+        public static Speed One
+        {
+            get { return _one; }
         }
 
         /// <summary>

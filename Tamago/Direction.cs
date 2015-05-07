@@ -31,14 +31,14 @@ namespace Tamago
     /// </summary>
     public struct Direction
     {
-        private static Direction _default = new Direction(DirectionType.Aim, 0);
+        private static Direction _aim = new Direction(DirectionType.Aim, 0);
 
         /// <summary>
-        /// A static instance for a default direction aiming at the player.
+        /// A static instance for a direction aiming at the player.
         /// </summary>
-        public static Direction Default
+        public static Direction Aim
         {
-            get { return _default; }
+            get { return _aim; }
         }
 
         /// <summary>

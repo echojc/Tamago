@@ -80,7 +80,7 @@ namespace Tamago
                         targetDirection = bullet.Direction + Direction.Value;
                         break;
                     case DirectionType.Sequence:
-                        targetDirection = bullet.Direction + (Direction.Value * Term);
+                        targetDirection = bullet.Direction + (Direction.Value * Math.Max(0, Term));
                         break;
                     case DirectionType.Absolute:
                         targetDirection = Direction.Value;
@@ -93,7 +93,7 @@ namespace Tamago
             }
 
             framesRunCount++;
-            var ratio = Term <= 0 ? framesRunCount : (float)framesRunCount / Term;
+            var ratio = Term <= 0 ? 1 : (float)framesRunCount / Term;
             bullet.NewDirection = initialDirection + (targetDirection - initialDirection) * ratio;
 
             return true;

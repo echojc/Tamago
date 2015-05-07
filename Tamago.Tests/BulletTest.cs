@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Tamago.Tests
 {
     [TestFixture]
-    public class BasicTest : TestBase
+    public class BulletTest : TestBase
     {
         [Test]
         public void SanityCheck()
@@ -39,6 +39,62 @@ namespace Tamago.Tests
             Assert.AreEqual(-(float)(0.5 * Math.Sqrt(3)), bullet.Y);
             Assert.True(bullet.Action.IsCompleted);
             Assert.False(bullet.IsVanished);
+        }
+
+        [Test]
+        public void BulletPositionUpdatedBasedOnSpeedDirectionAndVelocities()
+        {
+            var bullet = TestManager.CreateBullet();
+            bullet.SetPattern(ActionRef.Default, isTopLevel: false);
+
+            bullet.X = -1.7f;
+            bullet.Y = 4.9f;
+
+            bullet.Speed = 4.2f;
+            bullet.Direction = 2.3f;
+            bullet.VelocityX = 1.2f;
+            bullet.VelocityY = 3.4f;
+
+            bullet.NewSpeed = null;
+            bullet.NewDirection = null;
+            bullet.NewVelocityX = null;
+            bullet.NewVelocityY = null;
+
+            bullet.Update();
+            Assert.AreEqual(2.63196f, bullet.X, 0.00001f);
+            Assert.AreEqual(11.09836f, bullet.Y, 0.00001f);
+            Assert.AreEqual(4.2f, bullet.Speed);
+            Assert.AreEqual(2.3f, bullet.Direction);
+            Assert.AreEqual(1.2f, bullet.VelocityX);
+            Assert.AreEqual(3.4f, bullet.VelocityY);
+        }
+
+        [Test]
+        public void BulletPositionUpdatedAfterNewValuesAreTransferred()
+        {
+            var bullet = TestManager.CreateBullet();
+            bullet.SetPattern(ActionRef.Default, isTopLevel: false);
+
+            bullet.X = -1.7f;
+            bullet.Y = 4.9f;
+
+            bullet.Speed = 4.2f;
+            bullet.Direction = 2.3f;
+            bullet.VelocityX = 1.2f;
+            bullet.VelocityY = 3.4f;
+
+            bullet.NewSpeed = 2.4f;
+            bullet.NewDirection = 3.2f;
+            bullet.NewVelocityX = 2.1f;
+            bullet.NewVelocityY = 4.3f;
+
+            bullet.Update();
+            Assert.AreEqual(0.25990f, bullet.X, 0.00001f);
+            Assert.AreEqual(11.59591f, bullet.Y, 0.00001f);
+            Assert.AreEqual(2.4f, bullet.Speed);
+            Assert.AreEqual(3.2f, bullet.Direction);
+            Assert.AreEqual(2.1f, bullet.VelocityX);
+            Assert.AreEqual(4.3f, bullet.VelocityY);
         }
 
         [Test]

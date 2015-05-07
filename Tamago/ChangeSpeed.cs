@@ -80,7 +80,7 @@ namespace Tamago
                         targetSpeed = bullet.Speed + Speed.Value;
                         break;
                     case SpeedType.Sequence:
-                        targetSpeed = bullet.Speed + (Speed.Value * Term);
+                        targetSpeed = bullet.Speed + (Speed.Value * Math.Max(0, Term));
                         break;
                     case SpeedType.Absolute:
                     default:
@@ -90,7 +90,7 @@ namespace Tamago
             }
 
             framesRunCount++;
-            var ratio = Term <= 0 ? framesRunCount : (float)framesRunCount / Term;
+            var ratio = Term <= 0 ? 1 : (float)framesRunCount / Term;
             bullet.NewSpeed = initialSpeed + (targetSpeed - initialSpeed) * ratio;
 
             return true;

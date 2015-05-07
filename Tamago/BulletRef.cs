@@ -38,10 +38,10 @@ namespace Tamago
                 throw new ArgumentNullException("node");
 
             var speed = node.Element("speed");
-            Speed = speed != null ? new Speed(speed) : Speed.Default;
+            Speed = speed != null ? new Speed(speed) : Speed.One;
 
             var direction = node.Element("direction");
-            Direction = direction != null ? new Direction(direction) : Direction.Default;
+            Direction = direction != null ? new Direction(direction) : Direction.Aim;
 
             var label = node.Attribute("label");
             if (label != null)

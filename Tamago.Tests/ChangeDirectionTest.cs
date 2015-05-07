@@ -145,6 +145,24 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void SetsDirectionToFinalDirectionIfTermIsLessThanZeroSequence()
+        {
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""sequence"">100</direction>
+                <term>-42</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.True(change.IsCompleted);
+
+            change.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(DefaultDirection, TestBullet.Direction);
+        }
+
+        [Test]
         public void SetsIsCompletedWhenRunXTimes()
         {
             var node = XElement.Parse(@"
