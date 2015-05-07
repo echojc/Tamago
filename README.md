@@ -140,6 +140,6 @@ following patterns are identical.
 ```
 
 This implementation does not introduce the extra one frame of delay. In fact,
-accounting for both this behaviour and the behaviour of `<wait>`, in this 
-implementation both these patterns will produce an instantaneous circular spread
-of bullets while the ABA implementation produces a clockwise spiral of bullets.
+accounting for both this behaviour and the behaviour of `<wait>`, this
+implementation produces an instantaneous circular spread of bullets for both
+patterns while the ABA implementation produces a clockwise spiral of bullets.
