@@ -102,6 +102,9 @@ namespace Tamago
                         targetDirection = bullet.AimDirection + Direction.Value;
                         break;
                 }
+
+                // denormalise target so we can lerp
+                targetDirection = initialDirection + MathHelper.NormalizeAngle(targetDirection - initialDirection);
             }
 
             framesRunCount++;

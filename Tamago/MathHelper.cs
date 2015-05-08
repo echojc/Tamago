@@ -10,10 +10,10 @@ namespace Tamago
     {
         public static float ToRadians(float degrees)
         {
-            return WrapAngle((float)(degrees * Math.PI / 180));
+            return NormalizeAngle((float)(degrees * Math.PI / 180));
         }
 
-        public static float WrapAngle(float angle)
+        public static float NormalizeAngle(float angle)
         {
             var res = Math.IEEERemainder(angle, 2 * Math.PI);
             if (res > Math.PI)

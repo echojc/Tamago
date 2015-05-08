@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccelTest.cs" />
+    <Compile Include="ActionRefComplexTest.cs" />
     <Compile Include="ActionRefTest.cs" />
     <Compile Include="BulletTest.cs" />
     <Compile Include="BulletRefTest.cs" />

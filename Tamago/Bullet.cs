@@ -68,7 +68,11 @@ namespace Tamago
         /// </summary>
         public float AimDirection
         {
-            get { return (float)Math.Atan2(BulletManager.PlayerX - X, -(BulletManager.PlayerY - Y)); }
+            get
+            {
+                var raw = (float)Math.Atan2(BulletManager.PlayerX - X, -(BulletManager.PlayerY - Y));
+                return MathHelper.NormalizeAngle(raw);
+            }
         }
 
         /// <summary>
@@ -91,7 +95,7 @@ namespace Tamago
             }
             if (NewDirection != null)
             {
-                Direction = NewDirection.Value;
+                Direction = MathHelper.NormalizeAngle(NewDirection.Value);
                 NewDirection = null;
             }
             if (NewVelocityX != null)

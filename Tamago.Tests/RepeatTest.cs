@@ -212,6 +212,36 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void CanBeNested()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>3</times>
+                <action>
+                  <repeat>
+                    <times>2</times>
+                    <action>
+                      <fire><bullet/></fire>
+                    </action>
+                  </repeat>
+                </action>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node);
+            Assert.False(repeat.IsCompleted);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            Assert.True(repeat.Run(TestBullet));
+            Assert.True(repeat.IsCompleted);
+            Assert.AreEqual(7, TestManager.Bullets.Count);
+
+            Assert.True(repeat.Run(TestBullet));
+            Assert.True(repeat.IsCompleted);
+            Assert.AreEqual(7, TestManager.Bullets.Count);
+        }
+
+        [Test]
         [Ignore]
         public void AcceptsActionRefInPlaceOfAction()
         { }

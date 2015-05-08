@@ -21,7 +21,7 @@ namespace Tamago.Tests
             TestBullet = TestManager.CreateBullet();
             TestBullet.SetPattern(ActionRef.Default, isTopLevel: false);
             TestBullet.Direction = DefaultDirection;
-
+            TestBullet.Speed = 0;
         }
 
         [Test]
@@ -376,5 +376,167 @@ namespace Tamago.Tests
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(78), TestBullet.Direction, 0.00001f);
         }
 
+        [Test]
+        public void WorksAcrossNormalisedBoundaryClockwise()
+        {
+            TestBullet.Direction = MathHelper.ToRadians(160);
+
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""absolute"">-160</direction>
+                <term>4</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(170), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            // only way to compare across the boundary
+            Assert.LessOrEqual(MathHelper.NormalizeAngle(MathHelper.ToRadians(180) - TestBullet.Direction), 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(-170), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(-160), TestBullet.Direction, 0.00001f);
+
+        }
+
+        [Test]
+        public void WorksAcrossNormalisedBoundaryAntiClockwise()
+        {
+            TestBullet.Direction = MathHelper.ToRadians(-160);
+
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""absolute"">160</direction>
+                <term>4</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(-170), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            // only way to compare across the boundary
+            Assert.LessOrEqual(MathHelper.NormalizeAngle(MathHelper.ToRadians(180) - TestBullet.Direction), 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(170), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(160), TestBullet.Direction, 0.00001f);
+        }
+
+        [Test]
+        public void ChoosesShortestDistanceClockwiseCrossingBoundary()
+        {
+            TestBullet.Direction = MathHelper.ToRadians(160);
+
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""absolute"">-20.01</direction>
+                <term>2</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(-110.005f), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(-20.01f), TestBullet.Direction, 0.00001f);
+        }
+
+        [Test]
+        public void ChoosesShortestDistanceAntiClockwiseCrossingBoundary()
+        {
+            TestBullet.Direction = MathHelper.ToRadians(-160);
+
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""absolute"">20.01</direction>
+                <term>2</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(110.005f), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(20.01f), TestBullet.Direction, 0.00001f);
+        }
+
+        [Test]
+        public void ChoosesShortestDistanceClockwiseWithoutCrossingBoundary()
+        {
+            TestBullet.Direction = MathHelper.ToRadians(-160);
+
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""absolute"">19.99</direction>
+                <term>2</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(-70.005f), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(19.99f), TestBullet.Direction, 0.00001f);
+        }
+
+        [Test]
+        public void ChoosesShortestDistanceAntiClockwiseWithoutCrossingBoundary()
+        {
+            TestBullet.Direction = MathHelper.ToRadians(160);
+
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""absolute"">-19.99</direction>
+                <term>2</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(70.005f), TestBullet.Direction, 0.00001f);
+
+            Assert.True(change.Run(TestBullet));
+            TestBullet.Update();
+            Assert.AreEqual(MathHelper.ToRadians(-19.99f), TestBullet.Direction, 0.00001f);
+        }
     }
 }

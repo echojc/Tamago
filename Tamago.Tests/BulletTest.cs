@@ -27,13 +27,32 @@ namespace Tamago.Tests
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             var root = TestManager.Bullets.Find(b => b.IsTopLevel == true);
+            var bullet = TestManager.Bullets.Find(b => b.IsTopLevel == false);
+
+            // root does not move and vanishes once tasks have completed
             Assert.NotNull(root);
             Assert.AreEqual(0, root.X);
             Assert.AreEqual(0, root.Y);
             Assert.True(root.Action.IsCompleted);
             Assert.True(root.IsVanished);
 
-            var bullet = TestManager.Bullets.Find(b => b.IsTopLevel == false);
+            // spawned bullets should move on the next frame
+            Assert.NotNull(bullet);
+            Assert.AreEqual(0, bullet.X);
+            Assert.AreEqual(0, bullet.Y);
+            Assert.True(bullet.Action.IsCompleted);
+            Assert.False(bullet.IsVanished);
+
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            // root does not move
+            Assert.NotNull(root);
+            Assert.AreEqual(0, root.X);
+            Assert.AreEqual(0, root.Y);
+            Assert.True(root.Action.IsCompleted);
+            Assert.True(root.IsVanished);
+
             Assert.NotNull(bullet);
             Assert.AreEqual(0.5f, bullet.X);
             Assert.AreEqual(-(float)(0.5 * Math.Sqrt(3)), bullet.Y);
@@ -92,7 +111,7 @@ namespace Tamago.Tests
             Assert.AreEqual(0.25990f, bullet.X, 0.00001f);
             Assert.AreEqual(11.59591f, bullet.Y, 0.00001f);
             Assert.AreEqual(2.4f, bullet.Speed);
-            Assert.AreEqual(3.2f, bullet.Direction);
+            Assert.AreEqual(MathHelper.NormalizeAngle(3.2f), bullet.Direction);
             Assert.AreEqual(2.1f, bullet.VelocityX);
             Assert.AreEqual(4.3f, bullet.VelocityY);
         }
@@ -123,7 +142,7 @@ namespace Tamago.Tests
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             TestManager.Update();
-            Assert.AreEqual(3, TestManager.Bullets.Count);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
 
             var root = TestManager.Bullets[0];
             Assert.True(root.IsTopLevel);
@@ -132,11 +151,32 @@ namespace Tamago.Tests
 
             var bullet1 = TestManager.Bullets[1];
             Assert.AreEqual(0, bullet1.X, 0.00001f);
+            Assert.AreEqual(0, bullet1.Y, 0.00001f);
+            Assert.False(bullet1.Action.IsCompleted);
+            Assert.False(bullet1.IsVanished);
+
+            TestManager.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+
+            Assert.AreEqual(0, bullet1.X, 0.00001f);
             Assert.AreEqual(20, bullet1.Y, 0.00001f);
             Assert.True(bullet1.Action.IsCompleted);
             Assert.False(bullet1.IsVanished);
 
             var bullet2 = TestManager.Bullets[2];
+            Assert.AreEqual(0, bullet2.X, 0.00001f);
+            Assert.AreEqual(0, bullet2.Y, 0.00001f);
+            Assert.True(bullet2.Action.IsCompleted);
+            Assert.False(bullet2.IsVanished);
+
+            TestManager.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+
+            Assert.AreEqual(0, bullet1.X, 0.00001f);
+            Assert.AreEqual(40, bullet1.Y, 0.00001f);
+            Assert.True(bullet1.Action.IsCompleted);
+            Assert.False(bullet1.IsVanished);
+
             Assert.AreEqual(1, bullet2.X, 0.00001f);
             Assert.AreEqual(0, bullet2.Y, 0.00001f);
             Assert.True(bullet2.Action.IsCompleted);

@@ -128,7 +128,7 @@ namespace Tamago
                         break;
                 }
 
-                newBullet.Direction = MathHelper.WrapAngle(result);
+                newBullet.Direction = MathHelper.NormalizeAngle(result);
             }
 
             IsCompleted = true;

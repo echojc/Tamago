@@ -98,7 +98,7 @@ namespace Tamago
                     break;
             }
 
-            newBullet.Direction = MathHelper.WrapAngle(direction);
+            newBullet.Direction = MathHelper.NormalizeAngle(direction);
 
             newBullet.X = parent.X;
             newBullet.Y = parent.Y;
