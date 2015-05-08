@@ -3,14 +3,35 @@ using System.Xml.Linq;
 
 namespace Tamago
 {
+    /// <summary>
+    /// Represents a &lt;repeat&gt; node.
+    /// </summary>
     public class Repeat : Task
     {
-        public ActionRef Action { get; private set; }
+        private int timesRunCount = 0;
 
+        /// <summary>
+        /// The number of times the nested action has been completely run through.
+        /// </summary>
         public int Times { get; private set; }
 
-        public bool IsCompleted { get; private set; }
+        /// <summary>
+        /// The action to repeat.
+        /// </summary>
+        public ActionRef Action { get; private set; }
 
+        /// <summary>
+        /// True if the nested action has been completely run through <see cref="Times">Times</see> times.
+        /// </summary>
+        public bool IsCompleted
+        {
+            get { return timesRunCount >= Times; }
+        }
+
+        /// <summary>
+        /// Parses a &lt;repeat&gt; node into an object representation.
+        /// </summary>
+        /// <param name="node">The &lt;repeat&gt; node.</param>
         public Repeat(XElement node)
         {
             if (node == null)
@@ -29,11 +50,19 @@ namespace Tamago
             Reset();
         }
 
+        /// <summary>
+        /// Resets this task to its pre-run state.
+        /// </summary>
         public void Reset()
         {
-            IsCompleted = false;
+            timesRunCount = 0;
         }
 
+        /// <summary>
+        /// Repeats the given action <see cref="Times">Times</see> times, waiting as necessary.
+        /// </summary>
+        /// <param name="bullet">The bullet to run the tasks against.</param>
+        /// <returns>True if no waiting is required, otherwise the result of the nested action.</returns>
         public bool Run(Bullet bullet)
         {
             if (bullet == null)
@@ -42,13 +71,18 @@ namespace Tamago
             if (IsCompleted)
                 return true;
 
-            for (int i = 0; i < Times; i++)
+            while (timesRunCount < Times)
             {
-                Action.Run(bullet);
+                var isDone = Action.Run(bullet);
+
+                // if the action waits, we also stop immediately
+                if (!isDone)
+                    return false;
+
+                timesRunCount++;
                 Action.Reset();
             }
 
-            IsCompleted = true;
             return true;
         }
     }

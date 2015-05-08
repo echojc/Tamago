@@ -139,6 +139,45 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ObeysWait()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>3</times>
+                <action>
+                  <fire><bullet/></fire>
+                  <wait>1</wait>
+                  <fire><bullet/></fire>
+                </action>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node);
+            Assert.False(repeat.IsCompleted);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            Assert.False(repeat.Run(TestBullet));
+            Assert.False(repeat.IsCompleted);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            Assert.False(repeat.Run(TestBullet));
+            Assert.False(repeat.IsCompleted);
+            Assert.AreEqual(4, TestManager.Bullets.Count);
+
+            Assert.False(repeat.Run(TestBullet));
+            Assert.False(repeat.IsCompleted);
+            Assert.AreEqual(6, TestManager.Bullets.Count);
+
+            Assert.True(repeat.Run(TestBullet));
+            Assert.True(repeat.IsCompleted);
+            Assert.AreEqual(7, TestManager.Bullets.Count);
+
+            Assert.True(repeat.Run(TestBullet));
+            Assert.True(repeat.IsCompleted);
+            Assert.AreEqual(7, TestManager.Bullets.Count);
+        }
+
+        [Test]
         public void CanBeReset()
         {
             var node = XElement.Parse(@"
@@ -171,5 +210,10 @@ namespace Tamago.Tests
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(7, TestManager.Bullets.Count);
         }
+
+        [Test]
+        [Ignore]
+        public void AcceptsActionRefInPlaceOfAction()
+        { }
     }
 }

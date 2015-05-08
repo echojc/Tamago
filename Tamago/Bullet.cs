@@ -71,6 +71,10 @@ namespace Tamago
             get { return (float)Math.Atan2(BulletManager.PlayerX - X, -(BulletManager.PlayerY - Y)); }
         }
 
+        /// <summary>
+        /// Runs the associated actions for this bullet and updates position based on speed, direction, and velocities.
+        /// This method should be called at 60 fps.
+        /// </summary>
         public void Update()
         {
             if (IsVanished)

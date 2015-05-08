@@ -83,7 +83,7 @@ namespace Tamago.Tests
                 <speed>2</speed>
               </bullet>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -99,7 +99,7 @@ namespace Tamago.Tests
                 <speed type=""absolute"">2</speed>
               </bullet>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -115,7 +115,7 @@ namespace Tamago.Tests
                 <speed type=""relative"">2</speed>
               </bullet>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -131,7 +131,7 @@ namespace Tamago.Tests
                 <speed type=""sequence"">2</speed>
               </bullet>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -173,7 +173,12 @@ namespace Tamago.Tests
 
         [Test]
         [Ignore]
-        public void AcceptsActionRefInPlaceOfBullet()
+        public void AcceptsActionRefInPlaceOfAction()
+        { }
+
+        [Test]
+        [Ignore]
+        public void ParsesAndRunsMultipleActions()
         { }
 
         [Test]
@@ -185,7 +190,7 @@ namespace Tamago.Tests
                 <bullet/>
               </fire>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -202,7 +207,7 @@ namespace Tamago.Tests
                 <bullet/>
               </fire>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -219,7 +224,7 @@ namespace Tamago.Tests
                 <bullet/>
               </fire>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -236,7 +241,7 @@ namespace Tamago.Tests
                 <bullet/>
               </fire>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -253,7 +258,7 @@ namespace Tamago.Tests
                 <bullet/>
               </fire>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -271,7 +276,7 @@ namespace Tamago.Tests
                 <bullet/>
               </fire>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             var bullet = bulletRef.Create(TestBullet);
 
@@ -285,7 +290,7 @@ namespace Tamago.Tests
             var node = XElement.Parse(@"
               <bullet label=""my label &amp;""/>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             Assert.AreEqual("my label &", bulletRef.Label);
         }
@@ -296,7 +301,7 @@ namespace Tamago.Tests
             var node = XElement.Parse(@"
               <bullet/>
             ");
-            
+
             var bulletRef = new BulletRef(node);
             Assert.Null(bulletRef.Label);
         }

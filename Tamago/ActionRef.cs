@@ -4,6 +4,9 @@ using System.Xml.Linq;
 
 namespace Tamago
 {
+    /// <summary>
+    /// Represents an &lt;action&gt; node.
+    /// </summary>
     public class ActionRef : Task
     {
         private List<Task> _tasks = new List<Task>();
@@ -43,9 +46,9 @@ namespace Tamago
         }
 
         /// <summary>
-        /// Creates a new representation of an &lt;action&gt; node.
+        /// Parses an &lt;action&gt; node into an object representation.
         /// </summary>
-        /// <param name="node">The node this instance should base itself on. If null, creates an empty action (equivalent to &lt;action/&gt;).</param>
+        /// <param name="node">The &lt;action&gt; node.</param>
         public ActionRef(XElement node)
         {
             if (node == null)
@@ -59,11 +62,34 @@ namespace Tamago
             {
                 switch (child.Name.LocalName)
                 {
+                    case "accel":
+                        _tasks.Add(new Accel(child));
+                        break;
+                    case "action":
+                        _tasks.Add(new ActionRef(child));
+                        break;
+                    case "changeDirection":
+                        _tasks.Add(new ChangeDirection(child));
+                        break;
+                    case "changeSpeed":
+                        _tasks.Add(new ChangeSpeed(child));
+                        break;
                     case "fire":
                         _tasks.Add(new FireRef(child));
                         break;
+                    case "repeat":
+                        _tasks.Add(new Repeat(child));
+                        break;
+                    case "vanish":
+                        _tasks.Add(new Vanish(child));
+                        break;
+                    case "wait":
+                        _tasks.Add(new Wait(child));
+                        break;
                 }
             }
+
+            Reset();
         }
 
         /// <summary>
@@ -74,14 +100,27 @@ namespace Tamago
             _tasks.ForEach(t => t.Reset());
         }
 
+        /// <summary>
+        /// Runs the nested tasks in order.
+        /// </summary>
+        /// <param name="bullet">The bullet to run the tasks against.</param>
+        /// <returns>True if no waiting is required, otherwise the result of any nested &lt;wait&gt; nodes</returns>
         public bool Run(Bullet bullet)
         {
+            if (bullet == null)
+                throw new ArgumentNullException("bullet");
+
+            if (IsCompleted)
+                return true;
+
             for (int i = 0; i < _tasks.Count; i++)
             {
-                _tasks[i].Run(bullet);
+                var isDone = _tasks[i].Run(bullet);
+
+                if (!isDone)
+                    return false;
             }
 
-            // TODO
             return true;
         }
     }

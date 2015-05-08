@@ -32,7 +32,7 @@ namespace Tamago
         public int Term { get; private set; }
 
         /// <summary>
-        /// True if this has been run <code>Term</code> times or more.
+        /// True if this has been run <see cref="Term">Term</see> times or more.
         /// </summary>
         public bool IsCompleted
         {

@@ -16,7 +16,7 @@ namespace Tamago
         public int Duration { get; private set; }
 
         /// <summary>
-        /// True if we have waited <code>Duration</code> number of frames.
+        /// True if we have waited <see cref="Duration">Duration</see> number of frames.
         /// </summary>
         public bool IsCompleted
         {
@@ -50,10 +50,10 @@ namespace Tamago
         }
 
         /// <summary>
-        /// Prevents further task execution until <code>Duration</code> frames have passed.
+        /// Prevents further task execution until <see cref="Duration">Duration</see> frames have passed.
         /// </summary>
         /// <param name="bullet">The bullet doing the waiting.</param>
-        /// <returns>True if this has been run 
+        /// <returns>True if <see cref="Duration">Duration</see> frames have passed, otherwise false</returns>
         public bool Run(Bullet bullet)
         {
             if (bullet == null)
