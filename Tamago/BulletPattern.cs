@@ -7,17 +7,6 @@ using System.Xml.XPath;
 
 namespace Tamago
 {
-    public class ParseException : Exception
-    {
-        public ParseException(string message)
-            : base(message)
-        { }
-
-        public ParseException(string message, Exception inner)
-            : base(message, inner)
-        { }
-    }
-
     public class BulletPattern
     {
         public const string TopLevelLabel = "top";

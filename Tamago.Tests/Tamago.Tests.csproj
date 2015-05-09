@@ -47,6 +47,7 @@
     <Compile Include="ChangeDirectionTest.cs" />
     <Compile Include="ChangeSpeedTest.cs" />
     <Compile Include="DirectionTest.cs" />
+    <Compile Include="ExpressionTest.cs" />
     <Compile Include="FireRefTest.cs" />
     <Compile Include="Helpers\TestManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

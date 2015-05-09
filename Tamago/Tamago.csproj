@@ -43,9 +43,11 @@
     <Compile Include="BulletRef.cs" />
     <Compile Include="ChangeDirection.cs" />
     <Compile Include="ChangeSpeed.cs" />
+    <Compile Include="Expression.cs" />
     <Compile Include="FireRef.cs" />
     <Compile Include="BulletManager.cs" />
     <Compile Include="MathHelper.cs" />
+    <Compile Include="ParseException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Repeat.cs" />
