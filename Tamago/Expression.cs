@@ -8,8 +8,39 @@ namespace Tamago
     {
         private List<Ast> rpn;
 
+        /// <summary>
+        /// Evaluate the expression without a parameter resolver. All parameters will evaluate to 0.
+        /// </summary>
+        /// <returns>The result of evaluating this expression.</returns>
         public float Evaluate()
         {
+            return Evaluate(_ => 0);
+        }
+
+        /// <summary>
+        /// Evaluate the expression by looking up parameters as indexes in this array.
+        /// Note that the array is 0-based but parameters are 1-based, so <code>$1</code> resolves to <code>array[0]</code>.
+        /// Values out of range will return 0.
+        /// </summary>
+        /// <param name="param">The array to look up parameters with.</param>
+        /// <returns>The result of evaluating this expression.</returns>
+        public float Evaluate(float[] param)
+        {
+            if (param == null)
+                throw new ArgumentNullException("param");
+            return Evaluate(i => (i >= 1 && i <= param.Length) ? param[i-1] : 0);
+        }
+
+        /// <summary>
+        /// Evaluate the expression by using the supplied function to look up parameters.
+        /// </summary>
+        /// <param name="param">The function to call to look up parameters with.</param>
+        /// <returns>The result of evaluating this expression.</returns>
+        public float Evaluate(Func<int, float> param)
+        {
+            if (param == null)
+                throw new ArgumentNullException("param");
+
             var evalStack = new Stack<float>();
             foreach (Ast ast in rpn)
             {
@@ -49,8 +80,12 @@ namespace Tamago
                                 evalStack.Push(l % r);
                             break;
                         default:
-                            throw new NotImplementedException();
+                            throw new NotImplementedException("Cannot evaluate expression: unknown operator.");
                     }
+                }
+                else if (ast is Param)
+                {
+                    evalStack.Push(param(((Param)ast).Index));
                 }
                 else
                 {
@@ -66,6 +101,9 @@ namespace Tamago
         /// <param name="input">The expression to parse</param>
         public Expression(string input)
         {
+            if (input == null)
+                throw new ArgumentNullException("input");
+
             var chars = input.Trim().ToCharArray();
             var index = 0;
 
@@ -198,9 +236,47 @@ namespace Tamago
             {
                 Const number;
                 var result = ParseNumber(input, start, out number);
-                match = number;
+
+                if (result > 0)
+                {
+                    match = number;
+                }
+                else
+                {
+                    Ast param;
+                    result = ParseVariable(input, start, out param);
+                    if (result < 0)
+                        return result;
+
+                    match = param;
+                }
+
                 return result;
             }
+        }
+
+        /// <summary>
+        /// var = /\$([0-9]+|rank|rand)/
+        /// </summary>
+        /// <returns>Index for the next token, or the negative of the index that failed to match.</returns>
+        protected int ParseVariable(char[] input, int start, out Ast match)
+        {
+            match = new Fail();
+
+            if (start >= input.Length || input[start] != '$')
+                return -start;
+
+            start++;
+            int end = start;
+            while (end < input.Length && input[end] >= '0' && input[end] <= '9')
+                end++;
+
+            if (end == start) // didn't match
+                return -start;
+
+            int arg = int.Parse(new string(input, start, end - start));
+            match = new Param(arg);
+            return end;
         }
 
         /// <summary>
@@ -262,6 +338,7 @@ namespace Tamago
     }
 
     public interface Ast { }
+
     public struct Fail : Ast { }
 
     public struct Negate : Ast
@@ -287,7 +364,7 @@ namespace Tamago
 
     public struct Param : Ast
     {
-        public float Index { get; private set; }
+        public int Index { get; private set; }
         public Param(int index)
             : this()
         {

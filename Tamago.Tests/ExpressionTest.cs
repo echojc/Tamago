@@ -11,6 +11,14 @@ namespace Tamago.Tests
     public class ExpressionTest
     {
         [Test]
+        public void ThrowsArgumentNulls()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Expression(null));
+            Assert.Throws<ArgumentNullException>(() => new Expression("1").Evaluate((float[])null));
+            Assert.Throws<ArgumentNullException>(() => new Expression("1").Evaluate((Func<int, float>)null));
+        }
+
+        [Test]
         public void DoesNotParsePlainDot()
         {
             TestDelegate del = () => new Expression(".");
@@ -146,6 +154,18 @@ namespace Tamago.Tests
         {
             var expr = new Expression("2.5 % 1.2");
             Assert.AreEqual(0.1f, expr.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesParamsWithOutOfRangeBehevaiour()
+        {
+            var expr1 = new Expression("$1 + $2");
+            var expr2 = new Expression("$1");
+            var expr3 = new Expression("$1 + $2 + $3");
+
+            Assert.AreEqual(3.7f, expr1.Evaluate(new[] { 1.2f, 2.5f }), 0.00001f);
+            Assert.AreEqual(0f, expr2.Evaluate(), 0.00001f);
+            Assert.AreEqual(3.7f, expr3.Evaluate(new[] { 1.2f, 2.5f }), 0.00001f);
         }
     }
 }
