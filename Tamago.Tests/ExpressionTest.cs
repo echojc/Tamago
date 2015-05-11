@@ -54,11 +54,98 @@ namespace Tamago.Tests
             var expr2 = new Expression("-.123");
             var expr3 = new Expression("-123");
             var expr4 = new Expression("--123.123");
+            var expr5 = new Expression("-1.2 * 2.5");
+            var expr6 = new Expression("2.5 + -1.2");
 
-            Assert.AreEqual(-123.123f, expr1.Evaluate());
-            Assert.AreEqual(-.123f, expr2.Evaluate());
-            Assert.AreEqual(-123, expr3.Evaluate());
-            Assert.AreEqual(123.123f, expr4.Evaluate());
+            Assert.AreEqual(-123.123f, expr1.Evaluate(), 0.00001f);
+            Assert.AreEqual(-.123f, expr2.Evaluate(), 0.00001f);
+            Assert.AreEqual(-123, expr3.Evaluate(), 0.00001f);
+            Assert.AreEqual(123.123f, expr4.Evaluate(), 0.00001f);
+            Assert.AreEqual(-3f, expr5.Evaluate(), 0.00001f);
+            Assert.AreEqual(1.3f, expr6.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void EvalsMinusNegative()
+        {
+            var expr = new Expression("2.5--1.2");
+
+            Assert.AreEqual(3.7f, expr.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void EvalsNegativeMultiplicationDivision()
+        {
+            var expr1 = new Expression("1.2 / -2.5");
+            var expr2 = new Expression("-1.2 / 2.5");
+            var expr3 = new Expression("-1.2 / -2.5");
+            var expr4 = new Expression("2.5 * -1.2");
+            var expr5 = new Expression("-2.5 * 1.2");
+            var expr6 = new Expression("-2.5 * -1.2");
+
+            Assert.AreEqual(-0.48f, expr1.Evaluate(), 0.00001f);
+            Assert.AreEqual(-0.48f, expr2.Evaluate(), 0.00001f);
+            Assert.AreEqual(0.48f, expr3.Evaluate(), 0.00001f);
+            Assert.AreEqual(-3f, expr4.Evaluate(), 0.00001f);
+            Assert.AreEqual(-3f, expr5.Evaluate(), 0.00001f);
+            Assert.AreEqual(3f, expr6.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void EvalsNegativeModuloUsingCSRules()
+        {
+            var expr1 = new Expression("2.5 % -1.2");
+            var expr2 = new Expression("-2.5 % 1.2");
+            var expr3 = new Expression("-2.5 % -1.2");
+
+            Assert.AreEqual(0.1f, expr1.Evaluate(), 0.00001f);
+            Assert.AreEqual(-0.1f, expr2.Evaluate(), 0.00001f);
+            Assert.AreEqual(-0.1f, expr3.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ReturnsZeroWhenDivisionAndModuloByZero()
+        {
+            var expr1 = new Expression("1 / 0");
+            var expr2 = new Expression("1 % 0");
+
+            Assert.AreEqual(0f, expr1.Evaluate(), 0.00001f);
+            Assert.AreEqual(0f, expr2.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesPlus()
+        {
+            var expr = new Expression("1.2 + 2.5");
+            Assert.AreEqual(3.7f, expr.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesMinus()
+        {
+            var expr = new Expression("1.2 - 2.5");
+            Assert.AreEqual(-1.3f, expr.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesTimes()
+        {
+            var expr = new Expression("1.2 * 2.5");
+            Assert.AreEqual(3f, expr.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesDivide()
+        {
+            var expr = new Expression("1.2 / 2.5");
+            Assert.AreEqual(0.48f, expr.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesModulo()
+        {
+            var expr = new Expression("2.5 % 1.2");
+            Assert.AreEqual(0.1f, expr.Evaluate(), 0.00001f);
         }
     }
 }
