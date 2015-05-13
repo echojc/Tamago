@@ -23,6 +23,16 @@ namespace Tamago
         /// </summary>
         public abstract float PlayerY { get; }
 
+        /// <summary>
+        /// Generates a random number between 0 and 1 inclusive.
+        /// </summary>
+        public abstract float Rand { get; }
+
+        /// <summary>
+        /// Gets the difficulty of the level between 0 and 1 inclusive.
+        /// </summary>
+        public abstract float Rank { get; }
+
         protected List<Bullet> Bullets = new List<Bullet>();
 
         /// <summary>
@@ -65,6 +75,16 @@ namespace Tamago
         /// The current Y position of the player.
         /// </summary>
         float PlayerY { get; }
+
+        /// <summary>
+        /// Generates a random number between 0 and 1 inclusive.
+        /// </summary>
+        float Rand { get; }
+
+        /// <summary>
+        /// Gets the difficulty of the level between 0 and 1 inclusive.
+        /// </summary>
+        float Rank { get; }
 
         /// <summary>
         /// Generate a new bullet and register it with this IBulletManager.

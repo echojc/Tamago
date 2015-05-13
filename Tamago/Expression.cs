@@ -9,6 +9,50 @@ namespace Tamago
         private List<Ast> rpn;
 
         /// <summary>
+        /// Parses an expression that can be evaluated later.
+        /// </summary>
+        /// <param name="input">The expression to parse</param>
+        public Expression(string input)
+        {
+            if (input == null)
+                throw new ArgumentNullException("input");
+
+            var chars = input.Trim().ToCharArray();
+            var result = ParseExpression(chars, 0, out rpn);
+
+            if (chars.Length == 0 || result < chars.Length)
+            {
+                if (result < 0)
+                    result = -result;
+
+                var hint = BuildSyntaxErrorHint(chars, result);
+                throw new ParseException("Could not parse expression at '" + hint + "'");
+            }
+        }
+
+        /// <summary>
+        /// Pretty prints an error at the given position.
+        /// </summary>
+        /// <param name="chars">The input expression.</param>
+        /// <param name="pos">The position to highlight.</param>
+        /// <param name="context">The number of characters to display around the error position.</param>
+        protected string BuildSyntaxErrorHint(char[] chars, int pos, int context = 20)
+        {
+            int start = Math.Max(0, pos - context);
+            int end = Math.Min(chars.Length, pos + context);
+
+            var before = new string(chars, start, pos - start);
+            var error = "[" + (pos < chars.Length ? chars[pos].ToString() : "") + "]";
+            var after = pos < chars.Length ? new string(chars, pos + 1, end - (pos + 1)) : "";
+
+            return (start > 0 ? "..." : "")
+                + before + error + after
+                + (end < chars.Length ? "..." : "");
+        }
+
+        #region Evaluation
+
+        /// <summary>
         /// Evaluate the expression without a parameter resolver. All parameters will evaluate to 0.
         /// </summary>
         /// <returns>The result of evaluating this expression.</returns>
@@ -23,20 +67,22 @@ namespace Tamago
         /// Values out of range will return 0.
         /// </summary>
         /// <param name="param">The array to look up parameters with.</param>
+        /// <param name="manager">Used to resolve <code>$rand</code> and <code>$rank</code>. If null, these variables will evaluate to 0.</param>
         /// <returns>The result of evaluating this expression.</returns>
-        public float Evaluate(float[] param)
+        public float Evaluate(float[] param, IBulletManager manager = null)
         {
             if (param == null)
                 throw new ArgumentNullException("param");
-            return Evaluate(i => (i >= 1 && i <= param.Length) ? param[i-1] : 0);
+            return Evaluate(i => (i >= 1 && i <= param.Length) ? param[i-1] : 0, manager);
         }
 
         /// <summary>
         /// Evaluate the expression by using the supplied function to look up parameters.
         /// </summary>
         /// <param name="param">The function to call to look up parameters with.</param>
+        /// <param name="manager">Used to resolve <code>$rand</code> and <code>$rank</code>. If null, these variables will evaluate to 0.</param>
         /// <returns>The result of evaluating this expression.</returns>
-        public float Evaluate(Func<int, float> param)
+        public float Evaluate(Func<int, float> param, IBulletManager manager = null)
         {
             if (param == null)
                 throw new ArgumentNullException("param");
@@ -87,172 +133,138 @@ namespace Tamago
                 {
                     evalStack.Push(param(((Param)ast).Index));
                 }
+                else if (ast is Function)
+                {
+                    switch (((Function)ast).Name)
+                    {
+                        case "rand":
+                            evalStack.Push(manager.Rand);
+                            break;
+                        case "rank":
+                            evalStack.Push(manager.Rank);
+                            break;
+                        default:
+                            throw new NotImplementedException("Cannot evaluate expression: unknown function.");
+                    }
+                }
                 else
                 {
                     throw new NotImplementedException("Cannot evaluate expression: unknown ast.");
                 }
             }
+
+            if (evalStack.Count != 1)
+                throw new InvalidOperationException("Cannot evaluate expression: incorrect number of values left on stack.");
+
             return evalStack.Pop();
         }
 
-        /// <summary>
-        /// Parses an expression that can be evaluated later.
-        /// </summary>
-        /// <param name="input">The expression to parse</param>
-        public Expression(string input)
-        {
-            if (input == null)
-                throw new ArgumentNullException("input");
+        #endregion
 
-            var chars = input.Trim().ToCharArray();
-            var index = 0;
-
-            rpn = new List<Ast>();
-            Ast ast;
-            var opStack = new Stack<Ast>();
-
-            // parse and shunt at the same time
-            var result = ParseTerm(chars, index, out ast);
-            if (result > 0)
-            {
-                AddTermToRpn(ast);
-
-                // try to parse operator + term pair if not complete
-                var lastResult = 0; // prevent infinite loops
-                while (lastResult < result && result < chars.Length)
-                {
-                    result = ParseOperator(chars, result, out ast);
-                    if (result < 0) break;
-                    opStack.Push(ast);
-
-                    result = ParseTerm(chars, result, out ast);
-                    if (result < 0) break;
-                    AddTermToRpn(ast);
-
-                    rpn.Add(opStack.Pop());
-                }
-            }
-
-            if (result < chars.Length)
-            {
-                if (result < 0)
-                    result = -result;
-
-                var hint = BuildSyntaxErrorHint(chars, result);
-                throw new ParseException("Could not parse expression at '" + hint + "'");
-            }
-        }
-
-        private void AddTermToRpn(Ast term)
-        {
-            if (term is Negate)
-            {
-                rpn.Add(Const.Zero);
-                AddTermToRpn(((Negate)term).Ast);
-                rpn.Add(Operator.Minus);
-            }
-            else
-            {
-                rpn.Add(term);
-            }
-        }
-
-        protected string BuildSyntaxErrorHint(char[] chars, int pos)
-        {
-            int start = Math.Max(0, pos - 5);
-            int end = Math.Min(chars.Length, pos + 5);
-
-            return (start > 0 ? "..." : "")
-                + new string(chars, start, pos - start)
-                + "[" + chars[pos].ToString() + "]"
-                + new string(chars, pos + 1, end - (pos + 1))
-                + (end < chars.Length ? "..." : "");
-        }
+        #region Parsers
 
         /// <summary>
-        /// op = /+|-|\*|\/|%/
+        /// expr = /{term}({op}{term})*/
         /// </summary>
         /// <returns>Index for the next token, or the negative of the index that failed to match.</returns>
-        protected int ParseOperator(char[] input, int start, out Ast match)
+        protected int ParseExpression(char[] input, int start, out List<Ast> match)
         {
-            match = new Fail();
+            match = new List<Ast>();
+            List<Ast> asts;
 
-            if (start >= input.Length)
-                return -start;
+            // parse and shunt at the same time
+            start = ParseTerm(input, start, out asts);
+            if (start < 0)
+                return start;
 
-            // skip all leading whitespace before the op
-            while (char.IsWhiteSpace(input[start]))
-                start++;
+            rpn.AddRange(asts);
 
-            switch (input[start])
+            // try to parse operator + term pair if not complete
+            var lastResult = 0; // prevent infinite loops
+            var opStack = new Stack<Operator>();
+
+            while (lastResult < start && start < input.Length)
             {
-                case '+':
-                    match = Operator.Plus;
-                    break;
-                case '-':
-                    match = Operator.Minus;
-                    break;
-                case '*':
-                    match = Operator.Times;
-                    break;
-                case '/':
-                    match = Operator.Divide;
-                    break;
-                case '%':
-                    match = Operator.Modulo;
-                    break;
-                default:
-                    // couldn't match
+                Ast temp;
+                int result = ParseOperator(input, start, out temp);
+                if (result < 0)
+                    break; // no more operators, we're done
+
+                // shunt
+                Operator op = (Operator)temp;
+                while (opStack.Count > 0 && op.CompareTo(opStack.Peek()) <= 0)
+                    rpn.Add(opStack.Pop());
+                opStack.Push(op);
+
+                start = ParseTerm(input, result, out asts);
+                if (start < 0)
                     return -start;
+
+                rpn.AddRange(asts);
             }
 
-            // skip all trailing whitespace after the op
-            start++;
-            while (char.IsWhiteSpace(input[start]))
-                start++;
+            // push remaining ops
+            while (opStack.Count > 0)
+                rpn.Add(opStack.Pop());
 
             return start;
         }
 
         /// <summary>
-        /// term = /-{term}|{num}/
+        /// term = /\({expr}\)|-{term}|{num}|{var}/
         /// </summary>
         /// <returns>Index for the next token, or the negative of the index that failed to match.</returns>
-        protected int ParseTerm(char[] input, int start, out Ast match)
+        protected int ParseTerm(char[] input, int start, out List<Ast> match)
         {
-            match = new Fail();
+            match = new List<Ast>();
 
             if (start >= input.Length)
                 return -start;
 
+            // parens
+            if (input[start] == '(')
+            {
+                var end = ParseExpression(input, start + 1, out match);
+                if (end < 0) 
+                    return end;
+
+                if (end >= input.Length || input[end] != ')')
+                    return -end;
+
+                return end + 1; // drop right parens
+            }
+
+            // negative
             if (input[start] == '-')
             {
-                Ast ast;
+                List<Ast> ast;
                 var end = ParseTerm(input, start + 1, out ast);
-                match = new Negate(ast);
+                if (end >= 0)
+                {
+                    match.Add(Const.Zero);
+                    match.AddRange(ast);
+                    match.Add(Operator.Minus);
+                }
                 return end;
             }
-            else
+
+            // number
+            Const number;
+            var result = ParseNumber(input, start, out number);
+            if (result > 0)
             {
-                Const number;
-                var result = ParseNumber(input, start, out number);
-
-                if (result > 0)
-                {
-                    match = number;
-                }
-                else
-                {
-                    Ast param;
-                    result = ParseVariable(input, start, out param);
-                    if (result < 0)
-                        return result;
-
-                    match = param;
-                }
-
+                match.Add(number);
                 return result;
             }
+
+            // variable
+            Ast var;
+            result = ParseVariable(input, start, out var);
+            if (result < 0)
+                return result;
+
+            match.Add(var);
+            return result;
         }
 
         /// <summary>
@@ -261,22 +273,44 @@ namespace Tamago
         /// <returns>Index for the next token, or the negative of the index that failed to match.</returns>
         protected int ParseVariable(char[] input, int start, out Ast match)
         {
-            match = new Fail();
+            match = null;
 
             if (start >= input.Length || input[start] != '$')
                 return -start;
 
+            // try match number
             start++;
             int end = start;
             while (end < input.Length && input[end] >= '0' && input[end] <= '9')
                 end++;
 
-            if (end == start) // didn't match
-                return -start;
+            if (end != start) // matched
+            {
+                int arg = int.Parse(new string(input, start, end - start));
+                match = new Param(arg);
+                return end;
+            }
 
-            int arg = int.Parse(new string(input, start, end - start));
-            match = new Param(arg);
-            return end;
+            // match vars
+            if (input.Length >= start + 4 &&
+                input[start] == 'r' &&
+                input[start+1] == 'a' &&
+                input[start+2] == 'n')
+            {
+                switch (input[start+3])
+                {
+                    case 'k':
+                        match = Function.Rank;
+                        return start + 4;
+                    case 'd':
+                        match = Function.Rand;
+                        return start + 4;
+                    default:
+                        return -start;
+                }
+            }
+
+            return -start;
         }
 
         /// <summary>
@@ -335,21 +369,58 @@ namespace Tamago
             match = float.Parse(new string(input, start, end - start));
             return end;
         }
+
+        /// <summary>
+        /// op = /+|-|\*|\/|%/
+        /// </summary>
+        /// <returns>Index for the next token, or the negative of the index that failed to match.</returns>
+        protected int ParseOperator(char[] input, int start, out Ast match)
+        {
+            match = null;
+
+            if (start >= input.Length)
+                return -start;
+
+            // skip all leading whitespace before the op
+            while (char.IsWhiteSpace(input[start]))
+                start++;
+
+            switch (input[start])
+            {
+                case '+':
+                    match = Operator.Plus;
+                    break;
+                case '-':
+                    match = Operator.Minus;
+                    break;
+                case '*':
+                    match = Operator.Times;
+                    break;
+                case '/':
+                    match = Operator.Divide;
+                    break;
+                case '%':
+                    match = Operator.Modulo;
+                    break;
+                default:
+                    // couldn't match
+                    return -start;
+            }
+
+            // skip all trailing whitespace after the op
+            start++;
+            while (char.IsWhiteSpace(input[start]))
+                start++;
+
+            return start;
+        }
+
+        #endregion 
     }
+
+    #region ASTs
 
     public interface Ast { }
-
-    public struct Fail : Ast { }
-
-    public struct Negate : Ast
-    {
-        public Ast Ast { get; private set; }
-        public Negate(Ast ast)
-            : this()
-        {
-            Ast = ast;
-        }
-    }
 
     public struct Const : Ast
     {
@@ -372,7 +443,20 @@ namespace Tamago
         }
     }
 
-    public struct Operator : Ast
+    public struct Function : Ast
+    {
+        public static readonly Function Rand = new Function("rand");
+        public static readonly Function Rank = new Function("rank");
+
+        public string Name { get; private set; }
+        public Function(string name)
+            : this()
+        {
+            Name = name;
+        }
+    }
+
+    public struct Operator : Ast, IComparable<Operator>
     {
         public static readonly Operator Plus = new Operator(Operator.Type.Plus);
         public static readonly Operator Minus = new Operator(Operator.Type.Minus);
@@ -382,11 +466,11 @@ namespace Tamago
 
         public enum Type
         {
-            Plus,
-            Minus,
-            Times,
-            Divide,
-            Modulo
+            Plus = 0,
+            Minus = 1,
+            Times = 10,
+            Divide = 11,
+            Modulo = 12
         }
         public Type Value { get; private set; }
         private Operator(Type value)
@@ -394,5 +478,12 @@ namespace Tamago
         {
             Value = value;
         }
+
+        public int CompareTo(Operator other)
+        {
+            return ((int)this.Value / 10) - ((int)other.Value / 10);
+        }
     }
+
+    #endregion
 }

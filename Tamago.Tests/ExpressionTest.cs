@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Tamago.Tests
 {
     [TestFixture]
-    public class ExpressionTest
+    public class ExpressionTest : TestBase
     {
         [Test]
         public void ThrowsArgumentNulls()
@@ -16,6 +16,14 @@ namespace Tamago.Tests
             Assert.Throws<ArgumentNullException>(() => new Expression(null));
             Assert.Throws<ArgumentNullException>(() => new Expression("1").Evaluate((float[])null));
             Assert.Throws<ArgumentNullException>(() => new Expression("1").Evaluate((Func<int, float>)null));
+        }
+
+        [Test]
+        public void DoesNotParseEmptyString()
+        {
+            TestDelegate del = () => new Expression("");
+            var thrown = Assert.Throws<ParseException>(del);
+            StringAssert.Contains("'[]'", thrown.Message);
         }
 
         [Test]
@@ -32,6 +40,38 @@ namespace Tamago.Tests
             TestDelegate del = () => new Expression("123.");
             var thrown = Assert.Throws<ParseException>(del);
             StringAssert.Contains("'123[.]'", thrown.Message);
+        }
+
+        [Test]
+        public void DoesNotParseIsolatedMinus()
+        {
+            TestDelegate del = () => new Expression("1 + - + 2");
+            var thrown = Assert.Throws<ParseException>(del);
+            StringAssert.Contains("'1 + -[ ]+ 2'", thrown.Message);
+        }
+
+        [Test]
+        public void DoesNotParseMultipleOperators()
+        {
+            TestDelegate del = () => new Expression("1 * + 2");
+            var thrown = Assert.Throws<ParseException>(del);
+            StringAssert.Contains("'1 * [+] 2'", thrown.Message);
+        }
+
+        [Test]
+        public void DoesNotParseMismatchedRightParens()
+        {
+            TestDelegate del = () => new Expression("(1");
+            var thrown = Assert.Throws<ParseException>(del);
+            StringAssert.Contains("'(1[]'", thrown.Message);
+        }
+
+        [Test]
+        public void DoesNotParseMismatchedLeftParens()
+        {
+            TestDelegate del = () => new Expression("1)");
+            var thrown = Assert.Throws<ParseException>(del);
+            StringAssert.Contains("'1[)]'", thrown.Message);
         }
 
         [Test]
@@ -166,6 +206,55 @@ namespace Tamago.Tests
             Assert.AreEqual(3.7f, expr1.Evaluate(new[] { 1.2f, 2.5f }), 0.00001f);
             Assert.AreEqual(0f, expr2.Evaluate(), 0.00001f);
             Assert.AreEqual(3.7f, expr3.Evaluate(new[] { 1.2f, 2.5f }), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesRand()
+        {
+            var expr = new Expression("$rand");
+            Assert.AreEqual(Helpers.TestManager.TestRand, expr.Evaluate(_ => 0, TestManager), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesRank()
+        {
+            var expr = new Expression("$rank");
+            Assert.AreEqual(Helpers.TestManager.TestRank, expr.Evaluate(_ => 0, TestManager), 0.00001f);
+        }
+
+        [Test]
+        public void OperatorsHavePrecedence()
+        {
+            Assert.AreEqual(0, Operator.Plus.CompareTo(Operator.Minus));
+            Assert.AreEqual(0, Operator.Minus.CompareTo(Operator.Plus));
+
+            Assert.AreEqual(0, Operator.Times.CompareTo(Operator.Divide));
+            Assert.AreEqual(0, Operator.Times.CompareTo(Operator.Modulo));
+            Assert.AreEqual(0, Operator.Divide.CompareTo(Operator.Modulo));
+
+            Assert.AreEqual(-1, Operator.Plus.CompareTo(Operator.Modulo));
+            Assert.AreEqual(1, Operator.Times.CompareTo(Operator.Minus));
+        }
+
+        [Test]
+        public void ObeysOrderOfOperations()
+        {
+            var expr = new Expression("1 + 2 * 3 - -4 / 5");
+            Assert.AreEqual(7.8f, expr.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesAndObeysParentheses()
+        {
+            var expr = new Expression("2 + (2 * (1 + 3)) / ((4) + 3)");
+            Assert.AreEqual(3 + (1f / 7), expr.Evaluate(), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesComplexEquation()
+        {
+            var expr = new Expression("360*$rand + ($1/((1-$rank)+1))");
+            Assert.AreEqual(52.90698f, expr.Evaluate(new[] { 8f }, TestManager), 0.00001f);
         }
     }
 }

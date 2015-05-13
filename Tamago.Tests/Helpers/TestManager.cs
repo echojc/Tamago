@@ -10,6 +10,9 @@ namespace Tamago.Tests.Helpers
     {
         private float _x, _y;
 
+        public const float TestRand = 0.1337f;
+        public const float TestRank = 0.3246f;
+
         public override float PlayerX
         {
             get { return _x; }
@@ -18,6 +21,16 @@ namespace Tamago.Tests.Helpers
         public override float PlayerY
         {
             get { return _y; }
+        }
+
+        public override float Rand
+        {
+            get { return TestRand; }
+        }
+
+        public override float Rank
+        {
+            get { return TestRank; }
         }
 
         public new List<Bullet> Bullets
