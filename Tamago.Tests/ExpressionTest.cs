@@ -256,5 +256,23 @@ namespace Tamago.Tests
             var expr = new Expression("360*$rand + ($1/((1-$rank)+1))");
             Assert.AreEqual(52.90698f, expr.Evaluate(new[] { 8f }, TestManager), 0.00001f);
         }
+
+        [Test]
+        public void EquivalentExpressionsAreEqual()
+        {
+            var expr1 = new Expression("2 + 4 * 3");
+            var expr2 = new Expression(" 2 + (4*3) ");
+            Assert.AreEqual(expr1, expr2);
+            Assert.AreEqual(expr1.GetHashCode(), expr2.GetHashCode());
+        }
+
+        [Test]
+        public void NonEquivalentExpressionsAreNotEqual()
+        {
+            var expr1 = new Expression("2 + 4 * 3");
+            var expr2 = new Expression("(2 + 4) * 3");
+            Assert.AreNotEqual(expr1, expr2);
+            Assert.AreNotEqual(expr1.GetHashCode(), expr2.GetHashCode());
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Tamago
@@ -7,6 +8,7 @@ namespace Tamago
     public class Expression
     {
         private List<Ast> rpn;
+        private string trimmedExpression;
 
         /// <summary>
         /// Parses an expression that can be evaluated later.
@@ -17,7 +19,8 @@ namespace Tamago
             if (input == null)
                 throw new ArgumentNullException("input");
 
-            var chars = input.Trim().ToCharArray();
+            trimmedExpression = input.Trim();
+            var chars = trimmedExpression.ToCharArray();
             var result = ParseExpression(chars, 0, out rpn);
 
             if (chars.Length == 0 || result < chars.Length)
@@ -416,6 +419,35 @@ namespace Tamago
         }
 
         #endregion 
+
+        #region Boilerplate
+
+        public override string ToString()
+        {
+            return "Expression [" + trimmedExpression + "]";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Expression && this == (Expression)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return rpn.Aggregate(41, (acc, next) => acc * 23 + next.GetHashCode());
+        }
+
+        public static bool operator ==(Expression x, Expression y)
+        {
+            return x.rpn.SequenceEqual(y.rpn);
+        }
+
+        public static bool operator !=(Expression x, Expression y)
+        {
+            return !(x == y);
+        }
+
+        #endregion
     }
 
     #region ASTs
@@ -431,6 +463,35 @@ namespace Tamago
         {
             Value = value;
         }
+
+        #region Boilerplate
+
+        public override string ToString()
+        {
+            return "Const [" + Value + "]";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Const && this == (Const)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return "Const".GetHashCode() * Value.GetHashCode();
+        }
+
+        public static bool operator ==(Const x, Const y)
+        {
+            return x.Value == y.Value;
+        }
+
+        public static bool operator !=(Const x, Const y)
+        {
+            return !(x == y);
+        }
+
+        #endregion
     }
 
     public struct Param : Ast
@@ -441,6 +502,35 @@ namespace Tamago
         {
             Index = index;
         }
+
+        #region Boilerplate
+
+        public override string ToString()
+        {
+            return "Param [Index=" + Index + "]";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Param && this == (Param)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return "Param".GetHashCode() * Index.GetHashCode();
+        }
+
+        public static bool operator ==(Param x, Param y)
+        {
+            return x.Index == y.Index;
+        }
+
+        public static bool operator !=(Param x, Param y)
+        {
+            return !(x == y);
+        }
+
+        #endregion
     }
 
     public struct Function : Ast
@@ -454,6 +544,35 @@ namespace Tamago
         {
             Name = name;
         }
+
+        #region Boilerplate
+
+        public override string ToString()
+        {
+            return "Function [" + Name + "]";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Function && this == (Function)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return "Function".GetHashCode() * Name.GetHashCode();
+        }
+
+        public static bool operator ==(Function x, Function y)
+        {
+            return x.Name == y.Name;
+        }
+
+        public static bool operator !=(Function x, Function y)
+        {
+            return !(x == y);
+        }
+
+        #endregion
     }
 
     public struct Operator : Ast, IComparable<Operator>
@@ -483,6 +602,35 @@ namespace Tamago
         {
             return ((int)this.Value / 10) - ((int)other.Value / 10);
         }
+
+        #region Boilerplate
+
+        public override string ToString()
+        {
+            return "Operator [" + Value + "]";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Operator && this == (Operator)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return "Operator".GetHashCode() * Value.GetHashCode();
+        }
+
+        public static bool operator ==(Operator x, Operator y)
+        {
+            return x.Value == y.Value;
+        }
+
+        public static bool operator !=(Operator x, Operator y)
+        {
+            return !(x == y);
+        }
+
+        #endregion
     }
 
     #endregion
