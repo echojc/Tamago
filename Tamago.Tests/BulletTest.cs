@@ -64,7 +64,7 @@ namespace Tamago.Tests
         public void BulletPositionUpdatedBasedOnSpeedDirectionAndVelocities()
         {
             var bullet = TestManager.CreateBullet();
-            bullet.SetPattern(ActionRef.Default, isTopLevel: false);
+            bullet.SetPattern(ActionDef.Default, isTopLevel: false);
 
             bullet.X = -1.7f;
             bullet.Y = 4.9f;
@@ -92,7 +92,7 @@ namespace Tamago.Tests
         public void BulletPositionUpdatedAfterNewValuesAreTransferred()
         {
             var bullet = TestManager.CreateBullet();
-            bullet.SetPattern(ActionRef.Default, isTopLevel: false);
+            bullet.SetPattern(ActionDef.Default, isTopLevel: false);
 
             bullet.X = -1.7f;
             bullet.Y = 4.9f;

@@ -11,10 +11,10 @@ namespace Tamago
     {
         public const string TopLevelLabel = "top";
 
-        public ActionRef TopLevelAction { get; private set; }
-        private List<ActionRef> Actions;
+        public ActionDef TopLevelAction { get; private set; }
+        private List<ActionDef> Actions;
 
-        private BulletPattern(List<ActionRef> actions)
+        private BulletPattern(List<ActionDef> actions)
         {
             Actions = actions;
             TopLevelAction = actions.Find(a => a.Label == TopLevelLabel);
@@ -33,7 +33,7 @@ namespace Tamago
 
                 // extract all labelled nodes
                 var actions = (from node in root.XPathSelectElements("action")
-                               select new ActionRef(node)).ToList();
+                               select new ActionDef(node)).ToList();
 
                 if (actions.Exists(a => a.Label == null))
                     throw new ParseException("Top level actions must be labelled.");

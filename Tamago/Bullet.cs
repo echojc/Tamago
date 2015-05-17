@@ -10,7 +10,7 @@ namespace Tamago
     {
         internal IBulletManager BulletManager;
 
-        public ActionRef Action { get; protected set; }
+        public ActionDef Action { get; protected set; }
         public bool IsTopLevel { get; protected set; }
         public bool IsVanished { get; set; }
 
@@ -56,7 +56,7 @@ namespace Tamago
         /// </summary>
         /// <param name="action">What this bullet will do.</param>
         /// <param name="isTopLevel">Whether this is a top level bullet (i.e., &lt;action label="top"/&gt;). Top level bullets should be invisible.</param>
-        public void SetPattern(ActionRef action, bool isTopLevel = false)
+        public void SetPattern(ActionDef action, bool isTopLevel = false)
         {
             Action = action;
             IsTopLevel = isTopLevel;

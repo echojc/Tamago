@@ -18,7 +18,7 @@ namespace Tamago
         /// <summary>
         /// The action to repeat.
         /// </summary>
-        public ActionRef Action { get; private set; }
+        public ActionDef Action { get; private set; }
 
         /// <summary>
         /// True if the nested action has been completely run through <see cref="Times">Times</see> times.
@@ -28,7 +28,7 @@ namespace Tamago
         /// <summary>
         /// For cloning.
         /// </summary>
-        private Repeat(ActionRef actionRef, Expression times)
+        private Repeat(ActionDef actionRef, Expression times)
         {
             Action = actionRef;
             Times = times;
@@ -52,7 +52,7 @@ namespace Tamago
             var action = node.Element("action");
             if (action == null)
                 throw new ParseException("<repeat> node requires an <action> node.");
-            Action = new ActionRef(action);
+            Action = new ActionDef(action);
 
             Reset();
         }
@@ -103,7 +103,7 @@ namespace Tamago
         /// <returns>A reset copy of this task.</returns>
         public Task Copy()
         {
-            return new Repeat((ActionRef)Action.Copy(), Times);
+            return new Repeat((ActionDef)Action.Copy(), Times);
         }
     }
 }

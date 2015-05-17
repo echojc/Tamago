@@ -6,12 +6,12 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;fire&gt; node.
     /// </summary>
-    public class FireRef : Task
+    public class FireDef : Task
     {
         /// <summary>
         /// The bullet to fire.
         /// </summary>
-        public BulletRef BulletRef { get; private set; }
+        public BulletDef BulletRef { get; private set; }
 
         /// <summary>
         /// The speed at which to fire the bullet. Overrides any settings specified by the bullet.
@@ -36,7 +36,7 @@ namespace Tamago
         /// <summary>
         /// For cloning.
         /// </summary>
-        private FireRef(BulletRef bulletRef, Speed? speed, Direction? direction, string label)
+        private FireDef(BulletDef bulletRef, Speed? speed, Direction? direction, string label)
         {
             BulletRef = bulletRef;
             Speed = speed;
@@ -49,7 +49,7 @@ namespace Tamago
         /// Parses a &lt;fire&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;fire&gt; node.</param>
-        public FireRef(XElement node)
+        public FireDef(XElement node)
         {
             if (node == null) throw new ArgumentNullException("node");
             if (node.Name.LocalName != "fire") throw new ArgumentException("node");
@@ -70,7 +70,7 @@ namespace Tamago
             if (label != null)
                 Label = label.Value;
 
-            BulletRef = new BulletRef(bulletRef);
+            BulletRef = new BulletDef(bulletRef);
 
             Reset();
         }
@@ -155,7 +155,7 @@ namespace Tamago
         /// <returns>A reset copy of this task.</returns>
         public Task Copy()
         {
-            return new FireRef(BulletRef, Speed, Direction, Label);
+            return new FireDef(BulletRef, Speed, Direction, Label);
         }
     }
 }

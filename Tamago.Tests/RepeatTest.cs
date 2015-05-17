@@ -14,7 +14,7 @@ namespace Tamago.Tests
         {
             base.SetUp();
             TestBullet = TestManager.CreateBullet();
-            TestBullet.SetPattern(ActionRef.Default, isTopLevel: false);
+            TestBullet.SetPattern(ActionDef.Default, isTopLevel: false);
         }
 
         [Test]

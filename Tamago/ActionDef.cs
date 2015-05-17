@@ -8,7 +8,7 @@ namespace Tamago
     /// <summary>
     /// Represents an &lt;action&gt; node.
     /// </summary>
-    public class ActionRef : Task
+    public class ActionDef : Task
     {
         private List<Task> _tasks = new List<Task>();
 
@@ -36,12 +36,12 @@ namespace Tamago
             get { return _tasks.TrueForAll(t => t.IsCompleted); }
         }
 
-        private static ActionRef _default = new ActionRef(XElement.Parse("<action/>"));
+        private static ActionDef _default = new ActionDef(XElement.Parse("<action/>"));
 
         /// <summary>
         /// A static instance for a no-op action.
         /// </summary>
-        public static ActionRef Default
+        public static ActionDef Default
         {
             get { return _default; }
         }
@@ -49,7 +49,7 @@ namespace Tamago
         /// <summary>
         /// For cloning.
         /// </summary>
-        private ActionRef(List<Task> tasks, string label)
+        private ActionDef(List<Task> tasks, string label)
         {
             _tasks = tasks;
             Label = label;
@@ -60,7 +60,7 @@ namespace Tamago
         /// Parses an &lt;action&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;action&gt; node.</param>
-        public ActionRef(XElement node)
+        public ActionDef(XElement node)
         {
             if (node == null) throw new ArgumentNullException("node");
             if (node.Name.LocalName != "action") throw new ArgumentException("node");
@@ -77,7 +77,7 @@ namespace Tamago
                         _tasks.Add(new Accel(child));
                         break;
                     case "action":
-                        _tasks.Add(new ActionRef(child));
+                        _tasks.Add(new ActionDef(child));
                         break;
                     case "changeDirection":
                         _tasks.Add(new ChangeDirection(child));
@@ -86,7 +86,7 @@ namespace Tamago
                         _tasks.Add(new ChangeSpeed(child));
                         break;
                     case "fire":
-                        _tasks.Add(new FireRef(child));
+                        _tasks.Add(new FireDef(child));
                         break;
                     case "repeat":
                         _tasks.Add(new Repeat(child));
@@ -145,7 +145,7 @@ namespace Tamago
             foreach (Task t in _tasks)
                 copies.Add(t.Copy());
 
-            return new ActionRef(copies, Label);
+            return new ActionDef(copies, Label);
         }
     }
 }

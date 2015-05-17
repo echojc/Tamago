@@ -37,14 +37,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Accel.cs" />
-    <Compile Include="ActionRef.cs" />
+    <Compile Include="ActionDef.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="BulletPattern.cs" />
-    <Compile Include="BulletRef.cs" />
+    <Compile Include="BulletDef.cs" />
     <Compile Include="ChangeDirection.cs" />
     <Compile Include="ChangeSpeed.cs" />
     <Compile Include="Expression.cs" />
-    <Compile Include="FireRef.cs" />
+    <Compile Include="FireDef.cs" />
     <Compile Include="BulletManager.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="ParseException.cs" />

@@ -18,7 +18,7 @@ namespace Tamago.Tests
             TestManager.SetPlayerPosition(1, (float)Math.Sqrt(3));
 
             TestBullet = TestManager.CreateBullet();
-            TestBullet.SetPattern(ActionRef.Default, isTopLevel: false);
+            TestBullet.SetPattern(ActionDef.Default, isTopLevel: false);
             TestBullet.Speed = DefaultSpeed;
         }
 

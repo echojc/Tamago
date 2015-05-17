@@ -5,7 +5,7 @@ using System.Xml.Linq;
 namespace Tamago.Tests
 {
     [TestFixture]
-    public class ActionRefComplexTest : TestBase
+    public class ActionDefComplexTest : TestBase
     {
         [Test]
         public void LastIncompleteChangeSpeedTakesPriority()

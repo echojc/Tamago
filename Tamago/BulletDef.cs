@@ -6,12 +6,12 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;bullet&gt; node.
     /// </summary>
-    public class BulletRef
+    public class BulletDef
     {
         /// <summary>
         /// The actions performed by this bullet.
         /// </summary>
-        public ActionRef Action { get; private set; }
+        public ActionDef Action { get; private set; }
 
         /// <summary>
         /// The default speed for this bullet. Can be overidden by a parent &lt;fire&rt; node.
@@ -32,7 +32,7 @@ namespace Tamago
         /// Parses a &lt;bullet&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;bullet&gt; node.</param>
-        public BulletRef(XElement node)
+        public BulletDef(XElement node)
         {
             if (node == null) throw new ArgumentNullException("node");
             if (node.Name.LocalName != "bullet") throw new ArgumentException("node");
@@ -49,9 +49,9 @@ namespace Tamago
 
             var actionRef = node.Element("action");
             if (actionRef != null)
-                Action = new ActionRef(actionRef);
+                Action = new ActionDef(actionRef);
             else
-                Action = ActionRef.Default;
+                Action = ActionDef.Default;
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Tamago
                 throw new ArgumentNullException("parent");
 
             var newBullet = parent.BulletManager.CreateBullet();
-            newBullet.SetPattern((ActionRef)Action.Copy(), isTopLevel: false);
+            newBullet.SetPattern((ActionDef)Action.Copy(), isTopLevel: false);
 
             var speed = Speed.Value.Evaluate();
             switch (Speed.Type)

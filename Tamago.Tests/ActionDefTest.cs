@@ -6,7 +6,7 @@ using System.Xml.Linq;
 namespace Tamago.Tests
 {
     [TestFixture]
-    public class ActionRefTest : TestBase
+    public class ActionDefTest : TestBase
     {
         internal Bullet TestBullet;
 
@@ -15,20 +15,20 @@ namespace Tamago.Tests
         {
             base.SetUp();
             TestBullet = TestManager.CreateBullet();
-            TestBullet.SetPattern(ActionRef.Default, isTopLevel: false);
+            TestBullet.SetPattern(ActionDef.Default, isTopLevel: false);
         }
 
         [Test]
         public void ThrowsArgumentNullIfNodeToConstructFromIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new ActionRef(null));
+            Assert.Throws<ArgumentNullException>(() => new ActionDef(null));
         }
 
         [Test]
         public void ThrowsArgumentExceptionIfNodeIsNotAction()
         {
             var node = XElement.Parse(@"<foo/>");
-            Assert.Throws<ArgumentException>(() => new ActionRef(node));
+            Assert.Throws<ArgumentException>(() => new ActionDef(node));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Tamago.Tests
               <action/>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.Throws<ArgumentNullException>(() => action.Run(null));
         }
 
@@ -49,7 +49,7 @@ namespace Tamago.Tests
               <action label=""my label &amp;""/>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.AreEqual("my label &", action.Label);
         }
 
@@ -60,7 +60,7 @@ namespace Tamago.Tests
               <action/>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.True(action.IsCompleted);
         }
 
@@ -75,7 +75,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
             Assert.AreEqual(1, TestManager.Bullets.Count);
@@ -98,7 +98,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
 
@@ -120,7 +120,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
             Assert.False(TestBullet.IsVanished);
@@ -142,7 +142,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
             Assert.AreEqual(0, TestBullet.Speed);
@@ -165,7 +165,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
             Assert.AreEqual(0, TestBullet.Direction);
@@ -189,7 +189,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
             Assert.AreEqual(0, TestBullet.VelocityX);
@@ -218,7 +218,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
             Assert.AreEqual(1, TestManager.Bullets.Count);
@@ -241,7 +241,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
             Assert.AreEqual(1, TestManager.Bullets.Count);
@@ -264,7 +264,7 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action = new ActionRef(node);
+            var action = new ActionDef(node);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(3, action.Tasks.Count);
             Assert.AreEqual(1, TestManager.Bullets.Count);
@@ -292,8 +292,8 @@ namespace Tamago.Tests
               </action>
             ");
 
-            var action1 = new ActionRef(node);
-            var action2 = (ActionRef)action1.Copy();
+            var action1 = new ActionDef(node);
+            var action2 = (ActionDef)action1.Copy();
             Assert.AreNotSame(action1, action2);
 
             Assert.AreEqual("abc", action2.Label);

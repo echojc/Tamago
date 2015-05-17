@@ -40,16 +40,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccelTest.cs" />
-    <Compile Include="ActionRefComplexTest.cs" />
-    <Compile Include="ActionRefTest.cs" />
+    <Compile Include="ActionDefComplexTest.cs" />
+    <Compile Include="ActionDefTest.cs" />
     <Compile Include="BulletPatternTest.cs" />
     <Compile Include="BulletTest.cs" />
-    <Compile Include="BulletRefTest.cs" />
+    <Compile Include="BulletDefTest.cs" />
     <Compile Include="ChangeDirectionTest.cs" />
     <Compile Include="ChangeSpeedTest.cs" />
     <Compile Include="DirectionTest.cs" />
     <Compile Include="ExpressionTest.cs" />
-    <Compile Include="FireRefTest.cs" />
+    <Compile Include="FireDefTest.cs" />
     <Compile Include="Helpers\TestManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepeatTest.cs" />
