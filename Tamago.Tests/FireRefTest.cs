@@ -407,5 +407,26 @@ namespace Tamago.Tests
             Assert.AreEqual(3, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(9), bullet.Direction, 0.00001f);
         }
+        
+        [Test]
+        public void Clones()
+        {
+            var node = XElement.Parse(@"
+              <fire label=""abc"">
+                <direction>1</direction>
+                <speed>2</speed>
+                <bullet/>
+              </fire>
+            ");
+
+            var fire1 = new FireRef(node);
+            var fire2 = (FireRef)fire1.Copy();
+            Assert.AreNotSame(fire1, fire2);
+
+            Assert.AreSame(fire1.BulletRef, fire2.BulletRef);
+            Assert.AreEqual(new Direction(DirectionType.Aim, 1), fire2.Direction);
+            Assert.AreEqual(new Speed(SpeedType.Absolute, 2), fire2.Speed);
+            Assert.AreEqual("abc", fire2.Label);
+        }
     }
 }

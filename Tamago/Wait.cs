@@ -21,6 +21,15 @@ namespace Tamago
         public bool IsCompleted { get; private set; }
 
         /// <summary>
+        /// For cloning.
+        /// </summary>
+        private Wait(Expression duration)
+        {
+            Duration = duration;
+            Reset();
+        }
+
+        /// <summary>
         /// Parses a &lt;wait&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;wait&gt; node.</param>
@@ -66,6 +75,15 @@ namespace Tamago
             framesRunCount++;
             IsCompleted = framesRunCount >= duration;
             return false;
+        }
+
+        /// <summary>
+        /// Copies this task and resets it.
+        /// </summary>
+        /// <returns>A reset copy of this task.</returns>
+        public Task Copy()
+        {
+            return new Wait(Duration);
         }
     }
 }

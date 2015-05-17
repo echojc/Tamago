@@ -313,6 +313,24 @@ namespace Tamago.Tests
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(7, TestManager.Bullets.Count);
         }
+        
+        [Test]
+        public void Clones()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>1</times>
+                <action/>
+              </repeat>
+            ");
+
+            var repeat1 = new Repeat(node);
+            var repeat2 = (Repeat)repeat1.Copy();
+            Assert.AreNotSame(repeat1, repeat2);
+
+            Assert.AreEqual(new Expression(1), repeat2.Times);
+            Assert.AreNotSame(repeat1.Action, repeat2.Action);
+        }
 
         [Test]
         [Ignore]

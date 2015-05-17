@@ -30,6 +30,16 @@ namespace Tamago
         public bool IsCompleted { get; private set; }
 
         /// <summary>
+        /// For cloning.
+        /// </summary>
+        private ChangeSpeed(Speed speed, Expression term)
+        {
+            Speed = speed;
+            Term = term;
+            Reset();
+        }
+
+        /// <summary>
         /// Parses a &lt;changeSpeed&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;changeSpeed&gt; node.</param>
@@ -109,6 +119,15 @@ namespace Tamago
 
             IsCompleted = framesRunCount >= term;
             return true;
+        }
+
+        /// <summary>
+        /// Copies this task and resets it.
+        /// </summary>
+        /// <returns>A reset copy of this task.</returns>
+        public Task Copy()
+        {
+            return new ChangeSpeed(Speed, Term);
         }
     }
 }

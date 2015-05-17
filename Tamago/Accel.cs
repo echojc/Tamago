@@ -37,6 +37,17 @@ namespace Tamago
         public bool IsCompleted { get; private set; }
 
         /// <summary>
+        /// For cloning.
+        /// </summary>
+        private Accel(Speed? velocityX, Speed? velocityY, Expression term)
+        {
+            VelocityX = velocityX;
+            VelocityY = velocityY;
+            Term = term;
+            Reset();
+        }
+
+        /// <summary>
         /// Parses an &lt;accel&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;accel&gt; node.</param>
@@ -152,6 +163,15 @@ namespace Tamago
 
             IsCompleted = framesRunCount >= term;
             return true;
+        }
+
+        /// <summary>
+        /// Copies this task and resets it.
+        /// </summary>
+        /// <returns>A reset copy of this task.</returns>
+        public Task Copy()
+        {
+            return new Accel(VelocityX, VelocityY, Term);
         }
     }
 }

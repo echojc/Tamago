@@ -28,5 +28,11 @@ namespace Tamago
         /// <param name="bullet">The bullet to run this task on.</param>
         /// <returns>True if following tasks should be run, otherwise false.</returns>
         bool Run(Bullet bullet);
+
+        /// <summary>
+        /// Copies this task and resets it.
+        /// </summary>
+        /// <returns>A reset copy of this task.</returns>
+        Task Copy();
     }
 }

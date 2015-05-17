@@ -179,6 +179,35 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ActionsAreNotShared()
+        {
+            var node = XElement.Parse(@"
+              <bullet>
+                <action>
+                  <fire><bullet/></fire>
+                </action>
+              </bullet>
+            ");
+
+            var bulletRef = new BulletRef(node);
+            var bullet1 = bulletRef.Create(TestBullet);
+            var bullet2 = bulletRef.Create(TestBullet);
+            var bullet3 = bulletRef.Create(TestBullet);
+            Assert.False(bulletRef.Action.IsCompleted);
+            Assert.False(bullet1.Action.IsCompleted);
+            Assert.False(bullet2.Action.IsCompleted);
+            Assert.False(bullet3.Action.IsCompleted);
+
+            bullet1.Update();
+            bullet2.Update();
+            Assert.False(bulletRef.Action.IsCompleted);
+            Assert.True(bullet1.Action.IsCompleted);
+            Assert.True(bullet2.Action.IsCompleted);
+            Assert.False(bullet3.Action.IsCompleted);
+            Assert.AreEqual(6, TestManager.Bullets.Count);
+        }
+
+        [Test]
         [Ignore]
         public void AcceptsActionRefInPlaceOfAction()
         { }

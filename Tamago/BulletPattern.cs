@@ -20,17 +20,30 @@ namespace Tamago
             TopLevelAction = actions.Find(a => a.Label == TopLevelLabel);
         }
 
-        // TODO rethrow xmlexceptions
         public static BulletPattern ParseString(string xml)
         {
-            XDocument doc = XDocument.Parse(xml);
-            var root = doc.Root;
+            if (xml == null) throw new ArgumentNullException("xml");
 
-            // extract all labelled nodes
-            var actions = (from node in root.XPathSelectElements("//action[@label]")
-                           select new ActionRef(node)).ToList();
+            try
+            {
+                XDocument doc = XDocument.Parse(xml);
+                var root = doc.Root;
+                if (root.Name.LocalName != "bulletml")
+                    throw new ParseException("Root element must be <bulletml>.");
 
-            return new BulletPattern(actions);
+                // extract all labelled nodes
+                var actions = (from node in root.XPathSelectElements("action")
+                               select new ActionRef(node)).ToList();
+
+                if (actions.Exists(a => a.Label == null))
+                    throw new ParseException("Top level actions must be labelled.");
+
+                return new BulletPattern(actions);
+            }
+            catch (XmlException e)
+            {
+                throw new ParseException("Could not parse XML.", e);
+            }
         }
     }
 }

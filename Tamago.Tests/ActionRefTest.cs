@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Tamago.Tests
@@ -279,6 +280,31 @@ namespace Tamago.Tests
             Assert.True(action.Run(TestBullet));
             Assert.True(action.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        public void Clones()
+        {
+            var node = XElement.Parse(@"
+              <action label=""abc"">
+                <fire><bullet/></fire>
+                <wait>2</wait>
+              </action>
+            ");
+
+            var action1 = new ActionRef(node);
+            var action2 = (ActionRef)action1.Copy();
+            Assert.AreNotSame(action1, action2);
+
+            Assert.AreEqual("abc", action2.Label);
+            action1.Tasks.Zip(action2.Tasks, (a, b) =>
+                {
+                    // this really should be equals
+                    // but i cbf implementing .Equals 
+                    Assert.IsInstanceOf(a.GetType(), b);
+                    Assert.AreNotSame(a, b);
+                    return true;
+                });
         }
 
         [Test]

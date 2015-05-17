@@ -570,5 +570,23 @@ namespace Tamago.Tests
             Assert.AreEqual(new Direction(DirectionType.Absolute, new Expression("3+4")), change.Direction);
             Assert.AreEqual(new Expression("1+2"), change.Term);
         }
+        
+        [Test]
+        public void Clones()
+        {
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction>1</direction>
+                <term>2</term>
+              </changeDirection>
+            ");
+
+            var change1 = new ChangeDirection(node);
+            var change2 = (ChangeDirection)change1.Copy();
+            Assert.AreNotSame(change1, change2);
+
+            Assert.AreEqual(new Direction(DirectionType.Aim, 1), change2.Direction);
+            Assert.AreEqual(new Expression(2), change2.Term);
+        }
     }
 }

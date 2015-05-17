@@ -380,5 +380,23 @@ namespace Tamago.Tests
             Assert.AreEqual(new Speed(SpeedType.Absolute, new Expression("3+4")), change.Speed);
             Assert.AreEqual(new Expression("1+2"), change.Term);
         }
+        
+        [Test]
+        public void Clones()
+        {
+            var node = XElement.Parse(@"
+              <changeSpeed>
+                <speed>1</speed>
+                <term>2</term>
+              </changeSpeed>
+            ");
+
+            var change1 = new ChangeSpeed(node);
+            var change2 = (ChangeSpeed)change1.Copy();
+            Assert.AreNotSame(change1, change2);
+
+            Assert.AreEqual(new Speed(SpeedType.Absolute, 1), change2.Speed);
+            Assert.AreEqual(new Expression(2), change2.Term);
+        }
     }
 }

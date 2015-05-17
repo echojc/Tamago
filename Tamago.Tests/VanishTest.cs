@@ -104,5 +104,17 @@ namespace Tamago.Tests
             vanish.Run(TestBullet);
             Assert.True(TestBullet.IsVanished);
         }
+        
+        [Test]
+        public void Clones()
+        {
+            var node = XElement.Parse(@"
+              <vanish/>
+            ");
+
+            var vanish1 = new Vanish(node);
+            var vanish2 = (Vanish)vanish1.Copy();
+            Assert.AreNotSame(vanish1, vanish2);
+        }
     }
 }

@@ -14,6 +14,14 @@ namespace Tamago
         public bool IsCompleted { get; private set; }
 
         /// <summary>
+        /// For cloning.
+        /// </summary>
+        private Vanish()
+        {
+            Reset();
+        }
+
+        /// <summary>
         /// Parses a &lt;vanish&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;vanish&gt; node.</param>
@@ -50,6 +58,15 @@ namespace Tamago
 
             IsCompleted = true;
             return true;
+        }
+
+        /// <summary>
+        /// Copies this task and resets it.
+        /// </summary>
+        /// <returns>A reset copy of this task.</returns>
+        public Task Copy()
+        {
+            return new Vanish();
         }
     }
 }

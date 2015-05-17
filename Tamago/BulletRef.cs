@@ -64,7 +64,7 @@ namespace Tamago
                 throw new ArgumentNullException("parent");
 
             var newBullet = parent.BulletManager.CreateBullet();
-            newBullet.SetPattern(Action, isTopLevel: false);
+            newBullet.SetPattern((ActionRef)Action.Copy(), isTopLevel: false);
 
             var speed = Speed.Value.Evaluate();
             switch (Speed.Type)

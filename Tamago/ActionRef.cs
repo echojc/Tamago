@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Tamago
@@ -43,6 +44,16 @@ namespace Tamago
         public static ActionRef Default
         {
             get { return _default; }
+        }
+
+        /// <summary>
+        /// For cloning.
+        /// </summary>
+        private ActionRef(List<Task> tasks, string label)
+        {
+            _tasks = tasks;
+            Label = label;
+            Reset();
         }
 
         /// <summary>
@@ -122,6 +133,19 @@ namespace Tamago
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Copies this task and resets it.
+        /// </summary>
+        /// <returns>A reset copy of this task.</returns>
+        public Task Copy()
+        {
+            List<Task> copies = new List<Task>();
+            foreach (Task t in _tasks)
+                copies.Add(t.Copy());
+
+            return new ActionRef(copies, Label);
         }
     }
 }

@@ -182,5 +182,12 @@ namespace Tamago.Tests
             Assert.True(bullet2.Action.IsCompleted);
             Assert.False(bullet2.IsVanished);
         }
+
+        [Test]
+        [Ignore]
+        public void MutableStateInTasksAreNotShared()
+        {
+            // play with ActionRef used in multiple places
+        }
     }
 }

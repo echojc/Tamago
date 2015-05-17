@@ -34,6 +34,18 @@ namespace Tamago
         public bool IsCompleted { get; private set; }
 
         /// <summary>
+        /// For cloning.
+        /// </summary>
+        private FireRef(BulletRef bulletRef, Speed? speed, Direction? direction, string label)
+        {
+            BulletRef = bulletRef;
+            Speed = speed;
+            Direction = direction;
+            Label = label;
+            Reset();
+        }
+
+        /// <summary>
         /// Parses a &lt;fire&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;fire&gt; node.</param>
@@ -135,6 +147,15 @@ namespace Tamago
 
             IsCompleted = true;
             return true;
+        }
+
+        /// <summary>
+        /// Copies this task and resets it.
+        /// </summary>
+        /// <returns>A reset copy of this task.</returns>
+        public Task Copy()
+        {
+            return new FireRef(BulletRef, Speed, Direction, Label);
         }
     }
 }

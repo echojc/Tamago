@@ -128,5 +128,19 @@ namespace Tamago.Tests
 
             Assert.True(wait.Run(TestBullet));
         }
+
+        [Test]
+        public void Clones()
+        {
+            var node = XElement.Parse(@"
+              <wait>2</wait>
+            ");
+
+            var wait1 = new Wait(node);
+            var wait2 = (Wait)wait1.Copy();
+            Assert.AreNotSame(wait1, wait2);
+
+            Assert.AreEqual(new Expression(2), wait2.Duration);
+        }
     }
 }
