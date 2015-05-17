@@ -31,6 +31,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotAccel()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new Accel(node));
+        }
+
+        [Test]
         public void ThrowsParseExceptionIfNoTerm()
         {
             var node = XElement.Parse(@"
@@ -101,20 +108,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 4.2f), accel.VelocityX);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 2.3f), accel.VelocityY);
-            Assert.AreEqual(3, accel.Term);
-        }
-
-        [Test]
-        public void ParsesTermRoundingDown()
-        {
-            var node = XElement.Parse(@"
-              <accel>
-                <term>3.9</term>
-              </accel>
-            ");
-
-            var accel = new Accel(node);
-            Assert.AreEqual(3, accel.Term);
+            Assert.AreEqual(3, accel.Term.Evaluate());
         }
 
         [Test]
@@ -156,6 +150,25 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void SetsIsCompletedWhenRunXTimesRoundingDown()
+        {
+            var node = XElement.Parse(@"
+              <accel>
+                <term>1.1</term>
+              </accel>
+            ");
+
+            var accel = new Accel(node);
+            Assert.False(accel.IsCompleted);
+
+            Assert.True(accel.Run(TestBullet));
+            Assert.True(accel.IsCompleted);
+
+            Assert.True(accel.Run(TestBullet));
+            Assert.True(accel.IsCompleted);
+        }
+
+        [Test]
         public void SetsVelocitiesToFinalIfTermIsZero()
         {
             var node = XElement.Parse(@"
@@ -167,9 +180,10 @@ namespace Tamago.Tests
             ");
 
             var accel = new Accel(node);
-            Assert.True(accel.IsCompleted);
+            Assert.False(accel.IsCompleted);
 
             accel.Run(TestBullet);
+            Assert.True(accel.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
             Assert.AreEqual(4.2f, TestBullet.VelocityY);
@@ -187,9 +201,10 @@ namespace Tamago.Tests
             ");
 
             var accel = new Accel(node);
-            Assert.True(accel.IsCompleted);
+            Assert.False(accel.IsCompleted);
 
             accel.Run(TestBullet);
+            Assert.True(accel.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
             Assert.AreEqual(4.2f, TestBullet.VelocityY);
@@ -207,9 +222,10 @@ namespace Tamago.Tests
             ");
 
             var accel = new Accel(node);
-            Assert.True(accel.IsCompleted);
+            Assert.False(accel.IsCompleted);
 
             accel.Run(TestBullet);
+            Assert.True(accel.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(DefaultVelocityX, TestBullet.VelocityX);
             Assert.AreEqual(DefaultVelocityY, TestBullet.VelocityY);
@@ -537,6 +553,7 @@ namespace Tamago.Tests
                 0.00001f);
 
             accel.Reset();
+            Assert.False(accel.IsCompleted);
 
             accel.Run(TestBullet);
             TestBullet.Update();
@@ -581,6 +598,48 @@ namespace Tamago.Tests
                 DefaultVelocityY + 4.2f,
                 TestBullet.VelocityY,
                 0.00001f);
+        }
+
+        [Test]
+        public void RunsCorrectlyForDecimalTermRoundingDown()
+        {
+            var node = XElement.Parse(@"
+              <accel>
+                <horizontal>2.3</horizontal>
+                <vertical>4.2</vertical>
+                <term>1.99</term>
+              </accel>
+            ");
+
+            var accel = new Accel(node);
+            Assert.False(accel.IsCompleted);
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(2.3f, TestBullet.VelocityX);
+            Assert.AreEqual(4.2f, TestBullet.VelocityY);
+
+            accel.Run(TestBullet);
+            TestBullet.Update();
+            Assert.AreEqual(2.3f, TestBullet.VelocityX);
+            Assert.AreEqual(4.2f, TestBullet.VelocityY);
+        }
+
+        [Test]
+        public void AcceptsExpressionsInAllFields()
+        {
+            var node = XElement.Parse(@"
+              <accel>
+                <horizontal>1+2</horizontal>
+                <vertical>3+4</vertical>
+                <term>5+6</term>
+              </accel>
+            ");
+
+            var accel = new Accel(node);
+            Assert.AreEqual(new Speed(SpeedType.Absolute, new Expression("1+2")), accel.VelocityX);
+            Assert.AreEqual(new Speed(SpeedType.Absolute, new Expression("3+4")), accel.VelocityY);
+            Assert.AreEqual(new Expression("5+6"), accel.Term);
         }
     }
 }

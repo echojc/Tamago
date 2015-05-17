@@ -31,6 +31,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotFireRef()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new FireRef(node));
+        }
+
+        [Test]
         public void ThrowsParseExceptionIfNoBulletNode()
         {
             var node = XElement.Parse(@"
@@ -380,6 +387,25 @@ namespace Tamago.Tests
 
             fireRef.Run(TestBullet);
             Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        public void AcceptsExpressionsInDirectionAndSpeed()
+        {
+            var node = XElement.Parse(@"
+              <fire>
+                <direction type=""absolute"">4+5</direction>
+                <speed>1+2</speed>
+                <bullet/>
+              </fire>
+            ");
+
+            var fireRef = new FireRef(node);
+            fireRef.Run(TestBullet);
+
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(3, bullet.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(9), bullet.Direction, 0.00001f);
         }
     }
 }

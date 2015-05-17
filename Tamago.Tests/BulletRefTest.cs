@@ -31,6 +31,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotBullet()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new BulletRef(node));
+        }
+
+        [Test]
         public void ThrowsArgumentNullIfParentToCreateFromIsNull()
         {
             var node = XElement.Parse(@"
@@ -185,10 +192,9 @@ namespace Tamago.Tests
         public void UsesFireDirectionDefaultIfSet()
         {
             var node = XElement.Parse(@"
-              <fire>
+              <bullet>
                 <direction>45</direction>
-                <bullet/>
-              </fire>
+              </bullet>
             ");
 
             var bulletRef = new BulletRef(node);
@@ -202,10 +208,9 @@ namespace Tamago.Tests
         public void UsesFireDirectionAimIfSet()
         {
             var node = XElement.Parse(@"
-              <fire>
+              <bullet>
                 <direction type=""aim"">25</direction>
-                <bullet/>
-              </fire>
+              </bullet>
             ");
 
             var bulletRef = new BulletRef(node);
@@ -219,10 +224,9 @@ namespace Tamago.Tests
         public void UsesFireDirectionAbsoluteIfSet()
         {
             var node = XElement.Parse(@"
-              <fire>
+              <bullet>
                 <direction type=""absolute"">30</direction>
-                <bullet/>
-              </fire>
+              </bullet>
             ");
 
             var bulletRef = new BulletRef(node);
@@ -236,10 +240,9 @@ namespace Tamago.Tests
         public void UsesFireDirectionRelativeIfSet()
         {
             var node = XElement.Parse(@"
-              <fire>
+              <bullet>
                 <direction type=""relative"">30</direction>
-                <bullet/>
-              </fire>
+              </bullet>
             ");
 
             var bulletRef = new BulletRef(node);
@@ -253,10 +256,9 @@ namespace Tamago.Tests
         public void UsesFireDirectionSequenceIfSet()
         {
             var node = XElement.Parse(@"
-              <fire>
+              <bullet>
                 <direction type=""sequence"">30</direction>
-                <bullet/>
-              </fire>
+              </bullet>
             ");
 
             var bulletRef = new BulletRef(node);
@@ -270,11 +272,10 @@ namespace Tamago.Tests
         public void UsesBothFireSpeedAndFireDirectionIfSet()
         {
             var node = XElement.Parse(@"
-              <fire>
+              <bullet>
                 <direction>88.9</direction>
                 <speed>1.23</speed>
-                <bullet/>
-              </fire>
+              </bullet>
             ");
 
             var bulletRef = new BulletRef(node);
@@ -304,6 +305,23 @@ namespace Tamago.Tests
 
             var bulletRef = new BulletRef(node);
             Assert.Null(bulletRef.Label);
+        }
+
+        [Test]
+        public void AcceptsExpressionsInDirectionAndSpeed()
+        {
+            var node = XElement.Parse(@"
+              <bullet>
+                <direction type=""absolute"">4+5</direction>
+                <speed>1+2</speed>
+              </bullet>
+            ");
+
+            var bulletRef = new BulletRef(node);
+            var bullet = bulletRef.Create(TestBullet);
+
+            Assert.AreEqual(3, bullet.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(9), bullet.Direction, 0.00001f);
         }
     }
 }

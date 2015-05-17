@@ -23,6 +23,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotWait()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new Wait(node));
+        }
+
+        [Test]
         public void ThrowsParseExceptionIfNoWaitTime()
         {
             var node = XElement.Parse(@"
@@ -44,25 +51,14 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void ParsesWaitDuration()
+        public void ParsesWaitDurationAsExpression()
         {
             var node = XElement.Parse(@"
-              <wait>42</wait>
+              <wait>42 + 1</wait>
             ");
 
             var wait = new Wait(node);
-            Assert.AreEqual(42, wait.Duration);
-        }
-
-        [Test]
-        public void RoundsFractionalDurationsDown()
-        {
-            var node = XElement.Parse(@"
-              <wait>42.9999</wait>
-            ");
-
-            var wait = new Wait(node);
-            Assert.AreEqual(42, wait.Duration);
+            Assert.AreEqual(new Expression("42+1"), wait.Duration);
         }
 
         [Test]
@@ -70,6 +66,25 @@ namespace Tamago.Tests
         {
             var node = XElement.Parse(@"
               <wait>2</wait>
+            ");
+
+            var wait = new Wait(node);
+            Assert.False(wait.IsCompleted);
+
+            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.IsCompleted);
+
+            Assert.False(wait.Run(TestBullet));
+            Assert.True(wait.IsCompleted);
+
+            Assert.True(wait.Run(TestBullet));
+        }
+
+        [Test]
+        public void CompletesAfterExecutingRunXTimesRoundedDown()
+        {
+            var node = XElement.Parse(@"
+              <wait>2.999</wait>
             ");
 
             var wait = new Wait(node);

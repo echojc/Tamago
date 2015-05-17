@@ -49,7 +49,7 @@ namespace Tamago
         /// <summary>
         /// The angle in radians, measured from directly up as 0, clockwise.
         /// </summary>
-        public float Value { get; private set; }
+        public Expression Value { get; private set; }
 
         /// <summary>
         /// Represents a &lt;direction&gt; node.
@@ -60,7 +60,19 @@ namespace Tamago
             : this()
         {
             Type = type;
-            Value = value;
+            Value = new Expression(value);
+        }
+
+        /// <summary>
+        /// Represents a &lt;direction&gt; node.
+        /// </summary>
+        /// <param name="type">Specifies how to interpret the given value.</param>
+        /// <param name="expr">The expression to obtain the angle offset or value.</param>
+        public Direction(DirectionType type, Expression expr)
+            : this()
+        {
+            Type = type;
+            Value = expr;
         }
 
         /// <summary>
@@ -70,8 +82,8 @@ namespace Tamago
         public Direction(XElement node)
             : this()
         {
-            if (node == null)
-                throw new ArgumentNullException();
+            if (node == null) throw new ArgumentNullException();
+            if (node.Name.LocalName != "direction") throw new ArgumentException("node");
 
             var typeAttr = node.Attribute("type");
             if (typeAttr != null)
@@ -83,7 +95,7 @@ namespace Tamago
             else
                 Type = default(DirectionType);
 
-            Value = MathHelper.ToRadians(float.Parse(node.Value));
+            Value = new Expression(node.Value);
         }
 
         #region Boilerplate

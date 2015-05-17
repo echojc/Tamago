@@ -31,6 +31,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotChangeDirection()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new ChangeDirection(node));
+        }
+
+        [Test]
         public void ThrowsParseExceptionIfEmptyNode()
         {
             var node = XElement.Parse(@"
@@ -89,23 +96,9 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeDirection(node);
-            var expectedDirection = new Direction(DirectionType.Aim, MathHelper.ToRadians(100));
+            var expectedDirection = new Direction(DirectionType.Aim, new Expression(100));
             Assert.AreEqual(expectedDirection, change.Direction);
-            Assert.AreEqual(3, change.Term);
-        }
-
-        [Test]
-        public void ParsesTermRoundingDown()
-        {
-            var node = XElement.Parse(@"
-              <changeDirection>
-                <direction>100</direction>
-                <term>3.9</term>
-              </changeDirection>
-            ");
-
-            var change = new ChangeDirection(node);
-            Assert.AreEqual(3, change.Term);
+            Assert.AreEqual(new Expression(3), change.Term);
         }
 
         [Test]
@@ -119,9 +112,10 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeDirection(node);
-            Assert.True(change.IsCompleted);
+            Assert.False(change.IsCompleted);
 
             change.Run(TestBullet);
+            Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(100), TestBullet.Direction);
         }
@@ -137,9 +131,10 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeDirection(node);
-            Assert.True(change.IsCompleted);
+            Assert.False(change.IsCompleted);
 
             change.Run(TestBullet);
+            Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(100), TestBullet.Direction);
         }
@@ -155,9 +150,10 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeDirection(node);
-            Assert.True(change.IsCompleted);
+            Assert.False(change.IsCompleted);
 
             change.Run(TestBullet);
+            Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection, TestBullet.Direction);
         }
@@ -179,6 +175,26 @@ namespace Tamago.Tests
             Assert.False(change.IsCompleted);
 
             Assert.True(change.Run(TestBullet));
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            Assert.True(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            Assert.True(change.IsCompleted);
+        }
+
+        [Test]
+        public void SetsIsCompletedWhenRunXTimesRoundingDown()
+        {
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction>2.5</direction>
+                <term>1.9</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
             Assert.True(change.Run(TestBullet));
@@ -358,6 +374,7 @@ namespace Tamago.Tests
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(39), TestBullet.Direction, 0.00001f);
 
             change.Reset();
+            Assert.False(change.IsCompleted);
 
             Assert.True(change.Run(TestBullet));
             TestBullet.Update();
@@ -537,6 +554,21 @@ namespace Tamago.Tests
             Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(-19.99f), TestBullet.Direction, 0.00001f);
+        }
+
+        [Test]
+        public void AcceptsExpressionsInAllFields()
+        {
+            var node = XElement.Parse(@"
+              <changeDirection>
+                <direction type=""absolute"">3+4</direction>
+                <term>1+2</term>
+              </changeDirection>
+            ");
+
+            var change = new ChangeDirection(node);
+            Assert.AreEqual(new Direction(DirectionType.Absolute, new Expression("3+4")), change.Direction);
+            Assert.AreEqual(new Expression("1+2"), change.Term);
         }
     }
 }

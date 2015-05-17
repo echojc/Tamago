@@ -15,6 +15,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotSpeed()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new Speed(node));
+        }
+
+        [Test]
         public void DefaultsTypeToAbsolute()
         {
             var node = XElement.Parse(@"
@@ -26,14 +33,14 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void ParsesMagnitude()
+        public void ParsesMagnitudeAsAnExpression()
         {
             var node = XElement.Parse(@"
-              <speed>2.4</speed> 
+              <speed>2.4 + 1.2</speed> 
             ");
 
             var speed = new Speed(node);
-            Assert.AreEqual(2.4f, speed.Value);
+            Assert.AreEqual(new Expression("2.4 + 1.2"), speed.Value);
         }
 
         [Test]

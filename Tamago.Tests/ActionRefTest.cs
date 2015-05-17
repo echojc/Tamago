@@ -24,6 +24,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotAction()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new ActionRef(node));
+        }
+
+        [Test]
         public void ThrowsArgumentNullIfBulletToRunAgainstIsNull()
         {
             var node = XElement.Parse(@"

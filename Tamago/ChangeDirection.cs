@@ -22,15 +22,12 @@ namespace Tamago
         /// <summary>
         /// The number of frames to animate the change over.
         /// </summary>
-        public int Term { get; private set; }
+        public Expression Term { get; private set; }
 
         /// <summary>
         /// True if this has been run <see cref="Term">Term</see> times or more.
         /// </summary>
-        public bool IsCompleted
-        {
-            get { return framesRunCount >= Term; }
-        }
+        public bool IsCompleted { get; private set; }
 
         /// <summary>
         /// Parses a &lt;changeDirection&gt; node into an object representation.
@@ -38,8 +35,8 @@ namespace Tamago
         /// <param name="node">The &lt;changeDirection&gt; node.</param>
         public ChangeDirection(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "changeDirection") throw new ArgumentException("node");
 
             var direction = node.Element("direction");
             if (direction == null)
@@ -49,7 +46,7 @@ namespace Tamago
             var term = node.Element("term");
             if (term == null)
                 throw new ParseException("<changeDirection> node requires a <term> node.");
-            Term = (int)float.Parse(term.Value);
+            Term = new Expression(term.Value);
 
             Reset();
         }
@@ -61,6 +58,7 @@ namespace Tamago
         {
             isFirstRun = true;
             framesRunCount = 0;
+            IsCompleted = false;
         }
 
         /// <summary>
@@ -80,26 +78,30 @@ namespace Tamago
 
             if (!isFirstRun && IsCompleted)
                 return true;
+
+            // must be rounded down
+            int term = (int)Term.Evaluate();
             
             if (isFirstRun)
             {
                 isFirstRun = false;
                 initialDirection = bullet.Direction;
 
+                var direction = MathHelper.ToRadians(Direction.Value.Evaluate());
                 switch (Direction.Type)
                 {
                     case DirectionType.Relative:
-                        targetDirection = bullet.Direction + Direction.Value;
+                        targetDirection = bullet.Direction + direction;
                         break;
                     case DirectionType.Sequence:
-                        targetDirection = bullet.Direction + (Direction.Value * Math.Max(0, Term));
+                        targetDirection = bullet.Direction + (direction * Math.Max(0, term));
                         break;
                     case DirectionType.Absolute:
-                        targetDirection = Direction.Value;
+                        targetDirection = direction;
                         break;
                     case DirectionType.Aim:
                     default:
-                        targetDirection = bullet.AimDirection + Direction.Value;
+                        targetDirection = bullet.AimDirection + direction;
                         break;
                 }
 
@@ -108,8 +110,9 @@ namespace Tamago
             }
 
             framesRunCount++;
-            var ratio = Term <= 0 ? 1 : (float)framesRunCount / Term;
+            var ratio = term <= 0 ? 1 : (float)framesRunCount / term;
             bullet.NewDirection = initialDirection + (targetDirection - initialDirection) * ratio;
+            IsCompleted = framesRunCount >= term;
 
             return true;
         }

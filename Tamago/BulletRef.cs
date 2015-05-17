@@ -34,8 +34,8 @@ namespace Tamago
         /// <param name="node">The &lt;bullet&gt; node.</param>
         public BulletRef(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "bullet") throw new ArgumentException("node");
 
             var speed = node.Element("speed");
             Speed = speed != null ? new Speed(speed) : Speed.One;
@@ -66,39 +66,41 @@ namespace Tamago
             var newBullet = parent.BulletManager.CreateBullet();
             newBullet.SetPattern(Action, isTopLevel: false);
 
+            var speed = Speed.Value.Evaluate();
             switch (Speed.Type)
             {
                 case SpeedType.Relative:
-                    newBullet.Speed = parent.Speed + Speed.Value;
+                    newBullet.Speed = parent.Speed + speed;
                     break;
                 case SpeedType.Sequence:
-                    newBullet.Speed = parent.FireSpeed + Speed.Value;
+                    newBullet.Speed = parent.FireSpeed + speed;
                     break;
                 case SpeedType.Absolute:
                 default:
-                    newBullet.Speed = Speed.Value;
+                    newBullet.Speed = speed;
                     break;
             }
 
-            float direction;
+            float result;
+            var direction = MathHelper.ToRadians(Direction.Value.Evaluate());
             switch (Direction.Type)
             {
                 case DirectionType.Relative:
-                    direction = parent.Direction + Direction.Value;
+                    result = parent.Direction + direction;
                     break;
                 case DirectionType.Sequence:
-                    direction = parent.FireDirection + Direction.Value;
+                    result = parent.FireDirection + direction;
                     break;
                 case DirectionType.Absolute:
-                    direction = Direction.Value;
+                    result = direction;
                     break;
                 case DirectionType.Aim:
                 default:
-                    direction = parent.AimDirection + Direction.Value;
+                    result = parent.AimDirection + direction;
                     break;
             }
 
-            newBullet.Direction = MathHelper.NormalizeAngle(direction);
+            newBullet.Direction = MathHelper.NormalizeAngle(result);
 
             newBullet.X = parent.X;
             newBullet.Y = parent.Y;

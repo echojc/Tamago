@@ -23,6 +23,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotVanish()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new Vanish(node));
+        }
+
+        [Test]
         public void ThrowsArgumentNullIfBulletToRunAgainstIsNull()
         {
             var node = XElement.Parse(@"

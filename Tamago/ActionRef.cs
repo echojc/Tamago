@@ -51,8 +51,8 @@ namespace Tamago
         /// <param name="node">The &lt;action&gt; node.</param>
         public ActionRef(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "action") throw new ArgumentException("node");
 
             var label = node.Attribute("label");
             if (label != null)

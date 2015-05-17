@@ -27,7 +27,7 @@ namespace Tamago
     }
 
     /// <summary>
-    /// Represents a &lt;speed&gt; node. Speed values are measured in pixel per frame.
+    /// Represents a &lt;speed&gt;, &lt;horizontal&gt;, or &lt;vertical&gt; node. Speed values are measured in pixel per frame.
     /// </summary>
     public struct Speed
     {
@@ -58,10 +58,10 @@ namespace Tamago
         /// <summary>
         /// The magnitude of this speed instance.
         /// </summary>
-        public float Value { get; private set; }
+        public Expression Value { get; private set; }
 
         /// <summary>
-        /// Represents a &lt;speed&gt; node.
+        /// Represents a &lt;speed&gt;, &lt;horizontal&gt;, or &lt;vertical&gt; node.
         /// </summary>
         /// <param name="type">Specifies how to interpret the given value.</param>
         /// <param name="value">The value or offset for the speed type.</param>
@@ -69,18 +69,33 @@ namespace Tamago
             : this()
         {
             Type = type;
-            Value = value;
+            Value = new Expression(value);
         }
 
         /// <summary>
-        /// Represents a &lt;speed&gt; node.
+        /// Represents a &lt;speed&gt;, &lt;horizontal&gt;, or &lt;vertical&gt; node.
+        /// </summary>
+        /// <param name="type">Specifies how to interpret the given value.</param>
+        /// <param name="expr">The expression to obtain value or offset for the speed type.</param>
+        public Speed(SpeedType type, Expression expr)
+            : this()
+        {
+            Type = type;
+            Value = expr;
+        }
+
+        /// <summary>
+        /// Represents a &lt;speed&gt;, &lt;horizontal&gt;, or &lt;vertical&gt; node.
         /// </summary>
         /// <param name="node">The node to construct this instance from.</param>
         public Speed(XElement node)
             : this()
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "speed" &&
+                node.Name.LocalName != "horizontal" &&
+                node.Name.LocalName != "vertical")
+                throw new ArgumentException("node");
 
             var typeAttr = node.Attribute("type");
             if (typeAttr != null)
@@ -92,7 +107,7 @@ namespace Tamago
             else
                 Type = default(SpeedType);
 
-            Value = float.Parse(node.Value);
+            Value = new Expression(node.Value);
         }
 
         #region Boilerplate

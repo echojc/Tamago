@@ -39,8 +39,8 @@ namespace Tamago
         /// <param name="node">The &lt;fire&gt; node.</param>
         public FireRef(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "fire") throw new ArgumentException("node");
 
             var bulletRef = node.Element("bullet");
             if (bulletRef == null)
@@ -91,17 +91,18 @@ namespace Tamago
             if (Speed != null)
             {
                 Speed s = Speed.Value;
+                var speed = s.Value.Evaluate();
                 switch (s.Type)
                 {
                     case SpeedType.Relative:
-                        newBullet.Speed = bullet.Speed + s.Value;
+                        newBullet.Speed = bullet.Speed + speed;
                         break;
                     case SpeedType.Sequence:
-                        newBullet.Speed = bullet.FireSpeed + s.Value;
+                        newBullet.Speed = bullet.FireSpeed + speed;
                         break;
                     case SpeedType.Absolute:
                     default:
-                        newBullet.Speed = s.Value;
+                        newBullet.Speed = speed;
                         break;
                 }
             }
@@ -111,20 +112,21 @@ namespace Tamago
                 Direction d = Direction.Value;
 
                 float result;
+                var direction = MathHelper.ToRadians(d.Value.Evaluate());
                 switch (d.Type)
                 {
                     case DirectionType.Relative:
-                        result = bullet.Direction + d.Value;
+                        result = bullet.Direction + direction;
                         break;
                     case DirectionType.Sequence:
-                        result = bullet.FireDirection + d.Value;
+                        result = bullet.FireDirection + direction;
                         break;
                     case DirectionType.Absolute:
-                        result = d.Value;
+                        result = direction;
                         break;
                     case DirectionType.Aim:
                     default:
-                        result = bullet.AimDirection + d.Value;
+                        result = bullet.AimDirection + direction;
                         break;
                 }
 

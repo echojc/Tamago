@@ -13,15 +13,12 @@ namespace Tamago
         /// <summary>
         /// How many frames to wait for.
         /// </summary>
-        public int Duration { get; private set; }
+        public Expression Duration { get; private set; }
 
         /// <summary>
         /// True if we have waited <see cref="Duration">Duration</see> number of frames.
         /// </summary>
-        public bool IsCompleted
-        {
-            get { return framesRunCount >= Duration; }
-        }
+        public bool IsCompleted { get; private set; }
 
         /// <summary>
         /// Parses a &lt;wait&gt; node into an object representation.
@@ -29,14 +26,14 @@ namespace Tamago
         /// <param name="node">The &lt;wait&gt; node.</param>
         public Wait(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "wait") throw new ArgumentException("node");
 
             var duration = node.Value;
             if (duration == string.Empty)
                 throw new ParseException("wait node without duration");
 
-            Duration = (int)float.Parse(duration);
+            Duration = new Expression(duration);
 
             Reset();
         }
@@ -47,6 +44,7 @@ namespace Tamago
         public void Reset()
         {
             framesRunCount = 0;
+            IsCompleted = false;
         }
 
         /// <summary>
@@ -62,7 +60,11 @@ namespace Tamago
             if (IsCompleted)
                 return true;
 
+            // must be rounded down
+            int duration = (int)Duration.Evaluate();
+
             framesRunCount++;
+            IsCompleted = framesRunCount >= duration;
             return false;
         }
     }

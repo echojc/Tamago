@@ -22,15 +22,12 @@ namespace Tamago
         /// <summary>
         /// The number of frames to animate the change over.
         /// </summary>
-        public int Term { get; private set; }
+        public Expression Term { get; private set; }
 
         /// <summary>
         /// True if this has been run <see cref="Term">Term</see> times or more.
         /// </summary>
-        public bool IsCompleted
-        {
-            get { return framesRunCount >= Term; }
-        }
+        public bool IsCompleted { get; private set; }
 
         /// <summary>
         /// Parses a &lt;changeSpeed&gt; node into an object representation.
@@ -38,8 +35,8 @@ namespace Tamago
         /// <param name="node">The &lt;changeSpeed&gt; node.</param>
         public ChangeSpeed(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "changeSpeed") throw new ArgumentException("node");
 
             var speed = node.Element("speed");
             if (speed == null)
@@ -49,7 +46,7 @@ namespace Tamago
             var term = node.Element("term");
             if (term == null)
                 throw new ParseException("<changeSpeed> node requires a <term> node.");
-            Term = (int)float.Parse(term.Value);
+            Term = new Expression(term.Value);
 
             Reset();
         }
@@ -61,6 +58,7 @@ namespace Tamago
         {
             isFirstRun = true;
             framesRunCount = 0;
+            IsCompleted = false;
         }
 
         /// <summary>
@@ -80,31 +78,36 @@ namespace Tamago
 
             if (!isFirstRun && IsCompleted)
                 return true;
+
+            // must be rounded down
+            int term = (int)Term.Evaluate();
             
             if (isFirstRun)
             {
                 isFirstRun = false;
                 initialSpeed = bullet.Speed;
 
+                var speed = Speed.Value.Evaluate();
                 switch (Speed.Type)
                 {
                     case SpeedType.Relative:
-                        targetSpeed = bullet.Speed + Speed.Value;
+                        targetSpeed = bullet.Speed + speed;
                         break;
                     case SpeedType.Sequence:
-                        targetSpeed = bullet.Speed + (Speed.Value * Math.Max(0, Term));
+                        targetSpeed = bullet.Speed + (speed * Math.Max(0, term));
                         break;
                     case SpeedType.Absolute:
                     default:
-                        targetSpeed = Speed.Value;
+                        targetSpeed = speed;
                         break;
                 }
             }
 
             framesRunCount++;
-            var ratio = Term <= 0 ? 1 : (float)framesRunCount / Term;
+            var ratio = term <= 0 ? 1 : (float)framesRunCount / term;
             bullet.NewSpeed = initialSpeed + (targetSpeed - initialSpeed) * ratio;
 
+            IsCompleted = framesRunCount >= term;
             return true;
         }
     }

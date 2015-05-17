@@ -29,15 +29,12 @@ namespace Tamago
         /// <summary>
         /// The number of frames to animate the change over.
         /// </summary>
-        public int Term { get; private set; }
+        public Expression Term { get; private set; }
 
         /// <summary>
         /// True if this has been run <see cref="Term">Term</see> times or more.
         /// </summary>
-        public bool IsCompleted
-        {
-            get { return framesRunCount >= Term; }
-        }
+        public bool IsCompleted { get; private set; }
 
         /// <summary>
         /// Parses an &lt;accel&gt; node into an object representation.
@@ -45,13 +42,13 @@ namespace Tamago
         /// <param name="node">The &lt;accel&gt; node.</param>
         public Accel(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "accel") throw new ArgumentException("node");
 
             var term = node.Element("term");
             if (term == null)
                 throw new ParseException("<accel> node requires a <term> node.");
-            Term = (int)float.Parse(term.Value);
+            Term = new Expression(term.Value);
 
             var horizontal = node.Element("horizontal");
             if (horizontal != null)
@@ -71,6 +68,7 @@ namespace Tamago
         {
             isFirstRun = true;
             framesRunCount = 0;
+            IsCompleted = false;
         }
 
         /// <summary>
@@ -95,6 +93,9 @@ namespace Tamago
             if (!isFirstRun && IsCompleted)
                 return true;
 
+            // must be rounded down
+            int term = (int)Term.Evaluate();
+
             if (isFirstRun)
             {
                 isFirstRun = false;
@@ -104,17 +105,18 @@ namespace Tamago
                 if (VelocityX != null)
                 {
                     Speed x = VelocityX.Value;
+                    var xvalue = x.Value.Evaluate();
                     switch (x.Type)
                     {
                         case SpeedType.Relative:
-                            targetVelocityX = bullet.VelocityX + x.Value;
+                            targetVelocityX = bullet.VelocityX + xvalue;
                             break;
                         case SpeedType.Sequence:
-                            targetVelocityX = bullet.VelocityX + (x.Value * Math.Max(0, Term));
+                            targetVelocityX = bullet.VelocityX + (xvalue * Math.Max(0, term));
                             break;
                         case SpeedType.Absolute:
                         default:
-                            targetVelocityX = x.Value;
+                            targetVelocityX = xvalue;
                             break;
                     }
                 }
@@ -122,24 +124,25 @@ namespace Tamago
                 if (VelocityY != null)
                 {
                     Speed y = VelocityY.Value;
+                    var yvalue = y.Value.Evaluate();
                     switch (y.Type)
                     {
                         case SpeedType.Relative:
-                            targetVelocityY = bullet.VelocityY + y.Value;
+                            targetVelocityY = bullet.VelocityY + yvalue;
                             break;
                         case SpeedType.Sequence:
-                            targetVelocityY = bullet.VelocityY + (y.Value * Math.Max(0, Term));
+                            targetVelocityY = bullet.VelocityY + (yvalue * Math.Max(0, term));
                             break;
                         case SpeedType.Absolute:
                         default:
-                            targetVelocityY = y.Value;
+                            targetVelocityY = yvalue;
                             break;
                     }
                 }
             }
 
             framesRunCount++;
-            var ratio = Term <= 0 ? 1 : (float)framesRunCount / Term;
+            var ratio = term <= 0 ? 1 : (float)framesRunCount / term;
 
             if (VelocityX != null)
                 bullet.NewVelocityX = initialVelocityX + (targetVelocityX - initialVelocityX) * ratio;
@@ -147,6 +150,7 @@ namespace Tamago
             if (VelocityY != null)
                 bullet.NewVelocityY = initialVelocityY + (targetVelocityY - initialVelocityY) * ratio;
 
+            IsCompleted = framesRunCount >= term;
             return true;
         }
     }

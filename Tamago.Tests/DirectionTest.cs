@@ -15,6 +15,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotDirection()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new Direction(node));
+        }
+
+        [Test]
         public void DefaultsTypeToAim()
         {
             var node = XElement.Parse(@"
@@ -26,14 +33,14 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void ParsesMagnitudeAsDegrees()
+        public void ParsesMagnitudeAsExpression()
         {
             var node = XElement.Parse(@"
-              <direction>30</direction> 
+              <direction>10 + 20</direction> 
             ");
 
             var direction = new Direction(node);
-            Assert.AreEqual((float)(Math.PI / 6), direction.Value, 0.00001f);
+            Assert.AreEqual(new Expression("10+20"), direction.Value);
         }
 
         [Test]

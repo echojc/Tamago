@@ -34,6 +34,17 @@ namespace Tamago
         }
 
         /// <summary>
+        /// Creates an expression that evaluates to a constant value. Intended for testing purposes.
+        /// </summary>
+        /// <param name="constant">The constant value</param>
+        public Expression(float constant)
+        {
+            rpn = new List<Ast>();
+            rpn.Add(new Const(constant));
+            trimmedExpression = constant.ToString();
+        }
+
+        /// <summary>
         /// Pretty prints an error at the given position.
         /// </summary>
         /// <param name="chars">The input expression.</param>

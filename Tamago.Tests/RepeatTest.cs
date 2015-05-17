@@ -21,7 +21,13 @@ namespace Tamago.Tests
         public void ThrowsArgumentNullIfNodeToConstructFromIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new Repeat(null));
+        }
 
+        [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotRepeat()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new Repeat(node));
         }
 
         [Test]
@@ -63,17 +69,17 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void ParsesTimesRoundingDown()
+        public void ParsesTimesAsExpression()
         {
             var node = XElement.Parse(@"
               <repeat>
-                <times>3.9</times>
+                <times>2+1</times>
                 <action/>
               </repeat>
             ");
 
             var repeat = new Repeat(node);
-            Assert.AreEqual(3, repeat.Times);
+            Assert.AreEqual(new Expression("2+1"), repeat.Times);
         }
 
         [Test]
@@ -95,6 +101,73 @@ namespace Tamago.Tests
 
             repeat.Run(TestBullet);
             Assert.AreEqual(4, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        public void ExecutesActionXTimesWhenRunRoundingDown()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>3.9</times>
+                <action>
+                  <fire>
+                    <bullet/>
+                  </fire>
+                </action>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            repeat.Run(TestBullet);
+            Assert.AreEqual(4, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        public void NopsIfTimesIsZero()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>0</times>
+                <action>
+                  <fire>
+                    <bullet/>
+                  </fire>
+                </action>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node);
+            Assert.False(repeat.IsCompleted);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            repeat.Run(TestBullet);
+            Assert.True(repeat.IsCompleted);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        public void NopsIfTimesIsLessThanZero()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>-42</times>
+                <action>
+                  <fire>
+                    <bullet/>
+                  </fire>
+                </action>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node);
+            Assert.False(repeat.IsCompleted);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            repeat.Run(TestBullet);
+            Assert.True(repeat.IsCompleted);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
         }
 
         [Test]

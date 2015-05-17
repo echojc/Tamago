@@ -13,7 +13,7 @@ namespace Tamago
         /// <summary>
         /// The number of times the nested action has been completely run through.
         /// </summary>
-        public int Times { get; private set; }
+        public Expression Times { get; private set; }
 
         /// <summary>
         /// The action to repeat.
@@ -23,10 +23,7 @@ namespace Tamago
         /// <summary>
         /// True if the nested action has been completely run through <see cref="Times">Times</see> times.
         /// </summary>
-        public bool IsCompleted
-        {
-            get { return timesRunCount >= Times; }
-        }
+        public bool IsCompleted { get; private set; }
 
         /// <summary>
         /// Parses a &lt;repeat&gt; node into an object representation.
@@ -34,13 +31,13 @@ namespace Tamago
         /// <param name="node">The &lt;repeat&gt; node.</param>
         public Repeat(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "repeat") throw new ArgumentException("node");
 
             var times = node.Element("times");
             if (times == null)
                 throw new ParseException("<repeat> node requires a <times> node.");
-            Times = (int)float.Parse(times.Value);
+            Times = new Expression(times.Value);
 
             var action = node.Element("action");
             if (action == null)
@@ -55,6 +52,7 @@ namespace Tamago
         /// </summary>
         public void Reset()
         {
+            IsCompleted = false;
             timesRunCount = 0;
         }
 
@@ -71,7 +69,10 @@ namespace Tamago
             if (IsCompleted)
                 return true;
 
-            while (timesRunCount < Times)
+            // must be rounded down
+            int times = (int)Times.Evaluate();
+
+            while (!(IsCompleted = timesRunCount >= times))
             {
                 var isDone = Action.Run(bullet);
 

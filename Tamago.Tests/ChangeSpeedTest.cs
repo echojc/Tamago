@@ -29,6 +29,13 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsArgumentExceptionIfNodeIsNotChangeSpeed()
+        {
+            var node = XElement.Parse(@"<foo/>");
+            Assert.Throws<ArgumentException>(() => new ChangeSpeed(node));
+        }
+
+        [Test]
         public void ThrowsParseExceptionIfEmptyNode()
         {
             var node = XElement.Parse(@"
@@ -88,21 +95,7 @@ namespace Tamago.Tests
 
             var change = new ChangeSpeed(node);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 2.5f), change.Speed);
-            Assert.AreEqual(3, change.Term);
-        }
-
-        [Test]
-        public void ParsesTermRoundingDown()
-        {
-            var node = XElement.Parse(@"
-              <changeSpeed>
-                <speed>2.5</speed>
-                <term>3.9</term>
-              </changeSpeed>
-            ");
-
-            var change = new ChangeSpeed(node);
-            Assert.AreEqual(3, change.Term);
+            Assert.AreEqual(new Expression(3), change.Term);
         }
 
         [Test]
@@ -116,9 +109,10 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeSpeed(node);
-            Assert.True(change.IsCompleted);
+            Assert.False(change.IsCompleted);
 
             change.Run(TestBullet);
+            Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(2.5f, TestBullet.Speed);
         }
@@ -134,9 +128,10 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeSpeed(node);
-            Assert.True(change.IsCompleted);
+            Assert.False(change.IsCompleted);
 
             change.Run(TestBullet);
+            Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(2.5f, TestBullet.Speed);
         }
@@ -152,9 +147,10 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeSpeed(node);
-            Assert.True(change.IsCompleted);
+            Assert.False(change.IsCompleted);
 
             change.Run(TestBullet);
+            Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed, TestBullet.Speed);
         }
@@ -176,6 +172,26 @@ namespace Tamago.Tests
             Assert.False(change.IsCompleted);
 
             Assert.True(change.Run(TestBullet));
+            Assert.False(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            Assert.True(change.IsCompleted);
+
+            Assert.True(change.Run(TestBullet));
+            Assert.True(change.IsCompleted);
+        }
+
+        [Test]
+        public void SetsIsCompletedWhenRunXTimesRoundingDown()
+        {
+            var node = XElement.Parse(@"
+              <changeSpeed>
+                <speed>2.5</speed>
+                <term>1.9</term>
+              </changeSpeed>
+            ");
+
+            var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
             Assert.True(change.Run(TestBullet));
@@ -331,6 +347,7 @@ namespace Tamago.Tests
             Assert.AreEqual(DefaultSpeed + 2.4f, TestBullet.Speed, 0.00001f);
 
             change.Reset();
+            Assert.False(change.IsCompleted);
 
             Assert.True(change.Run(TestBullet));
             TestBullet.Update();
@@ -347,6 +364,21 @@ namespace Tamago.Tests
             Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 4.8f, TestBullet.Speed, 0.00001f);
+        }
+
+        [Test]
+        public void AcceptsExpressionsInAllFields()
+        {
+            var node = XElement.Parse(@"
+              <changeSpeed>
+                <speed>3+4</speed>
+                <term>1+2</term>
+              </changeSpeed>
+            ");
+
+            var change = new ChangeSpeed(node);
+            Assert.AreEqual(new Speed(SpeedType.Absolute, new Expression("3+4")), change.Speed);
+            Assert.AreEqual(new Expression("1+2"), change.Term);
         }
     }
 }

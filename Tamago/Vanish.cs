@@ -19,8 +19,8 @@ namespace Tamago
         /// <param name="node">The &lt;vanish&gt; node.</param>
         public Vanish(XElement node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.Name.LocalName != "vanish") throw new ArgumentException("node");
 
             Reset();
         }
