@@ -17,7 +17,7 @@ namespace Tamago.Tests
         internal Bullet CreateTopLevelBullet(string xml)
         {
             var bullet = TestManager.CreateBullet();
-            var pattern = BulletPattern.ParseString(xml);
+            var pattern = new BulletPattern(xml);
             bullet.SetPattern(pattern.TopLevelAction, isTopLevel: true);
             return bullet;
         }
