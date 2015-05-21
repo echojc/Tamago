@@ -300,7 +300,10 @@ namespace Tamago
 
             if (end != start) // matched
             {
-                int arg = int.Parse(new string(input, start, end - start));
+                int arg;
+                if (!int.TryParse(new string(input, start, end - start), out arg))
+                    return -start;
+
                 match = new Param(arg);
                 return end;
             }
@@ -339,7 +342,12 @@ namespace Tamago
 
             if (end != start) // matched numbers
             {
-                int integral = int.Parse(new string(input, start, end - start));
+                int integral;
+                if (!int.TryParse(new string(input, start, end - start), out integral))
+                {
+                    match = new Const(0);
+                    return -start;
+                }
 
                 float fractional;
                 int end2 = ParseFractional(input, end, out fractional);
@@ -380,7 +388,9 @@ namespace Tamago
             if (end == start + 1) // didn't match anything after '.'
                 return -start;
 
-            match = float.Parse(new string(input, start, end - start));
+            if (!float.TryParse(new string(input, start, end - start), out match))
+                return -start;
+
             return end;
         }
 

@@ -96,6 +96,12 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void ThrowsParseErrorOnOverflow()
+        {
+            Assert.Throws<ParseException>(() => new Expression("999999999999999999999"));
+        }
+
+        [Test]
         public void ParsesNegativeTerms()
         {
             var expr1 = new Expression("-123.123");
@@ -206,6 +212,19 @@ namespace Tamago.Tests
             Assert.AreEqual(3.7f, expr1.Evaluate(new[] { 1.2f, 2.5f }), 0.00001f);
             Assert.AreEqual(0f, expr2.Evaluate(), 0.00001f);
             Assert.AreEqual(3.7f, expr3.Evaluate(new[] { 1.2f, 2.5f }), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesParamsIgnoringLeadingZeroes()
+        {
+            var expr = new Expression("$00000000000000000000002");
+            Assert.AreEqual(3.7f, expr.Evaluate(new[] { 0.8f, 3.7f, 2.5f }), 0.00001f);
+        }
+
+        [Test]
+        public void ThrowsParseExceptionOnParamIndexOverflow()
+        {
+            Assert.Throws<ParseException>(() => new Expression("$99999999999999999999999999"));
         }
 
         [Test]
