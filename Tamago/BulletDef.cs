@@ -32,9 +32,11 @@ namespace Tamago
         /// Parses a &lt;bullet&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;bullet&gt; node.</param>
-        public BulletDef(XElement node)
+        /// <param name="pattern">The pattern this node belongs to.</param>
+        public BulletDef(XElement node, BulletPattern pattern)
         {
             if (node == null) throw new ArgumentNullException("node");
+            if (pattern == null) throw new ArgumentNullException("pattern");
             if (node.Name.LocalName != "bullet") throw new ArgumentException("node");
 
             var speed = node.Element("speed");
@@ -49,7 +51,7 @@ namespace Tamago
 
             var actionRef = node.Element("action");
             if (actionRef != null)
-                Action = new ActionDef(actionRef);
+                Action = new ActionDef(actionRef, pattern);
             else
                 Action = ActionDef.Default;
         }

@@ -49,9 +49,10 @@ namespace Tamago
         /// Parses a &lt;fire&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;fire&gt; node.</param>
-        public FireDef(XElement node)
+        public FireDef(XElement node, BulletPattern pattern)
         {
             if (node == null) throw new ArgumentNullException("node");
+            if (pattern == null) throw new ArgumentNullException("pattern");
             if (node.Name.LocalName != "fire") throw new ArgumentException("node");
 
             var bulletRef = node.Element("bullet");
@@ -70,7 +71,7 @@ namespace Tamago
             if (label != null)
                 Label = label.Value;
 
-            BulletRef = new BulletDef(bulletRef);
+            BulletRef = new BulletDef(bulletRef, pattern);
 
             Reset();
         }

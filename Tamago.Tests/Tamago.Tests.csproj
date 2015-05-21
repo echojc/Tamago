@@ -42,6 +42,7 @@
     <Compile Include="AccelTest.cs" />
     <Compile Include="ActionDefComplexTest.cs" />
     <Compile Include="ActionDefTest.cs" />
+    <Compile Include="ActionRefTest.cs" />
     <Compile Include="BulletPatternTest.cs" />
     <Compile Include="BulletTest.cs" />
     <Compile Include="BulletDefTest.cs" />

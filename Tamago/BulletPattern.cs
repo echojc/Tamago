@@ -27,7 +27,7 @@ namespace Tamago
 
                 // extract all labelled actions
                 var actions = (from node in root.XPathSelectElements("action")
-                               select new ActionDef(node)).ToList();
+                               select new ActionDef(node, this)).ToList();
 
                 if (actions.Exists(a => a.Label == null))
                     throw new ParseException("Top level actions must be labelled.");

@@ -20,14 +20,26 @@ namespace Tamago.Tests
         [Test]
         public void ThrowsArgumentNullIfNodeToConstructFromIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new Repeat(null));
+            Assert.Throws<ArgumentNullException>(() => new Repeat(null, DummyPattern));
+        }
+
+        [Test]
+        public void ThrowsArgumentNullIfPatternIsNull()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>1</times>
+                <action/>
+              </repeat>
+            ");
+            Assert.Throws<ArgumentNullException>(() => new Repeat(node, null));
         }
 
         [Test]
         public void ThrowsArgumentExceptionIfNodeIsNotRepeat()
         {
             var node = XElement.Parse(@"<foo/>");
-            Assert.Throws<ArgumentException>(() => new Repeat(node));
+            Assert.Throws<ArgumentException>(() => new Repeat(node, DummyPattern));
         }
 
         [Test]
@@ -40,7 +52,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.Throws<ArgumentNullException>(() => repeat.Run(null));
         }
 
@@ -53,11 +65,11 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            Assert.Throws<ParseException>(() => new Repeat(node));
+            Assert.Throws<ParseException>(() => new Repeat(node, DummyPattern));
         }
 
         [Test]
-        public void ThrowsParseExceptionIfNoAction()
+        public void ThrowsParseExceptionIfNoActionOrActionRef()
         {
             var node = XElement.Parse(@"
               <repeat>
@@ -65,7 +77,21 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            Assert.Throws<ParseException>(() => new Repeat(node));
+            Assert.Throws<ParseException>(() => new Repeat(node, DummyPattern));
+        }
+
+        [Test]
+        public void ThrowsParseExceptionIfBothActionAndActionRef()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>3</times>
+                <action/>
+                <actionRef label=""foo""/>
+              </repeat>
+            ");
+
+            Assert.Throws<ParseException>(() => new Repeat(node, DummyPattern));
         }
 
         [Test]
@@ -78,7 +104,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.AreEqual(new Expression("2+1"), repeat.Times);
         }
 
@@ -96,7 +122,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             repeat.Run(TestBullet);
@@ -117,7 +143,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             repeat.Run(TestBullet);
@@ -138,7 +164,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
@@ -161,7 +187,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
@@ -184,7 +210,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             repeat.Run(TestBullet);
@@ -204,7 +230,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.False(repeat.IsCompleted);
 
             repeat.Run(TestBullet);
@@ -225,7 +251,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
@@ -264,7 +290,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
@@ -301,7 +327,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat = new Repeat(node);
+            var repeat = new Repeat(node, DummyPattern);
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
@@ -324,7 +350,7 @@ namespace Tamago.Tests
               </repeat>
             ");
 
-            var repeat1 = new Repeat(node);
+            var repeat1 = new Repeat(node, DummyPattern);
             var repeat2 = (Repeat)repeat1.Copy();
             Assert.AreNotSame(repeat1, repeat2);
 
@@ -333,8 +359,28 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
         public void AcceptsActionRefInPlaceOfAction()
-        { }
+        {
+            TestManager.Bullets.Clear();
+
+            CreateTopLevelBullet(@"
+              <bulletml> 
+                <action label=""top"">
+                  <repeat>
+                    <times>2</times>
+                    <actionRef label=""abc""/>
+                  </repeat>
+                </action>
+                <action label=""abc"">
+                  <fire><bullet/></fire>
+                </action>
+              </bulletml> 
+            ");
+
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
     }
 }

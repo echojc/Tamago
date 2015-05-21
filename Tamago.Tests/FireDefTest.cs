@@ -27,14 +27,25 @@ namespace Tamago.Tests
         [Test]
         public void ThrowsArgumentNullIfNodeToConstructFromIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new FireDef(null));
+            Assert.Throws<ArgumentNullException>(() => new FireDef(null, DummyPattern));
+        }
+
+        [Test]
+        public void ThrowsArgumentNullIfPatternIsNull()
+        {
+            var node = XElement.Parse(@"
+              <fire>
+                <bullet/>
+              </fire>
+            ");
+            Assert.Throws<ArgumentNullException>(() => new FireDef(node, null));
         }
 
         [Test]
         public void ThrowsArgumentExceptionIfNodeIsNotFireRef()
         {
             var node = XElement.Parse(@"<foo/>");
-            Assert.Throws<ArgumentException>(() => new FireDef(node));
+            Assert.Throws<ArgumentException>(() => new FireDef(node, DummyPattern));
         }
 
         [Test]
@@ -44,7 +55,7 @@ namespace Tamago.Tests
               <fire/>
             ");
 
-            Assert.Throws<ParseException>(() => new FireDef(node));
+            Assert.Throws<ParseException>(() => new FireDef(node, DummyPattern));
         }
 
         [Test]
@@ -56,7 +67,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             Assert.Throws<ArgumentNullException>(() => fireRef.Run(null));
         }
 
@@ -69,7 +80,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -87,7 +98,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -105,7 +116,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -123,7 +134,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -141,7 +152,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -159,7 +170,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -177,7 +188,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -195,7 +206,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -213,7 +224,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -231,7 +242,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -250,7 +261,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -270,7 +281,7 @@ namespace Tamago.Tests
               </fire>
             ");
 
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -292,7 +303,7 @@ namespace Tamago.Tests
               </fire>
             ");
 
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -314,7 +325,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             Assert.AreEqual("my label &", fireRef.Label);
         }
 
@@ -327,7 +338,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             Assert.Null(fireRef.Label);
         }
 
@@ -340,7 +351,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             Assert.False(fireRef.IsCompleted);
 
             Assert.True(fireRef.Run(TestBullet));
@@ -356,7 +367,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             fireRef.Run(TestBullet);
@@ -375,7 +386,7 @@ namespace Tamago.Tests
               </fire>
             ");
             
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             fireRef.Run(TestBullet);
@@ -400,7 +411,7 @@ namespace Tamago.Tests
               </fire>
             ");
 
-            var fireRef = new FireDef(node);
+            var fireRef = new FireDef(node, DummyPattern);
             fireRef.Run(TestBullet);
 
             var bullet = TestManager.Bullets.Last();
@@ -419,7 +430,7 @@ namespace Tamago.Tests
               </fire>
             ");
 
-            var fire1 = new FireDef(node);
+            var fire1 = new FireDef(node, DummyPattern);
             var fire2 = (FireDef)fire1.Copy();
             Assert.AreNotSame(fire1, fire2);
 

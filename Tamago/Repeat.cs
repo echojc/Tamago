@@ -18,7 +18,7 @@ namespace Tamago
         /// <summary>
         /// The action to repeat.
         /// </summary>
-        public ActionDef Action { get; private set; }
+        public IAction Action { get; private set; }
 
         /// <summary>
         /// True if the nested action has been completely run through <see cref="Times">Times</see> times.
@@ -39,9 +39,11 @@ namespace Tamago
         /// Parses a &lt;repeat&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;repeat&gt; node.</param>
-        public Repeat(XElement node)
+        /// <param name="pattern">The pattern this node belongs to.</param>
+        public Repeat(XElement node, BulletPattern pattern)
         {
             if (node == null) throw new ArgumentNullException("node");
+            if (pattern == null) throw new ArgumentNullException("pattern");
             if (node.Name.LocalName != "repeat") throw new ArgumentException("node");
 
             var times = node.Element("times");
@@ -50,9 +52,16 @@ namespace Tamago
             Times = new Expression(times.Value);
 
             var action = node.Element("action");
-            if (action == null)
-                throw new ParseException("<repeat> node requires an <action> node.");
-            Action = new ActionDef(action);
+            var actionRef = node.Element("actionRef");
+
+            if (action != null && actionRef != null)
+                throw new ParseException("<repeat> node must only have one of <action> or <actionRef> nodes.");
+            else if (action != null)
+                Action = new ActionDef(action, pattern);
+            else if (actionRef != null)
+                Action = new ActionRef(actionRef, pattern);
+            else
+                throw new ParseException("<repeat> node requires an <action> or an <actionRef> node.");
 
             Reset();
         }

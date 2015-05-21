@@ -157,5 +157,57 @@ namespace Tamago.Tests
             Assert.AreEqual(2.0f, bullet.VelocityX);
             Assert.AreEqual(4.0f, bullet.VelocityY);
         }
+
+        [Test]
+        [Ignore]
+        public void ResolvesRefsInClonedRepeatActions()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <repeat>
+                    <times>1</times>
+                    <actionRef label=""foo""/>
+                  </repeat>
+                </action>
+                <action label=""foo"">
+                  <repeat>
+                    <times>1</times>
+                    <actionRef label=""bar""/>
+                  </repeat>
+                </action>
+                <action label=""bar"">
+                  <fire><bullet/></fire>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        [Ignore]
+        public void ResolvesRefsInClonedActionActions()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <actionRef label=""foo""/>
+                </action>
+                <action label=""foo"">
+                  <actionRef label=""bar""/>
+                </action>
+                <action label=""bar"">
+                  <fire><bullet/></fire>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+        }
     }
 }

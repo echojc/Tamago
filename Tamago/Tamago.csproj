@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="Accel.cs" />
     <Compile Include="ActionDef.cs" />
+    <Compile Include="ActionRef.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="BulletPattern.cs" />
     <Compile Include="BulletDef.cs" />
@@ -46,6 +47,7 @@
     <Compile Include="Expression.cs" />
     <Compile Include="FireDef.cs" />
     <Compile Include="BulletManager.cs" />
+    <Compile Include="IAction.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="ParseException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

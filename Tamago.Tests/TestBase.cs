@@ -8,10 +8,20 @@ namespace Tamago.Tests
     {
         internal Helpers.TestManager TestManager;
 
+        /// <summary>
+        /// Allows tests to construct internal nodes directly.
+        /// </summary>
+        internal BulletPattern DummyPattern;
+
         [SetUp]
         public virtual void SetUp()
         {
             TestManager = new Helpers.TestManager();
+            DummyPattern = new BulletPattern(@"
+              <bulletml>
+                <action label=""top""/>
+              </bulletml>
+            ");
         }
 
         internal Bullet CreateTopLevelBullet(string xml)

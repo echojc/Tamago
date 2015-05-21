@@ -8,9 +8,10 @@ namespace Tamago
     /// <summary>
     /// Represents an &lt;action&gt; node.
     /// </summary>
-    public class ActionDef : Task
+    public class ActionDef : IAction
     {
-        private List<Task> _tasks = new List<Task>();
+        private BulletPattern _pattern;
+        private List<Task> _tasks;
 
         /// <summary>
         /// A read-only view of all tasks this action performs.
@@ -36,7 +37,7 @@ namespace Tamago
             get { return _tasks.TrueForAll(t => t.IsCompleted); }
         }
 
-        private static ActionDef _default = new ActionDef(XElement.Parse("<action/>"));
+        private static ActionDef _default = new ActionDef(new List<Task>(), null, null);
 
         /// <summary>
         /// A static instance for a no-op action.
@@ -49,8 +50,9 @@ namespace Tamago
         /// <summary>
         /// For cloning.
         /// </summary>
-        private ActionDef(List<Task> tasks, string label)
+        private ActionDef(List<Task> tasks, string label, BulletPattern pattern)
         {
+            _pattern = pattern;
             _tasks = tasks;
             Label = label;
             Reset();
@@ -60,15 +62,20 @@ namespace Tamago
         /// Parses an &lt;action&gt; node into an object representation.
         /// </summary>
         /// <param name="node">The &lt;action&gt; node.</param>
-        public ActionDef(XElement node)
+        /// <param name="pattern">The pattern this node belongs to.</param>
+        public ActionDef(XElement node, BulletPattern pattern)
         {
             if (node == null) throw new ArgumentNullException("node");
+            if (pattern == null) throw new ArgumentNullException("pattern");
             if (node.Name.LocalName != "action") throw new ArgumentException("node");
+
+            _pattern = pattern;
 
             var label = node.Attribute("label");
             if (label != null)
                 Label = label.Value;
 
+            _tasks = new List<Task>();
             foreach (var child in node.Elements())
             {
                 switch (child.Name.LocalName)
@@ -77,7 +84,7 @@ namespace Tamago
                         _tasks.Add(new Accel(child));
                         break;
                     case "action":
-                        _tasks.Add(new ActionDef(child));
+                        _tasks.Add(new ActionDef(child, _pattern));
                         break;
                     case "changeDirection":
                         _tasks.Add(new ChangeDirection(child));
@@ -86,10 +93,10 @@ namespace Tamago
                         _tasks.Add(new ChangeSpeed(child));
                         break;
                     case "fire":
-                        _tasks.Add(new FireDef(child));
+                        _tasks.Add(new FireDef(child, _pattern));
                         break;
                     case "repeat":
-                        _tasks.Add(new Repeat(child));
+                        _tasks.Add(new Repeat(child, _pattern));
                         break;
                     case "vanish":
                         _tasks.Add(new Vanish(child));
@@ -145,7 +152,7 @@ namespace Tamago
             foreach (Task t in _tasks)
                 copies.Add(t.Copy());
 
-            return new ActionDef(copies, Label);
+            return new ActionDef(copies, Label, _pattern);
         }
     }
 }
