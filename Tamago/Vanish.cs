@@ -29,8 +29,6 @@ namespace Tamago
         {
             if (node == null) throw new ArgumentNullException("node");
             if (node.Name.LocalName != "vanish") throw new ArgumentException("node");
-
-            Reset();
         }
 
         /// <summary>

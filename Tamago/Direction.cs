@@ -47,7 +47,7 @@ namespace Tamago
         public DirectionType Type { get; private set; }
 
         /// <summary>
-        /// The angle in radians, measured from directly up as 0, clockwise.
+        /// The angle in degrees, measured from directly up as 0, clockwise.
         /// </summary>
         public Expression Value { get; private set; }
 
@@ -55,7 +55,7 @@ namespace Tamago
         /// Represents a &lt;direction&gt; node.
         /// </summary>
         /// <param name="type">Specifies how to interpret the given value.</param>
-        /// <param name="value">The angle offset or value.</param>
+        /// <param name="value">The angle offset or value, in degrees.</param>
         public Direction(DirectionType type, float value)
             : this()
         {
@@ -67,7 +67,7 @@ namespace Tamago
         /// Represents a &lt;direction&gt; node.
         /// </summary>
         /// <param name="type">Specifies how to interpret the given value.</param>
-        /// <param name="expr">The expression to obtain the angle offset or value.</param>
+        /// <param name="expr">The expression to obtain the angle offset or value, in degrees.</param>
         public Direction(DirectionType type, Expression expr)
             : this()
         {

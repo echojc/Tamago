@@ -238,29 +238,6 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void CanNestAction()
-        {
-            var node = XElement.Parse(@"
-              <action>
-                <action>
-                  <fire>
-                    <bullet/>
-                  </fire>
-                </action>
-              </action>
-            ");
-
-            var action = new ActionDef(node, DummyPattern);
-            Assert.False(action.IsCompleted);
-            Assert.AreEqual(1, action.Tasks.Count);
-            Assert.AreEqual(1, TestManager.Bullets.Count);
-
-            Assert.True(action.Run(TestBullet));
-            Assert.True(action.IsCompleted);
-            Assert.AreEqual(2, TestManager.Bullets.Count);
-        }
-
-        [Test]
         public void ObeysWaits()
         {
             var node = XElement.Parse(@"
@@ -317,13 +294,106 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
-        public void CanNestActionRef()
-        { }
+        public void CanNestAction()
+        {
+            var node = XElement.Parse(@"
+              <action>
+                <action>
+                  <fire><bullet/></fire>
+                  <wait>1</wait>
+                  <fire><bullet/></fire>
+                </action>
+              </action>
+            ");
+
+            var action = new ActionDef(node, DummyPattern);
+            Assert.False(action.IsCompleted);
+            Assert.AreEqual(1, action.Tasks.Count);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            Assert.False(action.Run(TestBullet));
+            Assert.False(action.IsCompleted);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            Assert.True(action.Run(TestBullet));
+            Assert.True(action.IsCompleted);
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+
+            Assert.True(action.Run(TestBullet));
+            Assert.True(action.IsCompleted);
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
 
         [Test]
-        [Ignore]
+        public void CanNestActionRef()
+        {
+            var fooPattern = new BulletPattern(@"
+              <bulletml>
+                <action label=""top""/>
+                <action label=""foo"">
+                  <fire><bullet/></fire>
+                  <wait>1</wait>
+                  <fire><bullet/></fire>
+                </action>
+              </bulletml>
+            ");
+
+            var node = XElement.Parse(@"
+              <action>
+                <actionRef label=""foo""/>
+              </action>
+            ");
+
+            var action = new ActionDef(node, fooPattern);
+            Assert.False(action.IsCompleted);
+            Assert.AreEqual(1, action.Tasks.Count);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            Assert.False(action.Run(TestBullet));
+            Assert.False(action.IsCompleted);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            Assert.True(action.Run(TestBullet));
+            Assert.True(action.IsCompleted);
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+
+            Assert.True(action.Run(TestBullet));
+            Assert.True(action.IsCompleted);
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
+
+        [Test]
         public void CanNestFireRef()
-        { }
+        {
+            var fooPattern = new BulletPattern(@"
+              <bulletml>
+                <action label=""top""/>
+                <fire label=""foo"">
+                  <speed>2.718</speed>
+                  <direction type=""absolute"">70</direction>
+                  <bullet/>
+                </fire>
+              </bulletml>
+            ");
+
+            var node = XElement.Parse(@"
+              <action>
+                <fireRef label=""foo""/>
+              </action>
+            ");
+
+            var action = new ActionDef(node, fooPattern);
+            Assert.False(action.IsCompleted);
+            Assert.AreEqual(1, action.Tasks.Count);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            Assert.True(action.Run(TestBullet));
+            Assert.True(action.IsCompleted);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(2.718f, bullet.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(70), bullet.Direction);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Tamago.Tests
 {
@@ -33,14 +34,14 @@ namespace Tamago.Tests
             Assert.NotNull(root);
             Assert.AreEqual(0, root.X);
             Assert.AreEqual(0, root.Y);
-            Assert.True(root.Action.IsCompleted);
+            Assert.True(root.IsCompleted);
             Assert.True(root.IsVanished);
 
             // spawned bullets should move on the next frame
             Assert.NotNull(bullet);
             Assert.AreEqual(0, bullet.X);
             Assert.AreEqual(0, bullet.Y);
-            Assert.True(bullet.Action.IsCompleted);
+            Assert.True(bullet.IsCompleted);
             Assert.False(bullet.IsVanished);
 
             TestManager.Update();
@@ -50,13 +51,13 @@ namespace Tamago.Tests
             Assert.NotNull(root);
             Assert.AreEqual(0, root.X);
             Assert.AreEqual(0, root.Y);
-            Assert.True(root.Action.IsCompleted);
+            Assert.True(root.IsCompleted);
             Assert.True(root.IsVanished);
 
             Assert.NotNull(bullet);
             Assert.AreEqual(0.5f, bullet.X);
             Assert.AreEqual(-(float)(0.5 * Math.Sqrt(3)), bullet.Y);
-            Assert.True(bullet.Action.IsCompleted);
+            Assert.True(bullet.IsCompleted);
             Assert.False(bullet.IsVanished);
         }
 
@@ -152,7 +153,7 @@ namespace Tamago.Tests
             var bullet1 = TestManager.Bullets[1];
             Assert.AreEqual(0, bullet1.X, 0.00001f);
             Assert.AreEqual(0, bullet1.Y, 0.00001f);
-            Assert.False(bullet1.Action.IsCompleted);
+            Assert.False(bullet1.IsCompleted);
             Assert.False(bullet1.IsVanished);
 
             TestManager.Update();
@@ -160,13 +161,13 @@ namespace Tamago.Tests
 
             Assert.AreEqual(0, bullet1.X, 0.00001f);
             Assert.AreEqual(20, bullet1.Y, 0.00001f);
-            Assert.True(bullet1.Action.IsCompleted);
+            Assert.True(bullet1.IsCompleted);
             Assert.False(bullet1.IsVanished);
 
             var bullet2 = TestManager.Bullets[2];
             Assert.AreEqual(0, bullet2.X, 0.00001f);
             Assert.AreEqual(0, bullet2.Y, 0.00001f);
-            Assert.True(bullet2.Action.IsCompleted);
+            Assert.True(bullet2.IsCompleted);
             Assert.False(bullet2.IsVanished);
 
             TestManager.Update();
@@ -174,13 +175,68 @@ namespace Tamago.Tests
 
             Assert.AreEqual(0, bullet1.X, 0.00001f);
             Assert.AreEqual(40, bullet1.Y, 0.00001f);
-            Assert.True(bullet1.Action.IsCompleted);
+            Assert.True(bullet1.IsCompleted);
             Assert.False(bullet1.IsVanished);
 
             Assert.AreEqual(1, bullet2.X, 0.00001f);
             Assert.AreEqual(0, bullet2.Y, 0.00001f);
-            Assert.True(bullet2.Action.IsCompleted);
+            Assert.True(bullet2.IsCompleted);
             Assert.False(bullet2.IsVanished);
+        }
+
+        [Test]
+        public void BulletsRunMultipleActionsVanishAfterAllComplete()
+        {
+            var root = CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <fire>
+                    <direction type=""absolute"">200</direction>
+                    <bullet>
+                      <action>
+                        <wait>1</wait>
+                        <fire>
+                          <direction type=""absolute"">50</direction>
+                          <bullet/>
+                        </fire>
+                      </action>
+                      <action>
+                        <fire>
+                          <direction type=""absolute"">100</direction>
+                          <bullet/>
+                        </fire>
+                      </action>
+                    </bullet>
+                  </fire>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            // bullets don't run on the turn they're created
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(MathHelper.ToRadians(200), bullet.Direction);
+            Assert.True(root.IsVanished);
+            Assert.True(root.IsCompleted);
+
+            TestManager.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+            Assert.AreEqual(MathHelper.ToRadians(100), TestManager.Bullets.Last().Direction);
+            Assert.False(bullet.IsCompleted);
+            Assert.False(bullet.IsVanished);
+
+            TestManager.Update();
+            Assert.AreEqual(4, TestManager.Bullets.Count);
+            Assert.AreEqual(MathHelper.ToRadians(50), TestManager.Bullets.Last().Direction);
+            Assert.True(bullet.IsCompleted);
+            Assert.False(bullet.IsVanished);
+
+            TestManager.Update();
+            Assert.AreEqual(4, TestManager.Bullets.Count);
+            Assert.True(bullet.IsCompleted);
+            Assert.False(bullet.IsVanished);
         }
 
         [Test]

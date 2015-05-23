@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Tamago
@@ -11,7 +13,7 @@ namespace Tamago
         /// <summary>
         /// The actions performed by this bullet.
         /// </summary>
-        public ActionDef Action { get; private set; }
+        public List<IAction> Actions { get; private set; }
 
         /// <summary>
         /// The default speed for this bullet. Can be overidden by a parent &lt;fire&rt; node.
@@ -49,11 +51,13 @@ namespace Tamago
             if (label != null)
                 Label = label.Value;
 
-            var actionRef = node.Element("action");
-            if (actionRef != null)
-                Action = new ActionDef(actionRef, pattern);
-            else
-                Action = ActionDef.Default;
+            Actions = new List<IAction>();
+            var actions = from action in node.Elements("action")
+                          select new ActionDef(action, pattern);
+            Actions.AddRange(actions);
+            var actionRefs = from actionRef in node.Elements("actionRef")
+                             select new ActionRef(actionRef, pattern);
+            Actions.AddRange(actionRefs);
         }
 
         /// <summary>
@@ -66,7 +70,8 @@ namespace Tamago
                 throw new ArgumentNullException("parent");
 
             var newBullet = parent.BulletManager.CreateBullet();
-            newBullet.SetPattern((ActionDef)Action.Copy(), isTopLevel: false);
+            var copy = Actions.Select(a => (IAction)a.Copy()).ToList();
+            newBullet.SetPattern(copy, isTopLevel: false);
 
             var speed = Speed.Value.Evaluate();
             switch (Speed.Type)

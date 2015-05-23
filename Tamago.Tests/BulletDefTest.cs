@@ -156,14 +156,14 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void DefaultsToEmptyAction()
+        public void DefaultsToNoActions()
         {
             var node = XElement.Parse(@"
               <bullet/>
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            Assert.True(bulletRef.Action.IsCompleted);
+            CollectionAssert.IsEmpty(bulletRef.Actions);
         }
 
         [Test]
@@ -179,11 +179,14 @@ namespace Tamago.Tests
 
             var bulletRef = new BulletDef(node, DummyPattern);
             var bullet = bulletRef.Create(TestBullet);
-            Assert.False(bulletRef.Action.IsCompleted);
-            Assert.AreEqual(1, bulletRef.Action.Tasks.Count);
+            Assert.AreEqual(1, bulletRef.Actions.Count);
 
-            bulletRef.Action.Run(bullet);
-            Assert.True(bulletRef.Action.IsCompleted);
+            var action = bulletRef.Actions[0];
+            Assert.False(action.IsCompleted);
+            Assert.AreEqual(1, action.Tasks.Count);
+
+            action.Run(bullet);
+            Assert.True(action.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
         }
 
@@ -195,6 +198,10 @@ namespace Tamago.Tests
                 <action>
                   <fire><bullet/></fire>
                 </action>
+                <action>
+                  <wait>1</wait>
+                  <fire><bullet/></fire>
+                </action>
               </bullet>
             ");
 
@@ -202,29 +209,128 @@ namespace Tamago.Tests
             var bullet1 = bulletRef.Create(TestBullet);
             var bullet2 = bulletRef.Create(TestBullet);
             var bullet3 = bulletRef.Create(TestBullet);
-            Assert.False(bulletRef.Action.IsCompleted);
-            Assert.False(bullet1.Action.IsCompleted);
-            Assert.False(bullet2.Action.IsCompleted);
-            Assert.False(bullet3.Action.IsCompleted);
+            bulletRef.Actions.ForEach(a => Assert.False(a.IsCompleted));
+            Assert.False(bullet1.IsCompleted);
+            Assert.False(bullet2.IsCompleted);
+            Assert.False(bullet3.IsCompleted);
 
             bullet1.Update();
             bullet2.Update();
-            Assert.False(bulletRef.Action.IsCompleted);
-            Assert.True(bullet1.Action.IsCompleted);
-            Assert.True(bullet2.Action.IsCompleted);
-            Assert.False(bullet3.Action.IsCompleted);
+            bulletRef.Actions.ForEach(a => Assert.False(a.IsCompleted));
+            Assert.False(bullet1.IsCompleted);
+            Assert.False(bullet2.IsCompleted);
+            Assert.False(bullet3.IsCompleted);
             Assert.AreEqual(6, TestManager.Bullets.Count);
+
+            bullet1.Update();
+            bulletRef.Actions.ForEach(a => Assert.False(a.IsCompleted));
+            Assert.True(bullet1.IsCompleted);
+            Assert.False(bullet2.IsCompleted);
+            Assert.False(bullet3.IsCompleted);
+            Assert.AreEqual(7, TestManager.Bullets.Count);
+
+            bullet2.Update();
+            bulletRef.Actions.ForEach(a => Assert.False(a.IsCompleted));
+            Assert.True(bullet1.IsCompleted);
+            Assert.True(bullet2.IsCompleted);
+            Assert.False(bullet3.IsCompleted);
+            Assert.AreEqual(8, TestManager.Bullets.Count);
         }
 
         [Test]
-        [Ignore]
         public void AcceptsActionRefInPlaceOfAction()
-        { }
+        {
+            var fooPattern = new BulletPattern(@"
+              <bulletml>
+                <action label=""top""/>
+                <action label=""foo"">
+                  <fire><bullet/></fire>
+                </action>
+              </bulletml>
+            ");
+
+            var node = XElement.Parse(@"
+              <bullet>
+                <actionRef label=""foo""/>
+              </bullet>
+            ");
+
+            var bulletRef = new BulletDef(node, fooPattern);
+            var bullet = bulletRef.Create(TestBullet);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            bullet.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
 
         [Test]
-        [Ignore]
         public void ParsesAndRunsMultipleActions()
-        { }
+        {
+            TestManager.Bullets.Clear();
+
+            var fooPattern = new BulletPattern(@"
+              <bulletml>
+                <action label=""top""/>
+                <action label=""foo"">
+                  <fire>
+                    <direction type=""absolute"">90</direction>
+                    <bullet/>
+                  </fire>
+                </action>
+                <action label=""bar"">
+                  <wait>3</wait>
+                  <fire>
+                    <direction type=""absolute"">270</direction>
+                    <bullet/>
+                  </fire>
+                </action>
+              </bulletml>
+            ");
+
+            var node = XElement.Parse(@"
+              <bullet>
+                <action>
+                  <wait>1</wait>
+                  <fire>
+                    <direction type=""absolute"">0</direction>
+                    <bullet/>
+                  </fire>
+                </action>
+                <actionRef label=""foo""/>
+                <action>
+                  <wait>2</wait>
+                  <fire>
+                    <direction type=""absolute"">180</direction>
+                    <bullet/>
+                  </fire>
+                </action>
+                <actionRef label=""bar""/>
+              </bullet>
+            ");
+
+            var bulletRef = new BulletDef(node, fooPattern);
+            var bullet = bulletRef.Create(TestBullet);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            bullet.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+            Assert.AreEqual(MathHelper.ToRadians(90), TestManager.Bullets.Last().Direction);
+
+            bullet.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+            Assert.AreEqual(MathHelper.ToRadians(0), TestManager.Bullets.Last().Direction);
+
+            bullet.Update();
+            Assert.AreEqual(4, TestManager.Bullets.Count);
+            Assert.AreEqual(MathHelper.ToRadians(180), TestManager.Bullets.Last().Direction);
+
+            bullet.Update();
+            Assert.AreEqual(5, TestManager.Bullets.Count);
+            Assert.AreEqual(MathHelper.ToRadians(270), TestManager.Bullets.Last().Direction);
+
+            bullet.Update();
+            Assert.AreEqual(5, TestManager.Bullets.Count);
+        }
 
         [Test]
         public void UsesFireDirectionDefaultIfSet()

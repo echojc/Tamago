@@ -43,8 +43,6 @@ namespace Tamago
                 throw new ParseException("wait node without duration");
 
             Duration = new Expression(duration);
-
-            Reset();
         }
 
         /// <summary>

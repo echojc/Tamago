@@ -47,7 +47,9 @@
     <Compile Include="Expression.cs" />
     <Compile Include="FireDef.cs" />
     <Compile Include="BulletManager.cs" />
+    <Compile Include="FireRef.cs" />
     <Compile Include="IAction.cs" />
+    <Compile Include="IFire.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="ParseException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

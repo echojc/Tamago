@@ -28,7 +28,7 @@ namespace Tamago
         /// <summary>
         /// For cloning.
         /// </summary>
-        private Repeat(ActionDef actionRef, Expression times)
+        private Repeat(IAction actionRef, Expression times)
         {
             Action = actionRef;
             Times = times;
@@ -62,8 +62,6 @@ namespace Tamago
                 Action = new ActionRef(actionRef, pattern);
             else
                 throw new ParseException("<repeat> node requires an <action> or an <actionRef> node.");
-
-            Reset();
         }
 
         /// <summary>
@@ -112,7 +110,7 @@ namespace Tamago
         /// <returns>A reset copy of this task.</returns>
         public Task Copy()
         {
-            return new Repeat((ActionDef)Action.Copy(), Times);
+            return new Repeat((IAction)Action.Copy(), Times);
         }
     }
 }

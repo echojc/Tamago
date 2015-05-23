@@ -83,7 +83,7 @@ namespace Tamago
         /// </summary>
         public void Reset()
         {
-              Action.Reset();
+            Action.Reset();
         }
 
         /// <summary>

@@ -57,8 +57,6 @@ namespace Tamago
             if (term == null)
                 throw new ParseException("<changeSpeed> node requires a <term> node.");
             Term = new Expression(term.Value);
-
-            Reset();
         }
 
         /// <summary>

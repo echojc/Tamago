@@ -10,9 +10,13 @@ namespace Tamago
     {
         internal IBulletManager BulletManager;
 
-        public ActionDef Action { get; protected set; }
+        public List<IAction> Actions { get; protected set; }
         public bool IsTopLevel { get; protected set; }
         public bool IsVanished { get; set; }
+        public bool IsCompleted
+        {
+            get { return Actions.TrueForAll(a => a.IsCompleted); }
+        }
 
         public virtual float X { get; set; }
         public virtual float Y { get; set; }
@@ -56,9 +60,21 @@ namespace Tamago
         /// </summary>
         /// <param name="action">What this bullet will do.</param>
         /// <param name="isTopLevel">Whether this is a top level bullet (i.e., &lt;action label="top"/&gt;). Top level bullets should be invisible.</param>
-        public void SetPattern(ActionDef action, bool isTopLevel = false)
+        public void SetPattern(IAction action, bool isTopLevel = false)
         {
-            Action = action;
+            var list = new List<IAction>();
+            list.Add(action);
+            SetPattern(list, isTopLevel);
+        }
+
+        /// <summary>
+        /// Initializes this bullet with some behaviour.
+        /// </summary>
+        /// <param name="actions">What this bullet will do.</param>
+        /// <param name="isTopLevel">Whether this is a top level bullet (i.e., &lt;action label="top"/&gt;). Top level bullets should be invisible.</param>
+        public void SetPattern(List<IAction> actions, bool isTopLevel = false)
+        {
+            Actions = actions;
             IsTopLevel = isTopLevel;
             IsVanished = false;
         }
@@ -85,7 +101,7 @@ namespace Tamago
                 return;
 
             // actions are run before bullets move
-            Action.Run(this);
+            Actions.ForEach(a => a.Run(this));
 
             // apply queued changes if they exist
             if (NewSpeed != null)
@@ -113,7 +129,7 @@ namespace Tamago
 			X += (float)(Math.Sin(Direction) * Speed) + VelocityX;
 			Y += (float)(-Math.Cos(Direction) * Speed) + VelocityY;
 
-            if (IsTopLevel && Action.IsCompleted)
+            if (IsTopLevel && IsCompleted)
                 Vanish();
         }
 

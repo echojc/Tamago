@@ -51,6 +51,7 @@
     <Compile Include="DirectionTest.cs" />
     <Compile Include="ExpressionTest.cs" />
     <Compile Include="FireDefTest.cs" />
+    <Compile Include="FireRefTest.cs" />
     <Compile Include="Helpers\TestManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepeatTest.cs" />

@@ -6,7 +6,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;fire&gt; node.
     /// </summary>
-    public class FireDef : Task
+    public class FireDef : IFire
     {
         /// <summary>
         /// The bullet to fire.
@@ -72,8 +72,6 @@ namespace Tamago
                 Label = label.Value;
 
             BulletRef = new BulletDef(bulletRef, pattern);
-
-            Reset();
         }
 
         /// <summary>

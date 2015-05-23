@@ -13,8 +13,8 @@ namespace Tamago
         private float initialVelocityY;
         private float targetVelocityY;
 
-        private bool isFirstRun;
-        private int framesRunCount;
+        private bool isFirstRun = true;
+        private int framesRunCount = 0;
 
         /// <summary>
         /// The horizontal velocity to change to.
@@ -68,8 +68,6 @@ namespace Tamago
             var vertical = node.Element("vertical");
             if (vertical != null)
                 VelocityY = new Speed(vertical);
-
-            Reset();
         }
 
         /// <summary>

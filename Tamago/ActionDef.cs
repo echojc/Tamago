@@ -86,6 +86,9 @@ namespace Tamago
                     case "action":
                         _tasks.Add(new ActionDef(child, _pattern));
                         break;
+                    case "actionRef":
+                        _tasks.Add(new ActionRef(child, _pattern));
+                        break;
                     case "changeDirection":
                         _tasks.Add(new ChangeDirection(child));
                         break;
@@ -94,6 +97,9 @@ namespace Tamago
                         break;
                     case "fire":
                         _tasks.Add(new FireDef(child, _pattern));
+                        break;
+                    case "fireRef":
+                        _tasks.Add(new FireRef(child, _pattern));
                         break;
                     case "repeat":
                         _tasks.Add(new Repeat(child, _pattern));
@@ -106,8 +112,6 @@ namespace Tamago
                         break;
                 }
             }
-
-            Reset();
         }
 
         /// <summary>

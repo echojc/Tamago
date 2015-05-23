@@ -159,7 +159,6 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
         public void ResolvesRefsInClonedRepeatActions()
         {
             CreateTopLevelBullet(@"
@@ -188,7 +187,6 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
         public void ResolvesRefsInClonedActionActions()
         {
             CreateTopLevelBullet(@"
