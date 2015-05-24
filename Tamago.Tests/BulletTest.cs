@@ -240,10 +240,104 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
         public void MutableStateInTasksAreNotShared()
         {
-            // play with ActionRef used in multiple places
+            var root = CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <fire>
+                    <direction type=""absolute"">0</direction>
+                    <bullet>
+                      <actionRef label=""b""/>
+                    </bullet>
+                  </fire>
+                  <fire>
+                    <direction type=""absolute"">90</direction>
+                    <bullet>
+                      <actionRef label=""a""/>
+                    </bullet>
+                  </fire>
+                  <fire>
+                    <direction type=""absolute"">180</direction>
+                    <bullet>
+                      <actionRef label=""b""/>
+                    </bullet>
+                  </fire>
+                  <fire>
+                    <direction type=""absolute"">210</direction>
+                    <bullet>
+                      <actionRef label=""a""/>
+                      <actionRef label=""b""/>
+                    </bullet>
+                  </fire>
+                </action>
+                <action label=""a"">
+                  <wait>1</wait>
+                  <changeSpeed>
+                    <speed>4</speed>
+                    <term>2</term>
+                  </changeSpeed>
+                </action>
+                <action label=""b"">
+                  <changeDirection>
+                    <direction type=""absolute"">90</direction>
+                    <term>3</term>
+                  </changeDirection>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.Update();
+            Assert.AreEqual(5, TestManager.Bullets.Count);
+
+            var b1 = TestManager.Bullets[1];
+            var b2 = TestManager.Bullets[2];
+            var b3 = TestManager.Bullets[3];
+            var b4 = TestManager.Bullets[4];
+
+            Assert.AreEqual(1, b1.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(0), b1.Direction, 0.00001f);
+            Assert.AreEqual(1, b2.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(90), b2.Direction, 0.00001f);
+            Assert.AreEqual(1, b3.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(180), b3.Direction, 0.00001f);
+            Assert.AreEqual(1, b4.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(210), b4.Direction, 0.00001f);
+
+            TestManager.Update();
+            Assert.AreEqual(1, b1.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(30), b1.Direction, 0.00001f);
+            Assert.AreEqual(1, b2.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(90), b2.Direction, 0.00001f);
+            Assert.AreEqual(1, b3.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(150), b3.Direction, 0.00001f);
+            Assert.AreEqual(1, b4.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(170), b4.Direction, 0.00001f);
+
+            TestManager.Update();
+            Assert.AreEqual(1, b1.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(60), b1.Direction, 0.00001f);
+            Assert.AreEqual(2.5, b2.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(90), b2.Direction, 0.00001f);
+            Assert.AreEqual(1, b3.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(120), b3.Direction, 0.00001f);
+            Assert.AreEqual(2.5, b4.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(130), b4.Direction, 0.00001f);
+
+            // stabilises once animations are done
+            for (int i = 0; i < 2; i++)
+            {
+                TestManager.Update();
+                Assert.AreEqual(1, b1.Speed);
+                Assert.AreEqual(MathHelper.ToRadians(90), b1.Direction, 0.00001f);
+                Assert.AreEqual(4, b2.Speed);
+                Assert.AreEqual(MathHelper.ToRadians(90), b2.Direction, 0.00001f);
+                Assert.AreEqual(1, b3.Speed);
+                Assert.AreEqual(MathHelper.ToRadians(90), b3.Direction, 0.00001f);
+                Assert.AreEqual(4, b4.Speed);
+                Assert.AreEqual(MathHelper.ToRadians(90), b4.Direction, 0.00001f);
+            }
         }
     }
 }
