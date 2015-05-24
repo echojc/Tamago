@@ -227,5 +227,92 @@ namespace Tamago.Tests
         }
 
         #endregion
+
+        [Test]
+        public void ThrowsParseExceptionIfAnyRootLevelBulletHasNoLabel()
+        {
+            var xml = @"
+              <bulletml>
+                <action label=""top""/>
+                <bullet/>
+                <bullet label=""foo""/>
+              </bulletml>
+            ";
+            Assert.Throws<ParseException>(() => new BulletPattern(xml));
+        }
+
+        [Test]
+        public void ThrowsParseExceptionIfMultipleBulletsHaveTheSameLabel()
+        {
+            var xml = @"
+              <bulletml>
+                <action label=""top""/>
+                <bullet label=""foo""/>
+                <bullet label=""foo""/>
+              </bulletml>
+            ";
+            Assert.Throws<ParseException>(() => new BulletPattern(xml));
+        }
+
+        [Test]
+        public void AllowsNestedBulletsWithNoLabel()
+        {
+            var xml = @"
+              <bulletml>
+                <action label=""top""/>
+                <bullet label=""foo"">
+                  <action>
+                    <fire><bullet/></fire>
+                  </action>
+                </bullet>
+              </bulletml>
+            ";
+
+            Assert.DoesNotThrow(() => CreateTopLevelBullet(xml));
+        }
+
+        [Test]
+        public void LooksUpBulletByLabel()
+        {
+            var xml = @"
+              <bulletml>
+                <action label=""top""/>
+                <bullet label=""foo"">
+                  <speed>3</speed>
+                  <direction>10</direction>
+                </bullet>
+                <bullet label=""bar"">
+                  <speed>7</speed>
+                  <direction>17</direction>
+                </bullet>
+              </bulletml>
+            ";
+
+            var pattern = new BulletPattern(xml);
+
+            var bullet1 = pattern.FindBullet("foo");
+            Assert.AreEqual("foo", bullet1.Label);
+            Assert.AreEqual(new Speed(SpeedType.Absolute, 3), bullet1.Speed);
+            Assert.AreEqual(new Direction(DirectionType.Aim, 10), bullet1.Direction);
+
+            var bullet2 = pattern.FindBullet("bar");
+            Assert.AreEqual("bar", bullet2.Label);
+            Assert.AreEqual(new Speed(SpeedType.Absolute, 7), bullet2.Speed);
+            Assert.AreEqual(new Direction(DirectionType.Aim, 17), bullet2.Direction);
+        }
+
+        [Test]
+        public void ThrowsKeyNotFoundExceptionIfBulletDoesNotExist()
+        {
+            var xml = @"
+              <bulletml>
+                <action label=""top""/>
+              </bulletml>
+            ";
+
+            var pattern = new BulletPattern(xml);
+            Assert.Throws<KeyNotFoundException>(() => pattern.FindBullet("abc"));
+        }
+
     }
 }

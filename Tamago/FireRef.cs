@@ -56,9 +56,9 @@ namespace Tamago
         /// <summary>
         /// The bullet to fire.
         /// </summary>
-        public BulletDef BulletRef
+        public IBulletDefinition Bullet
         {
-            get { return Fire.BulletRef; }
+            get { return Fire.Bullet; }
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Tamago
         /// Copies this fire reference with the underlying fire unresolved.
         /// </summary>
         /// <returns>A fire reference that has not been resolved.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
             return new FireRef(Label, _pattern);
         }

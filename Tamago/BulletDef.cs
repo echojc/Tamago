@@ -8,7 +8,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;bullet&gt; node.
     /// </summary>
-    public class BulletDef
+    public class BulletDef : IBulletDefinition
     {
         /// <summary>
         /// The actions performed by this bullet.

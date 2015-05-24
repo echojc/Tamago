@@ -6,7 +6,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;wait&gt; node.
     /// </summary>
-    public class Wait : Task
+    public class Wait : ITask
     {
         private int framesRunCount = 0;
 
@@ -79,7 +79,7 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
             return new Wait(Duration);
         }

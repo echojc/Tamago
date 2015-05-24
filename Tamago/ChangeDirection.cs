@@ -6,7 +6,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;changeDirection&gt; node.
     /// </summary>
-    public class ChangeDirection : Task
+    public class ChangeDirection : ITask
     {
         private float initialDirection;
         private float targetDirection;
@@ -129,7 +129,7 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
             return new ChangeDirection(Direction, Term);
         }

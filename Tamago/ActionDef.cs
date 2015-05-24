@@ -11,7 +11,7 @@ namespace Tamago
     public class ActionDef : IAction
     {
         private BulletPattern _pattern;
-        private List<Task> _tasks;
+        private List<ITask> _tasks;
 
         /// <summary>
         /// A read-only view of all tasks this action performs.
@@ -19,7 +19,7 @@ namespace Tamago
         /// <remarks>
         /// You can still force underlying tasks to run but that's not recommended.
         /// </remarks>
-        public IList<Task> Tasks
+        public IList<ITask> Tasks
         {
             get { return _tasks.AsReadOnly(); }
         }
@@ -37,7 +37,7 @@ namespace Tamago
             get { return _tasks.TrueForAll(t => t.IsCompleted); }
         }
 
-        private static ActionDef _default = new ActionDef(new List<Task>(), null, null);
+        private static ActionDef _default = new ActionDef(new List<ITask>(), null, null);
 
         /// <summary>
         /// A static instance for a no-op action.
@@ -50,7 +50,7 @@ namespace Tamago
         /// <summary>
         /// For cloning.
         /// </summary>
-        private ActionDef(List<Task> tasks, string label, BulletPattern pattern)
+        private ActionDef(List<ITask> tasks, string label, BulletPattern pattern)
         {
             _pattern = pattern;
             _tasks = tasks;
@@ -75,7 +75,7 @@ namespace Tamago
             if (label != null)
                 Label = label.Value;
 
-            _tasks = new List<Task>();
+            _tasks = new List<ITask>();
             foreach (var child in node.Elements())
             {
                 switch (child.Name.LocalName)
@@ -150,10 +150,10 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
-            List<Task> copies = new List<Task>();
-            foreach (Task t in _tasks)
+            List<ITask> copies = new List<ITask>();
+            foreach (ITask t in _tasks)
                 copies.Add(t.Copy());
 
             return new ActionDef(copies, Label, _pattern);

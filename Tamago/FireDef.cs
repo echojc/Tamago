@@ -11,7 +11,7 @@ namespace Tamago
         /// <summary>
         /// The bullet to fire.
         /// </summary>
-        public BulletDef BulletRef { get; private set; }
+        public IBulletDefinition Bullet { get; private set; }
 
         /// <summary>
         /// The speed at which to fire the bullet. Overrides any settings specified by the bullet.
@@ -36,9 +36,9 @@ namespace Tamago
         /// <summary>
         /// For cloning.
         /// </summary>
-        private FireDef(BulletDef bulletRef, Speed? speed, Direction? direction, string label)
+        private FireDef(IBulletDefinition bulletRef, Speed? speed, Direction? direction, string label)
         {
-            BulletRef = bulletRef;
+            Bullet = bulletRef;
             Speed = speed;
             Direction = direction;
             Label = label;
@@ -55,9 +55,16 @@ namespace Tamago
             if (pattern == null) throw new ArgumentNullException("pattern");
             if (node.Name.LocalName != "fire") throw new ArgumentException("node");
 
-            var bulletRef = node.Element("bullet");
-            if (bulletRef == null)
-                throw new ParseException("<fire> node requires a <bullet> node.");
+            var bullet = node.Element("bullet");
+            var bulletRef = node.Element("bulletRef");
+            if (bullet != null && bulletRef != null)
+                throw new ParseException("<fire> node cannot have both <bullet> and <bulletRef> nodes.");
+            else if (bullet != null)
+                Bullet = new BulletDef(bullet, pattern);
+            else if (bulletRef != null)
+                Bullet = new BulletRef(bulletRef, pattern);
+            else
+                throw new ParseException("<fire> node requires a <bullet> or an <bulletRef> node.");
 
             var speed = node.Element("speed");
             if (speed != null)
@@ -70,8 +77,6 @@ namespace Tamago
             var label = node.Attribute("label");
             if (label != null)
                 Label = label.Value;
-
-            BulletRef = new BulletDef(bulletRef, pattern);
         }
 
         /// <summary>
@@ -96,7 +101,7 @@ namespace Tamago
                 return true;
 
             // create bullet from definition
-            var newBullet = BulletRef.Create(parent: bullet);
+            var newBullet = Bullet.Create(parent: bullet);
 
             // override with fire attributes
             if (Speed != null)
@@ -152,9 +157,9 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
-            return new FireDef(BulletRef, Speed, Direction, Label);
+            return new FireDef(Bullet, Speed, Direction, Label);
         }
     }
 }

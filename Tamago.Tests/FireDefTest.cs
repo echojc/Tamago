@@ -49,10 +49,23 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void ThrowsParseExceptionIfNoBulletNode()
+        public void ThrowsParseExceptionIfNoBulletOrBulletRefNode()
         {
             var node = XElement.Parse(@"
               <fire/>
+            ");
+
+            Assert.Throws<ParseException>(() => new FireDef(node, DummyPattern));
+        }
+
+        [Test]
+        public void ThrowsParseExceptionIfBothBulletAndBulletRefNode()
+        {
+            var node = XElement.Parse(@"
+              <fire>
+                <bullet/>
+                <bulletRef label=""foo""/>
+              </fire>
             ");
 
             Assert.Throws<ParseException>(() => new FireDef(node, DummyPattern));
@@ -312,9 +325,36 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
         public void AcceptsBulletRefInPlaceOfBullet()
-        { }
+        {
+            var fooPattern = new BulletPattern(@"
+              <bulletml>
+                <action label=""top""/>
+                <bullet label=""foo"">
+                  <speed>3.5</speed>
+                  <direction type=""absolute"">100</direction>
+                </bullet>
+              </bulletml>
+            ");
+
+            var node = XElement.Parse(@"
+              <fire>
+                <bulletRef label=""foo""/>
+              </fire>
+            ");
+
+            var fire = new FireDef(node, fooPattern);
+            Assert.False(fire.IsCompleted);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            Assert.True(fire.Run(TestBullet));
+            Assert.True(fire.IsCompleted);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(3.5f, bullet.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(100), bullet.Direction);
+        }
 
         [Test]
         public void ParsesLabel()
@@ -434,7 +474,7 @@ namespace Tamago.Tests
             var fire2 = (FireDef)fire1.Copy();
             Assert.AreNotSame(fire1, fire2);
 
-            Assert.AreSame(fire1.BulletRef, fire2.BulletRef);
+            Assert.AreSame(fire1.Bullet, fire2.Bullet);
             Assert.AreEqual(new Direction(DirectionType.Aim, 1), fire2.Direction);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 2), fire2.Speed);
             Assert.AreEqual("abc", fire2.Label);

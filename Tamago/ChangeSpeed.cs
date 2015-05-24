@@ -6,7 +6,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;changeSpeed&gt; node.
     /// </summary>
-    public class ChangeSpeed : Task
+    public class ChangeSpeed : ITask
     {
         private float initialSpeed;
         private float targetSpeed;
@@ -123,7 +123,7 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
             return new ChangeSpeed(Speed, Term);
         }

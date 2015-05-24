@@ -9,7 +9,7 @@ namespace Tamago
     /// <summary>
     /// Used for subclassing &lt;action&gt; and &lt;actionRef&gt; nodes.
     /// </summary>
-    public interface IAction : Task
+    public interface IAction : ITask, ILabelled
     {
         /// <summary>
         /// A read-only view of all tasks this action performs.
@@ -17,11 +17,6 @@ namespace Tamago
         /// <remarks>
         /// You can still force underlying tasks to run but that's not recommended.
         /// </remarks>
-        IList<Task> Tasks { get; }
-
-        /// <summary>
-        /// The name of this action.
-        /// </summary>
-        string Label { get; }
+        IList<ITask> Tasks { get; }
     }
 }

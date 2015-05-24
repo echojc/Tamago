@@ -6,7 +6,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;repeat&gt; node.
     /// </summary>
-    public class Repeat : Task
+    public class Repeat : ITask
     {
         private int timesRunCount = 0;
 
@@ -108,7 +108,7 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
             return new Repeat((IAction)Action.Copy(), Times);
         }

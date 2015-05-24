@@ -2,12 +2,15 @@
 
 namespace Tamago
 {
-    public interface IFire : Task
+    /// <summary>
+    /// Used for subclassing &lt;fire&gt; and &lt;fireRef&gt; nodes.
+    /// </summary>
+    public interface IFire : ITask, ILabelled
     {
         /// <summary>
         /// The bullet to fire.
         /// </summary>
-        BulletDef BulletRef { get; }
+        IBulletDefinition Bullet { get; }
 
         /// <summary>
         /// The speed at which to fire the bullet. Overrides any settings specified by the bullet.
@@ -18,10 +21,5 @@ namespace Tamago
         /// The direction at which to fire the bullet. Overrides any settings specified by the bullet.
         /// </summary>
         Direction? Direction { get; }
-
-        /// <summary>
-        /// Name of this node that can be referenced using &lt;fireRef&gt;.
-        /// </summary>
-        string Label { get; }
     }
 }

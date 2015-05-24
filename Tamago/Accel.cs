@@ -6,7 +6,7 @@ namespace Tamago
     /// <summary>
     /// Represents an &lt;accel&gt; node.
     /// </summary>
-    public class Accel : Task
+    public class Accel : ITask
     {
         private float initialVelocityX;
         private float targetVelocityX;
@@ -167,7 +167,7 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
             return new Accel(VelocityX, VelocityY, Term);
         }

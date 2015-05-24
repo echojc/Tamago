@@ -60,7 +60,7 @@ namespace Tamago
         /// <remarks>
         /// You can still force underlying tasks to run but that's not recommended.
         /// </remarks>
-        public IList<Task> Tasks
+        public IList<ITask> Tasks
         {
             get { return Action.Tasks; }
         }
@@ -100,7 +100,7 @@ namespace Tamago
         /// Copies this action reference with the underlying action unresolved.
         /// </summary>
         /// <returns>An action reference that has not been resolved.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
             return new ActionRef(Label, _pattern);
         }

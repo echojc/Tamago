@@ -6,7 +6,7 @@ namespace Tamago
     /// <summary>
     /// Represents a &lt;vanish&gt; node.
     /// </summary>
-    public class Vanish : Task
+    public class Vanish : ITask
     {
         /// <summary>
         /// True if this task has been successfully run.
@@ -62,7 +62,7 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        public Task Copy()
+        public ITask Copy()
         {
             return new Vanish();
         }

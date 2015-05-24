@@ -111,7 +111,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void ImplementsBulletRef()
+        public void ImplementsBullet()
         {
             var node = XElement.Parse(@"
               <fireRef label=""foo""/>
@@ -119,7 +119,7 @@ namespace Tamago.Tests
 
             var fire = new FireRef(node, FooPattern);
             var foo = FooPattern.FindFire("foo");
-            Assert.AreSame(foo.BulletRef, fire.BulletRef);
+            Assert.AreSame(foo.Bullet, fire.Bullet);
         }
 
         [Test]
@@ -223,7 +223,7 @@ namespace Tamago.Tests
 
             Assert.AreEqual(fire2.Speed, fire1.Speed);
             Assert.AreEqual(fire2.Direction, fire1.Direction);
-            Assert.AreEqual(fire2.BulletRef, fire1.BulletRef);
+            Assert.AreEqual(fire2.Bullet, fire1.Bullet);
             Assert.AreEqual(fire2.Label, fire1.Label);
 
             Assert.False(fire1.IsCompleted);

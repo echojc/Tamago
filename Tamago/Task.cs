@@ -9,7 +9,7 @@ namespace Tamago
     /// <summary>
     /// Extended by any node that can be inside an &lt;action&gt; node.
     /// </summary>
-    public interface Task
+    public interface ITask
     {
         /// <summary>
         /// True if this task has completed.
@@ -33,6 +33,6 @@ namespace Tamago
         /// Copies this task and resets it.
         /// </summary>
         /// <returns>A reset copy of this task.</returns>
-        Task Copy();
+        ITask Copy();
     }
 }

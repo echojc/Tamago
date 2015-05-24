@@ -42,6 +42,7 @@
     <Compile Include="Bullet.cs" />
     <Compile Include="BulletPattern.cs" />
     <Compile Include="BulletDef.cs" />
+    <Compile Include="BulletRef.cs" />
     <Compile Include="ChangeDirection.cs" />
     <Compile Include="ChangeSpeed.cs" />
     <Compile Include="Expression.cs" />
@@ -49,7 +50,9 @@
     <Compile Include="BulletManager.cs" />
     <Compile Include="FireRef.cs" />
     <Compile Include="IAction.cs" />
+    <Compile Include="IBulletDefinition.cs" />
     <Compile Include="IFire.cs" />
+    <Compile Include="ILabelled.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="ParseException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

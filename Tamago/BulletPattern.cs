@@ -6,14 +6,22 @@ using System.Xml.Linq;
 
 namespace Tamago
 {
+    /// <summary>
+    /// Represents an entire BulletML document.
+    /// </summary>
     public class BulletPattern
     {
         public const string TopLevelLabel = "top";
         private Dictionary<string, ActionDef> Actions;
         private Dictionary<string, FireDef> Fires;
+        private Dictionary<string, BulletDef> Bullets;
 
         public ActionDef TopLevelAction { get; private set; }
 
+        /// <summary>
+        /// Parses a BulletML string to create a usable internal representation of it.
+        /// </summary>
+        /// <param name="xml">The BulletML string.</param>
         public BulletPattern(string xml)
         {
             if (xml == null) throw new ArgumentNullException("xml");
@@ -25,8 +33,9 @@ namespace Tamago
                 if (root.Name.LocalName != "bulletml")
                     throw new ParseException("Root element must be <bulletml>.");
 
-                ParseActions(root);
-                ParseFires(root);
+                Actions = ParseLabelledNodes(root, "action", n => new ActionDef(n, this));
+                Fires = ParseLabelledNodes(root, "fire", n => new FireDef(n, this));
+                Bullets = ParseLabelledNodes(root, "bullet", n => new BulletDef(n, this));
 
                 // find top
                 if (!Actions.ContainsKey(TopLevelLabel))
@@ -40,34 +49,29 @@ namespace Tamago
             }
         }
 
-        private void ParseActions(XElement root)
+        /// <summary>
+        /// Extracts labelled nodes. Only searches direct children of the given node.
+        /// </summary>
+        /// <param name="root">The node to search.</param>
+        /// <param name="node">The name of the nodes to parse.</param>
+        /// <param name="ctor">How to construct the internal representation given the XML node.</param>
+        /// <returns>A dictionary mapping labels to T.</returns>
+        private static Dictionary<string, T> ParseLabelledNodes<T>(XElement root, string node, Func<XElement, T> ctor) where T : ILabelled
         {
-            var actions = (from node in root.Elements("action")
-                           select new ActionDef(node, this)).ToList();
-
-            if (actions.Exists(a => a.Label == null))
-                throw new ParseException("Top level actions must be labelled.");
-
-            var actionLabels = actions.Select(a => a.Label).Distinct().ToList();
-            if (actionLabels.Count != actions.Count)
-                throw new ParseException("Actions cannot share the same label.");
-
-            Actions = actions.ToDictionary(a => a.Label);
-        }
-
-        private void ParseFires(XElement root)
-        {
-            var fires = (from node in root.Elements("fire")
-                         select new FireDef(node, this)).ToList();
-
-            if (fires.Exists(f => f.Label == null))
-                throw new ParseException("Top level fires must be labelled.");
-
-            var fireLabels = fires.Select(f => f.Label).Distinct().ToList();
-            if (fireLabels.Count != fires.Count)
-                throw new ParseException("Fires cannot share the same label.");
-
-            Fires = fires.ToDictionary(f => f.Label);
+            try
+            {
+                return root.Elements(node)
+                    .Select(n => ctor(n))
+                    .ToDictionary(n => n.Label);
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new ParseException("Top level <" + node + "> must be labelled.", e);
+            }
+            catch (ArgumentException e)
+            {
+                throw new ParseException("Top level <" + node + "> cannot share the same label.", e);
+            }
         }
 
         /// <summary>
@@ -88,6 +92,16 @@ namespace Tamago
         public FireDef FindFire(string label)
         {
             return Fires[label];
+        }
+
+        /// <summary>
+        /// Looks for the bullet with the given label.
+        /// </summary>
+        /// <param name="label">The bullet to find.</param>
+        /// <exception cref="KeyNotFoundException">If bullet does not exist.</exception>
+        public BulletDef FindBullet(string label)
+        {
+            return Bullets[label];
         }
     }
 }
