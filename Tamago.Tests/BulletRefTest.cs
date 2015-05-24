@@ -21,7 +21,6 @@ namespace Tamago.Tests
 
             FooPattern = new BulletPattern(@"
               <bulletml>
-                <action label=""top""/>
                 <bullet label=""foo"">
                   <speed>3</speed>
                   <direction type=""absolute"">150</direction>

@@ -329,7 +329,6 @@ namespace Tamago.Tests
         {
             var fooPattern = new BulletPattern(@"
               <bulletml>
-                <action label=""top""/>
                 <action label=""foo"">
                   <fire><bullet/></fire>
                   <wait>1</wait>
@@ -367,7 +366,6 @@ namespace Tamago.Tests
         {
             var fooPattern = new BulletPattern(@"
               <bulletml>
-                <action label=""top""/>
                 <fire label=""foo"">
                   <speed>2.718</speed>
                   <direction type=""absolute"">70</direction>

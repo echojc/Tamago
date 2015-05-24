@@ -28,24 +28,6 @@ namespace Tamago.Tests
             Assert.Throws<ParseException>(() => new BulletPattern(xml));
         }
 
-        [Test]
-        public void DoesNotAllowEmptyRoot()
-        {
-            var xml = @"<bulletml/>";
-            Assert.Throws<ParseException>(() => new BulletPattern(xml));
-        }
-
-        [Test]
-        public void ThrowsParseExceptionIfMissingTopAction()
-        {
-            var xml = @"
-              <bulletml>
-                <action label=""hi""><fire><bullet/></fire></action>
-              </bulletml>
-            ";
-            Assert.Throws<ParseException>(() => new BulletPattern(xml));
-        }
-
         #region Actions
 
         [Test]
@@ -154,7 +136,6 @@ namespace Tamago.Tests
         {
             var xml = @"
               <bulletml>
-                <action label=""top""/>
                 <fire label=""foo""><bullet/></fire>
                 <fire label=""foo""><bullet/></fire>
               </bulletml>
@@ -167,7 +148,6 @@ namespace Tamago.Tests
         {
             var xml = @"
               <bulletml>
-                <action label=""top""/>
                 <fire label=""foo"">
                   <bullet>
                     <action>
@@ -178,7 +158,7 @@ namespace Tamago.Tests
               </bulletml>
             ";
 
-            Assert.DoesNotThrow(() => CreateTopLevelBullet(xml));
+            Assert.DoesNotThrow(() => new BulletPattern(xml));
         }
 
         [Test]
@@ -186,7 +166,6 @@ namespace Tamago.Tests
         {
             var xml = @"
               <bulletml>
-                <action label=""top""/>
                 <fire label=""foo"">
                   <speed>3</speed>
                   <direction>10</direction>
@@ -228,12 +207,13 @@ namespace Tamago.Tests
 
         #endregion
 
+        #region Bullets
+
         [Test]
         public void ThrowsParseExceptionIfAnyRootLevelBulletHasNoLabel()
         {
             var xml = @"
               <bulletml>
-                <action label=""top""/>
                 <bullet/>
                 <bullet label=""foo""/>
               </bulletml>
@@ -246,7 +226,6 @@ namespace Tamago.Tests
         {
             var xml = @"
               <bulletml>
-                <action label=""top""/>
                 <bullet label=""foo""/>
                 <bullet label=""foo""/>
               </bulletml>
@@ -259,7 +238,6 @@ namespace Tamago.Tests
         {
             var xml = @"
               <bulletml>
-                <action label=""top""/>
                 <bullet label=""foo"">
                   <action>
                     <fire><bullet/></fire>
@@ -268,7 +246,7 @@ namespace Tamago.Tests
               </bulletml>
             ";
 
-            Assert.DoesNotThrow(() => CreateTopLevelBullet(xml));
+            Assert.DoesNotThrow(() => new BulletPattern(xml));
         }
 
         [Test]
@@ -276,7 +254,6 @@ namespace Tamago.Tests
         {
             var xml = @"
               <bulletml>
-                <action label=""top""/>
                 <bullet label=""foo"">
                   <speed>3</speed>
                   <direction>10</direction>
@@ -314,5 +291,6 @@ namespace Tamago.Tests
             Assert.Throws<KeyNotFoundException>(() => pattern.FindBullet("abc"));
         }
 
+        #endregion 
     }
 }

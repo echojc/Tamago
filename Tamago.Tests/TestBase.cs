@@ -17,18 +17,14 @@ namespace Tamago.Tests
         public virtual void SetUp()
         {
             TestManager = new Helpers.TestManager();
-            DummyPattern = new BulletPattern(@"
-              <bulletml>
-                <action label=""top""/>
-              </bulletml>
-            ");
+            DummyPattern = new BulletPattern(@"<bulletml/>");
         }
 
-        internal Bullet CreateTopLevelBullet(string xml)
+        internal Bullet CreateTopLevelBullet(string xml, string name = "top")
         {
             var bullet = TestManager.CreateBullet();
             var pattern = new BulletPattern(xml);
-            bullet.SetPattern(pattern.TopLevelAction, isTopLevel: true);
+            bullet.SetPattern(pattern.FindAction(name), isTopLevel: true);
             return bullet;
         }
     }

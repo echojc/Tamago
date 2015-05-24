@@ -242,7 +242,6 @@ namespace Tamago.Tests
         {
             var fooPattern = new BulletPattern(@"
               <bulletml>
-                <action label=""top""/>
                 <action label=""foo"">
                   <fire><bullet/></fire>
                 </action>
@@ -270,7 +269,6 @@ namespace Tamago.Tests
 
             var fooPattern = new BulletPattern(@"
               <bulletml>
-                <action label=""top""/>
                 <action label=""foo"">
                   <fire>
                     <direction type=""absolute"">90</direction>

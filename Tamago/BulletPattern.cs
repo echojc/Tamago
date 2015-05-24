@@ -11,12 +11,9 @@ namespace Tamago
     /// </summary>
     public class BulletPattern
     {
-        public const string TopLevelLabel = "top";
         private Dictionary<string, ActionDef> Actions;
         private Dictionary<string, FireDef> Fires;
         private Dictionary<string, BulletDef> Bullets;
-
-        public ActionDef TopLevelAction { get; private set; }
 
         /// <summary>
         /// Parses a BulletML string to create a usable internal representation of it.
@@ -36,12 +33,6 @@ namespace Tamago
                 Actions = ParseLabelledNodes(root, "action", n => new ActionDef(n, this));
                 Fires = ParseLabelledNodes(root, "fire", n => new FireDef(n, this));
                 Bullets = ParseLabelledNodes(root, "bullet", n => new BulletDef(n, this));
-
-                // find top
-                if (!Actions.ContainsKey(TopLevelLabel))
-                    throw new ParseException("Must have an action labelled '" + TopLevelLabel + "'.");
-
-                TopLevelAction = Actions[TopLevelLabel];
             }
             catch (XmlException e)
             {

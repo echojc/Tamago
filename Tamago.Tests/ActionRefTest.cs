@@ -20,7 +20,6 @@ namespace Tamago.Tests
 
             FooPattern = new BulletPattern(@"
               <bulletml>
-                <action label=""top""/>
                 <action label=""foo"">
                   <wait>1</wait>
                   <fire><bullet/></fire>
