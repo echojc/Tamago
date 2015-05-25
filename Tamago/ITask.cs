@@ -26,8 +26,9 @@ namespace Tamago
         /// Runs this task on the given bullet. This should be called at 60 fps.
         /// </summary>
         /// <param name="bullet">The bullet to run this task on.</param>
+        /// <param name="args">Values for params in expressions.</param>
         /// <returns>True if following tasks should be run, otherwise false.</returns>
-        bool Run(Bullet bullet);
+        bool Run(Bullet bullet, float[] args);
 
         /// <summary>
         /// Copies this task and resets it.

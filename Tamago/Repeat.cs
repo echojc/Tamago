@@ -77,8 +77,10 @@ namespace Tamago
         /// Repeats the given action <see cref="Times">Times</see> times, waiting as necessary.
         /// </summary>
         /// <param name="bullet">The bullet to run the tasks against.</param>
+        /// <param name="args">Values for params in expressions.</param>
+        /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
         /// <returns>True if no waiting is required, otherwise the result of the nested action.</returns>
-        public bool Run(Bullet bullet)
+        public bool Run(Bullet bullet, float[] args)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -87,11 +89,11 @@ namespace Tamago
                 return true;
 
             // must be rounded down
-            int times = (int)Times.Evaluate();
+            int times = (int)Times.Evaluate(args, bullet.BulletManager);
 
             while (!(IsCompleted = timesRunCount >= times))
             {
-                var isDone = Action.Run(bullet);
+                var isDone = Action.Run(bullet, args);
 
                 // if the action waits, we also stop immediately
                 if (!isDone)

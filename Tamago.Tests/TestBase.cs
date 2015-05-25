@@ -8,6 +8,8 @@ namespace Tamago.Tests
     {
         internal Helpers.TestManager TestManager;
 
+        internal static readonly float[] EmptyArray = new float[] { };
+
         /// <summary>
         /// Allows tests to construct internal nodes directly.
         /// </summary>

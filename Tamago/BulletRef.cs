@@ -78,9 +78,9 @@ namespace Tamago
         /// Creates a bullet from the context of the parent bullet using the underlying bullet.
         /// </summary>
         /// <param name="bullet">The parent bullet to create this bullet from.</param>
-        public Bullet Create(Bullet parent)
+        public Bullet Create(Bullet parent, float[] args)
         {
-            return Bullet.Create(parent);
+            return Bullet.Create(parent, args);
         }
     }
 }

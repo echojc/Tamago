@@ -149,14 +149,20 @@ namespace Tamago.Tests
             var bullet = new BulletRef(node, FooPattern);
             var foo = FooPattern.FindBullet("foo");
 
-            var bulletBullet = bullet.Create(TestBullet);
-            var fooBullet = foo.Create(TestBullet);
+            var bulletBullet = bullet.Create(TestBullet, EmptyArray);
+            var fooBullet = foo.Create(TestBullet, EmptyArray);
 
             Assert.AreEqual(fooBullet.Speed, bulletBullet.Speed);
             Assert.AreEqual(3, bulletBullet.Speed);
 
             Assert.AreEqual(fooBullet.Direction, bulletBullet.Direction);
             Assert.AreEqual(MathHelper.ToRadians(150), bulletBullet.Direction);
+        }
+
+        [Test]
+        [Ignore]
+        public void InjectsParams()
+        {
         }
     }
 }

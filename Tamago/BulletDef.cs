@@ -64,7 +64,8 @@ namespace Tamago
         /// Creates a bullet from the context of the parent bullet.
         /// </summary>
         /// <param name="bullet">The parent bullet to create this bullet from.</param>
-        public Bullet Create(Bullet parent)
+        /// <param name="args">Values for params in expressions.</param>
+        public Bullet Create(Bullet parent, float[] args)
         {
             if (parent == null)
                 throw new ArgumentNullException("parent");
@@ -73,7 +74,7 @@ namespace Tamago
             var copy = Actions.Select(a => (IAction)a.Copy()).ToList();
             newBullet.SetPattern(copy, isTopLevel: false);
 
-            var speed = Speed.Value.Evaluate();
+            var speed = Speed.Value.Evaluate(args, parent.BulletManager);
             switch (Speed.Type)
             {
                 case SpeedType.Relative:
@@ -89,7 +90,7 @@ namespace Tamago
             }
 
             float result;
-            var direction = MathHelper.ToRadians(Direction.Value.Evaluate());
+            var direction = MathHelper.ToRadians(Direction.Value.Evaluate(args, parent.BulletManager));
             switch (Direction.Type)
             {
                 case DirectionType.Relative:

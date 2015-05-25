@@ -28,6 +28,7 @@ namespace Tamago
         /// Creates a bullet from the context of the parent bullet.
         /// </summary>
         /// <param name="bullet">The parent bullet to create this bullet from.</param>
-        Bullet Create(Bullet parent);
+        /// <param name="args">Values for params in expressions.</param>
+        Bullet Create(Bullet parent, float[] args);
     }
 }

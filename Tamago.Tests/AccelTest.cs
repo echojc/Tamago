@@ -121,7 +121,7 @@ namespace Tamago.Tests
             ");
 
             var accel = new Accel(node);
-            Assert.Throws<ArgumentNullException>(() => accel.Run(null));
+            Assert.Throws<ArgumentNullException>(() => accel.Run(null, EmptyArray));
         }
 
         [Test]
@@ -136,16 +136,16 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            Assert.True(accel.Run(TestBullet));
+            Assert.True(accel.Run(TestBullet, EmptyArray));
             Assert.False(accel.IsCompleted);
 
-            Assert.True(accel.Run(TestBullet));
+            Assert.True(accel.Run(TestBullet, EmptyArray));
             Assert.False(accel.IsCompleted);
 
-            Assert.True(accel.Run(TestBullet));
+            Assert.True(accel.Run(TestBullet, EmptyArray));
             Assert.True(accel.IsCompleted);
 
-            Assert.True(accel.Run(TestBullet));
+            Assert.True(accel.Run(TestBullet, EmptyArray));
             Assert.True(accel.IsCompleted);
         }
 
@@ -161,10 +161,10 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            Assert.True(accel.Run(TestBullet));
+            Assert.True(accel.Run(TestBullet, EmptyArray));
             Assert.True(accel.IsCompleted);
 
-            Assert.True(accel.Run(TestBullet));
+            Assert.True(accel.Run(TestBullet, EmptyArray));
             Assert.True(accel.IsCompleted);
         }
 
@@ -182,7 +182,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             Assert.True(accel.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
@@ -203,7 +203,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             Assert.True(accel.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
@@ -224,7 +224,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             Assert.True(accel.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(DefaultVelocityX, TestBullet.VelocityX);
@@ -241,7 +241,7 @@ namespace Tamago.Tests
             ");
 
             var accel = new Accel(node);
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             Assert.Null(TestBullet.NewVelocityX);
             Assert.Null(TestBullet.NewVelocityY);
         }
@@ -260,7 +260,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + (2.3f - DefaultVelocityX) / 3,
@@ -271,7 +271,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + (2.3f - DefaultVelocityX) / 3 * 2,
@@ -282,12 +282,12 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
             Assert.AreEqual(4.2f, TestBullet.VelocityY);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
             Assert.AreEqual(4.2f, TestBullet.VelocityY);
@@ -307,7 +307,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + (2.3f - DefaultVelocityX) / 3,
@@ -318,7 +318,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + (2.3f - DefaultVelocityX) / 3 * 2,
@@ -329,12 +329,12 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
             Assert.AreEqual(4.2f, TestBullet.VelocityY);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
             Assert.AreEqual(4.2f, TestBullet.VelocityY);
@@ -354,7 +354,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 2.3f / 3,
@@ -365,7 +365,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 2.3f / 3 * 2,
@@ -376,12 +376,12 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(DefaultVelocityX + 2.3f, TestBullet.VelocityX);
             Assert.AreEqual(DefaultVelocityY + 4.2f, TestBullet.VelocityY);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(DefaultVelocityX + 2.3f, TestBullet.VelocityX);
             Assert.AreEqual(DefaultVelocityY + 4.2f, TestBullet.VelocityY);
@@ -401,7 +401,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 0.3,
@@ -412,7 +412,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 0.6,
@@ -423,7 +423,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 0.9f,
@@ -434,7 +434,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 0.9f,
@@ -460,7 +460,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 2.3f / 3,
@@ -471,7 +471,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 2.3f / 3 * 2,
@@ -482,7 +482,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 2.3f,
@@ -493,7 +493,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 2.3f,
@@ -519,7 +519,7 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 0.3,
@@ -530,7 +530,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 0.6,
@@ -541,7 +541,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 0.9f,
@@ -555,7 +555,7 @@ namespace Tamago.Tests
             accel.Reset();
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 1.2f,
@@ -566,7 +566,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 1.5f,
@@ -577,7 +577,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 1.8f,
@@ -588,7 +588,7 @@ namespace Tamago.Tests
                 TestBullet.VelocityY,
                 0.00001f);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultVelocityX + 1.8f,
@@ -614,12 +614,12 @@ namespace Tamago.Tests
             var accel = new Accel(node);
             Assert.False(accel.IsCompleted);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
             Assert.AreEqual(4.2f, TestBullet.VelocityY);
 
-            accel.Run(TestBullet);
+            accel.Run(TestBullet, EmptyArray);
             TestBullet.Update();
             Assert.AreEqual(2.3f, TestBullet.VelocityX);
             Assert.AreEqual(4.2f, TestBullet.VelocityY);
@@ -640,6 +640,29 @@ namespace Tamago.Tests
             Assert.AreEqual(new Speed(SpeedType.Absolute, new Expression("1+2")), accel.VelocityX);
             Assert.AreEqual(new Speed(SpeedType.Absolute, new Expression("3+4")), accel.VelocityY);
             Assert.AreEqual(new Expression("5+6"), accel.Term);
+        }
+        
+        [Test]
+        public void EvalsParamsRankRand()
+        {
+            var node = XElement.Parse(@"
+              <accel>
+                <horizontal>$rand</horizontal>
+                <vertical>$rank</vertical>
+                <term>$2</term>
+              </accel>
+            ");
+
+            var term = 2.5f;
+            var accel = new Accel(node);
+            accel.Run(TestBullet, new[] { 1.2f, term, 3.4f });
+
+            TestBullet.Update();
+            var expectedX = DefaultVelocityX + (Helpers.TestManager.TestRand - DefaultVelocityX) / (int)term;
+            Assert.AreEqual(expectedX, TestBullet.VelocityX);
+
+            var expectedY = DefaultVelocityY + (Helpers.TestManager.TestRank - DefaultVelocityY) / (int)term;
+            Assert.AreEqual(expectedY, TestBullet.VelocityY);
         }
         
         [Test]

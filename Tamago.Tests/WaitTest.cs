@@ -47,7 +47,7 @@ namespace Tamago.Tests
             ");
 
             var wait = new Wait(node);
-            Assert.Throws<ArgumentNullException>(() => wait.Run(null));
+            Assert.Throws<ArgumentNullException>(() => wait.Run(null, EmptyArray));
         }
 
         [Test]
@@ -62,6 +62,17 @@ namespace Tamago.Tests
         }
 
         [Test]
+        [Ignore]
+        public void ParsesEvalRandRank()
+        {
+            var node = XElement.Parse(@"
+              <wait>42 + 1</wait>
+            ");
+
+            var wait = new Wait(node);
+        }
+
+        [Test]
         public void CompletesAfterExecutingRunXTimes()
         {
             var node = XElement.Parse(@"
@@ -71,13 +82,13 @@ namespace Tamago.Tests
             var wait = new Wait(node);
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.Run(TestBullet, EmptyArray));
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.Run(TestBullet, EmptyArray));
             Assert.True(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet));
+            Assert.True(wait.Run(TestBullet, EmptyArray));
         }
 
         [Test]
@@ -90,13 +101,13 @@ namespace Tamago.Tests
             var wait = new Wait(node);
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.Run(TestBullet, EmptyArray));
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.Run(TestBullet, EmptyArray));
             Assert.True(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet));
+            Assert.True(wait.Run(TestBullet, EmptyArray));
         }
 
         [Test]
@@ -109,24 +120,24 @@ namespace Tamago.Tests
             var wait = new Wait(node);
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.Run(TestBullet, EmptyArray));
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.Run(TestBullet, EmptyArray));
             Assert.True(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet));
+            Assert.True(wait.Run(TestBullet, EmptyArray));
 
             wait.Reset();
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.Run(TestBullet, EmptyArray));
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet));
+            Assert.False(wait.Run(TestBullet, EmptyArray));
             Assert.True(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet));
+            Assert.True(wait.Run(TestBullet, EmptyArray));
         }
 
         [Test]

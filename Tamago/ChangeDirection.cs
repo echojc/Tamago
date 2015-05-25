@@ -78,8 +78,10 @@ namespace Tamago
         /// to prevent multiple &lt;changeDirection&gt;s from stacking their effects.
         /// </remarks>
         /// <param name="bullet">The bullet to change the direction of.</param>
+        /// <param name="args">Values for params in expressions.</param>
+        /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
         /// <returns>True always</returns>
-        public bool Run(Bullet bullet)
+        public bool Run(Bullet bullet, float[] args)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -88,14 +90,14 @@ namespace Tamago
                 return true;
 
             // must be rounded down
-            int term = (int)Term.Evaluate();
+            int term = (int)Term.Evaluate(args, bullet.BulletManager);
             
             if (isFirstRun)
             {
                 isFirstRun = false;
                 initialDirection = bullet.Direction;
 
-                var direction = MathHelper.ToRadians(Direction.Value.Evaluate());
+                var direction = MathHelper.ToRadians(Direction.Value.Evaluate(args, bullet.BulletManager));
                 switch (Direction.Type)
                 {
                     case DirectionType.Relative:

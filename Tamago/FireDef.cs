@@ -91,8 +91,10 @@ namespace Tamago
         /// Fires this bullet in the context of the parent bullet.
         /// </summary>
         /// <param name="bullet">The parent bullet firing this bullet.</param>
+        /// <param name="args">Values for params in expressions.</param>
+        /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
         /// <returns>True always</returns>
-        public bool Run(Bullet bullet)
+        public bool Run(Bullet bullet, float[] args)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -101,13 +103,13 @@ namespace Tamago
                 return true;
 
             // create bullet from definition
-            var newBullet = Bullet.Create(parent: bullet);
+            var newBullet = Bullet.Create(bullet, args);
 
             // override with fire attributes
             if (Speed != null)
             {
                 Speed s = Speed.Value;
-                var speed = s.Value.Evaluate();
+                var speed = s.Value.Evaluate(args, bullet.BulletManager);
                 switch (s.Type)
                 {
                     case SpeedType.Relative:
@@ -128,7 +130,7 @@ namespace Tamago
                 Direction d = Direction.Value;
 
                 float result;
-                var direction = MathHelper.ToRadians(d.Value.Evaluate());
+                var direction = MathHelper.ToRadians(d.Value.Evaluate(args, bullet.BulletManager));
                 switch (d.Type)
                 {
                     case DirectionType.Relative:

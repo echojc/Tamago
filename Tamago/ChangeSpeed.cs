@@ -78,8 +78,10 @@ namespace Tamago
         /// to prevent multiple &lt;changeSpeed&gt;s from stacking their effects.
         /// </remarks>
         /// <param name="bullet">The bullet to change the speed of.</param>
+        /// <param name="args">Values for params in expressions.</param>
+        /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
         /// <returns>True always</returns>
-        public bool Run(Bullet bullet)
+        public bool Run(Bullet bullet, float[] args)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -88,14 +90,14 @@ namespace Tamago
                 return true;
 
             // must be rounded down
-            int term = (int)Term.Evaluate();
+            int term = (int)Term.Evaluate(args, bullet.BulletManager);
             
             if (isFirstRun)
             {
                 isFirstRun = false;
                 initialSpeed = bullet.Speed;
 
-                var speed = Speed.Value.Evaluate();
+                var speed = Speed.Value.Evaluate(args, bullet.BulletManager);
                 switch (Speed.Type)
                 {
                     case SpeedType.Relative:

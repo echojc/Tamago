@@ -125,14 +125,14 @@ namespace Tamago.Tests
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             // <wait>1</wait>
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             // <fire/>
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.AreEqual(2, TestManager.Bullets.Count);
         }
 
@@ -147,14 +147,14 @@ namespace Tamago.Tests
             Assert.False(action.IsCompleted);
 
             // <wait>1</wait>
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.False(action.IsCompleted);
 
             // <fire/>
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.True(action.IsCompleted);
 
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.True(action.IsCompleted);
         }
 
@@ -167,8 +167,8 @@ namespace Tamago.Tests
 
             var action = new ActionRef(node, FooPattern);
 
-            action.Run(TestBullet);
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet, EmptyArray);
             Assert.True(action.IsCompleted);
 
             action.Reset();
@@ -176,16 +176,16 @@ namespace Tamago.Tests
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             // <wait>1</wait>
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             // <fire/>
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.True(action.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
 
-            action.Run(TestBullet);
+            action.Run(TestBullet, EmptyArray);
             Assert.True(action.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
         }
@@ -212,6 +212,12 @@ namespace Tamago.Tests
                     Assert.AreNotSame(a, b);
                     return true;
                 });
+        }
+
+        [Test]
+        [Ignore]
+        public void InjectsParams()
+        {
         }
     }
 }

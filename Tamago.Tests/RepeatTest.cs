@@ -53,7 +53,7 @@ namespace Tamago.Tests
             ");
 
             var repeat = new Repeat(node, DummyPattern);
-            Assert.Throws<ArgumentNullException>(() => repeat.Run(null));
+            Assert.Throws<ArgumentNullException>(() => repeat.Run(null, EmptyArray));
         }
 
         [Test]
@@ -109,6 +109,20 @@ namespace Tamago.Tests
         }
 
         [Test]
+        [Ignore]
+        public void ParsesParamsRandRank()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>$rank + $rand + $2</times>
+                <action/>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node, DummyPattern);
+        }
+
+        [Test]
         public void ExecutesActionXTimesWhenRun()
         {
             var node = XElement.Parse(@"
@@ -125,7 +139,7 @@ namespace Tamago.Tests
             var repeat = new Repeat(node, DummyPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.AreEqual(4, TestManager.Bullets.Count);
         }
 
@@ -146,7 +160,7 @@ namespace Tamago.Tests
             var repeat = new Repeat(node, DummyPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.AreEqual(4, TestManager.Bullets.Count);
         }
 
@@ -168,7 +182,7 @@ namespace Tamago.Tests
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
         }
@@ -191,7 +205,7 @@ namespace Tamago.Tests
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
         }
@@ -213,10 +227,10 @@ namespace Tamago.Tests
             var repeat = new Repeat(node, DummyPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.AreEqual(4, TestManager.Bullets.Count);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.AreEqual(4, TestManager.Bullets.Count);
         }
 
@@ -233,7 +247,7 @@ namespace Tamago.Tests
             var repeat = new Repeat(node, DummyPattern);
             Assert.False(repeat.IsCompleted);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.True(repeat.IsCompleted);
         }
 
@@ -255,23 +269,23 @@ namespace Tamago.Tests
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            Assert.False(repeat.Run(TestBullet));
+            Assert.False(repeat.Run(TestBullet, EmptyArray));
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            Assert.False(repeat.Run(TestBullet));
+            Assert.False(repeat.Run(TestBullet, EmptyArray));
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(4, TestManager.Bullets.Count);
 
-            Assert.False(repeat.Run(TestBullet));
+            Assert.False(repeat.Run(TestBullet, EmptyArray));
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(6, TestManager.Bullets.Count);
 
-            Assert.True(repeat.Run(TestBullet));
+            Assert.True(repeat.Run(TestBullet, EmptyArray));
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(7, TestManager.Bullets.Count);
 
-            Assert.True(repeat.Run(TestBullet));
+            Assert.True(repeat.Run(TestBullet, EmptyArray));
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(7, TestManager.Bullets.Count);
         }
@@ -294,18 +308,18 @@ namespace Tamago.Tests
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(4, TestManager.Bullets.Count);
 
             repeat.Reset();
             Assert.False(repeat.IsCompleted);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(7, TestManager.Bullets.Count);
 
-            repeat.Run(TestBullet);
+            repeat.Run(TestBullet, EmptyArray);
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(7, TestManager.Bullets.Count);
         }
@@ -331,11 +345,11 @@ namespace Tamago.Tests
             Assert.False(repeat.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            Assert.True(repeat.Run(TestBullet));
+            Assert.True(repeat.Run(TestBullet, EmptyArray));
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(7, TestManager.Bullets.Count);
 
-            Assert.True(repeat.Run(TestBullet));
+            Assert.True(repeat.Run(TestBullet, EmptyArray));
             Assert.True(repeat.IsCompleted);
             Assert.AreEqual(7, TestManager.Bullets.Count);
         }

@@ -101,7 +101,7 @@ namespace Tamago
                 return;
 
             // actions are run before bullets move
-            Actions.ForEach(a => a.Run(this));
+            Actions.ForEach(a => a.Run(this, new float[] { }));
 
             // apply queued changes if they exist
             if (NewSpeed != null)

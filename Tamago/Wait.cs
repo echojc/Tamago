@@ -58,8 +58,10 @@ namespace Tamago
         /// Prevents further task execution until <see cref="Duration">Duration</see> frames have passed.
         /// </summary>
         /// <param name="bullet">The bullet doing the waiting.</param>
+        /// <param name="args">Values for params in expressions.</param>
+        /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
         /// <returns>True if <see cref="Duration">Duration</see> frames have passed, otherwise false</returns>
-        public bool Run(Bullet bullet)
+        public bool Run(Bullet bullet, float[] args)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -68,7 +70,7 @@ namespace Tamago
                 return true;
 
             // must be rounded down
-            int duration = (int)Duration.Evaluate();
+            int duration = (int)Duration.Evaluate(args, bullet.BulletManager);
 
             framesRunCount++;
             IsCompleted = framesRunCount >= duration;

@@ -90,10 +90,12 @@ namespace Tamago
         /// Runs the underlying action.
         /// </summary>
         /// <param name="bullet">The bullet to run the underlying tasks against.</param>
+        /// <param name="args">Values for params in expressions.</param>
+        /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
         /// <returns>True if no waiting is required, otherwise the result of any nested &lt;wait&gt; nodes</returns>
-        public bool Run(Bullet bullet)
+        public bool Run(Bullet bullet, float[] args)
         {
-            return Action.Run(bullet);
+            return Action.Run(bullet, args);
         }
 
         /// <summary>

@@ -88,22 +88,22 @@ namespace Tamago.Tests
             Assert.False(fire.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet);
+            fire.Run(TestBullet, EmptyArray);
             Assert.False(foo.IsCompleted);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet);
+            fire.Run(TestBullet, EmptyArray);
             Assert.False(foo.IsCompleted);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            foo.Run(TestBullet);
+            foo.Run(TestBullet, EmptyArray);
             Assert.True(foo.IsCompleted);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
 
-            foo.Run(TestBullet);
+            foo.Run(TestBullet, EmptyArray);
             Assert.True(foo.IsCompleted);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
@@ -157,7 +157,7 @@ namespace Tamago.Tests
             var fire = new FireRef(node, FooPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet);
+            fire.Run(TestBullet, EmptyArray);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             var bullet = TestManager.Bullets.Last();
@@ -175,7 +175,7 @@ namespace Tamago.Tests
             var fire = new FireRef(node, FooPattern);
             Assert.False(fire.IsCompleted);
 
-            fire.Run(TestBullet);
+            fire.Run(TestBullet, EmptyArray);
             Assert.True(fire.IsCompleted);
         }
 
@@ -190,22 +190,22 @@ namespace Tamago.Tests
             Assert.False(fire.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet);
+            fire.Run(TestBullet, EmptyArray);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet);
+            fire.Run(TestBullet, EmptyArray);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             fire.Reset();
             Assert.False(fire.IsCompleted);
 
-            fire.Run(TestBullet);
+            fire.Run(TestBullet, EmptyArray);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet);
+            fire.Run(TestBullet, EmptyArray);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
         }
@@ -228,13 +228,19 @@ namespace Tamago.Tests
             Assert.False(fire1.IsCompleted);
             Assert.False(fire2.IsCompleted);
 
-            fire1.Run(TestBullet);
+            fire1.Run(TestBullet, EmptyArray);
             Assert.True(fire1.IsCompleted);
             Assert.False(fire2.IsCompleted);
 
-            fire2.Run(TestBullet);
+            fire2.Run(TestBullet, EmptyArray);
             Assert.True(fire1.IsCompleted);
             Assert.True(fire2.IsCompleted);
+        }
+
+        [Test]
+        [Ignore]
+        public void InjectsParams()
+        {
         }
     }
 }

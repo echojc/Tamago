@@ -37,7 +37,7 @@ namespace Tamago.Tests
             ");
 
             var vanish = new Vanish(node);
-            Assert.Throws<ArgumentNullException>(() => vanish.Run(null));
+            Assert.Throws<ArgumentNullException>(() => vanish.Run(null, EmptyArray));
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(TestBullet.IsVanished);
 
-            vanish.Run(TestBullet);
+            vanish.Run(TestBullet, EmptyArray);
             Assert.True(TestBullet.IsVanished);
         }
 
@@ -64,7 +64,7 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(vanish.IsCompleted);
 
-            Assert.True(vanish.Run(TestBullet));
+            Assert.True(vanish.Run(TestBullet, EmptyArray));
             Assert.True(vanish.IsCompleted);
         }
 
@@ -78,11 +78,11 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(vanish.IsCompleted);
 
-            vanish.Run(TestBullet);
+            vanish.Run(TestBullet, EmptyArray);
             Assert.True(TestBullet.IsVanished);
 
             TestBullet.IsVanished = false;
-            vanish.Run(TestBullet);
+            vanish.Run(TestBullet, EmptyArray);
             Assert.False(TestBullet.IsVanished);
         }
 
@@ -96,12 +96,12 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(vanish.IsCompleted);
 
-            vanish.Run(TestBullet);
+            vanish.Run(TestBullet, EmptyArray);
             Assert.True(TestBullet.IsVanished);
 
             vanish.Reset();
             TestBullet.IsVanished = false;
-            vanish.Run(TestBullet);
+            vanish.Run(TestBullet, EmptyArray);
             Assert.True(TestBullet.IsVanished);
         }
         

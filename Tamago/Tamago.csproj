@@ -59,7 +59,7 @@
     <Compile Include="Direction.cs" />
     <Compile Include="Repeat.cs" />
     <Compile Include="Speed.cs" />
-    <Compile Include="Task.cs" />
+    <Compile Include="ITask.cs" />
     <Compile Include="Vanish.cs" />
     <Compile Include="Wait.cs" />
   </ItemGroup>
