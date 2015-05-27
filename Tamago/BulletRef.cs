@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -12,6 +13,7 @@ namespace Tamago
     {
         private BulletPattern _pattern;
         private BulletDef _bullet;
+        private Expression[] _params;
 
         /// <summary>
         /// The underlying bullet. Resolution is delayed until the first time this property is read.
@@ -23,6 +25,17 @@ namespace Tamago
                 if (_bullet == null)
                     _bullet = (BulletDef)_pattern.FindBullet(Label);
                 return _bullet;
+            }
+        }
+
+        /// <summary>
+        /// The parameters for nested expressions.
+        /// </summary>
+        public ReadOnlyCollection<Expression> Params
+        {
+            get
+            {
+                return Array.AsReadOnly(_params);
             }
         }
 
@@ -41,6 +54,9 @@ namespace Tamago
             if (label == null)
                 throw new ParseException("<bulletRef> node requires a label.");
             Label = label.Value;
+
+            var args = node.Elements("param");
+            _params = args.Select(p => new Expression(p.Value)).ToArray();
 
             _pattern = pattern;
         }
@@ -80,7 +96,13 @@ namespace Tamago
         /// <param name="bullet">The parent bullet to create this bullet from.</param>
         public Bullet Create(Bullet parent, float[] args)
         {
-            return Bullet.Create(parent, args);
+            float[] newArgs = new float[_params.Length];
+            for (int i = 0; i < newArgs.Length; i++)
+                newArgs[i] = _params[i].Evaluate(args, parent.BulletManager);
+
+            var bullet = Bullet.Create(parent, args);
+            bullet.SetParams(newArgs);
+            return bullet;
         }
     }
 }

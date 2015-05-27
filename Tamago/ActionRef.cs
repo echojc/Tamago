@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -12,6 +13,7 @@ namespace Tamago
     {
         private BulletPattern _pattern;
         private ActionDef _action;
+        private Expression[] _params;
 
         /// <summary>
         /// The underlying action. Resolution is delayed until the first time this property is read.
@@ -27,12 +29,24 @@ namespace Tamago
         }
 
         /// <summary>
+        /// The parameters for nested expressions.
+        /// </summary>
+        public ReadOnlyCollection<Expression> Params
+        {
+            get
+            {
+                return Array.AsReadOnly(_params);
+            }
+        }
+
+        /// <summary>
         /// For cloning.
         /// </summary>
-        private ActionRef(string label, BulletPattern pattern)
+        private ActionRef(string label, BulletPattern pattern, Expression[] args)
         {
             Label = label;
             _pattern = pattern;
+            _params = args;
         }
 
         /// <summary>
@@ -50,6 +64,9 @@ namespace Tamago
             if (label == null)
                 throw new ParseException("<actionRef> node requires a label.");
             Label = label.Value;
+
+            var args = node.Elements("param");
+            _params = args.Select(p => new Expression(p.Value)).ToArray();
 
             _pattern = pattern;
         }
@@ -87,7 +104,7 @@ namespace Tamago
         }
 
         /// <summary>
-        /// Runs the underlying action.
+        /// Runs the underlying action. Parameters are evaluated with the given arguments and passed on.
         /// </summary>
         /// <param name="bullet">The bullet to run the underlying tasks against.</param>
         /// <param name="args">Values for params in expressions.</param>
@@ -95,7 +112,11 @@ namespace Tamago
         /// <returns>True if no waiting is required, otherwise the result of any nested &lt;wait&gt; nodes</returns>
         public bool Run(Bullet bullet, float[] args)
         {
-            return Action.Run(bullet, args);
+            float[] newArgs = new float[_params.Length];
+            for (int i = 0; i < newArgs.Length; i++)
+                newArgs[i] = _params[i].Evaluate(args, bullet.BulletManager);
+
+            return Action.Run(bullet, newArgs);
         }
 
         /// <summary>
@@ -104,7 +125,7 @@ namespace Tamago
         /// <returns>An action reference that has not been resolved.</returns>
         public ITask Copy()
         {
-            return new ActionRef(Label, _pattern);
+            return new ActionRef(Label, _pattern, _params);
         }
     }
 }

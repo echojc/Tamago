@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Tamago
@@ -11,6 +13,7 @@ namespace Tamago
     {
         private BulletPattern _pattern;
         private FireDef _fire;
+        private Expression[] _params;
 
         /// <summary>
         /// The underlying fire. Resolution is delayed until the first time this property is read.
@@ -26,12 +29,24 @@ namespace Tamago
         }
 
         /// <summary>
+        /// The parameters for nested expressions.
+        /// </summary>
+        public ReadOnlyCollection<Expression> Params
+        {
+            get
+            {
+                return Array.AsReadOnly(_params);
+            }
+        }
+
+        /// <summary>
         /// For cloning.
         /// </summary>
-        private FireRef(string label, BulletPattern pattern)
+        private FireRef(string label, BulletPattern pattern, Expression[] args)
         {
             Label = label;
             _pattern = pattern;
+            _params = args;
         }
 
         /// <summary>
@@ -49,6 +64,9 @@ namespace Tamago
             if (label == null)
                 throw new ParseException("<fireRef> node requires a label.");
             Label = label.Value;
+
+            var args = node.Elements("param");
+            _params = args.Select(p => new Expression(p.Value)).ToArray();
 
             _pattern = pattern;
         }
@@ -107,7 +125,11 @@ namespace Tamago
         /// <returns>True always</returns>
         public bool Run(Bullet bullet, float[] args)
         {
-            return Fire.Run(bullet, args);
+            float[] newArgs = new float[_params.Length];
+            for (int i = 0; i < newArgs.Length; i++)
+                newArgs[i] = _params[i].Evaluate(args, bullet.BulletManager);
+
+            return Fire.Run(bullet, newArgs);
         }
 
         /// <summary>
@@ -116,7 +138,7 @@ namespace Tamago
         /// <returns>A fire reference that has not been resolved.</returns>
         public ITask Copy()
         {
-            return new FireRef(Label, _pattern);
+            return new FireRef(Label, _pattern, _params);
         }
     }
 }

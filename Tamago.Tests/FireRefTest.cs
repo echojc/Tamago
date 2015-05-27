@@ -214,7 +214,10 @@ namespace Tamago.Tests
         public void ImplementsCopy()
         {
             var node = XElement.Parse(@"
-              <fireRef label=""foo""/>
+              <fireRef label=""foo"">
+                <param>1+2</param>
+                <param>3+4</param>
+              </fireRef>
             ");
 
             var fire1 = new FireRef(node, FooPattern);
@@ -224,6 +227,7 @@ namespace Tamago.Tests
             Assert.AreEqual(fire2.Direction, fire1.Direction);
             Assert.AreEqual(fire2.Bullet, fire1.Bullet);
             Assert.AreEqual(fire2.Label, fire1.Label);
+            Assert.AreEqual(fire2.Params, fire1.Params);
 
             Assert.False(fire1.IsCompleted);
             Assert.False(fire2.IsCompleted);
@@ -238,9 +242,51 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
-        public void InjectsParams()
+        public void ParsesParamsAsExpressions()
         {
+            var node = XElement.Parse(@"
+              <fireRef label=""foo"">
+                <param>1+2</param>
+                <param>3+4</param>
+              </fireRef>
+            ");
+
+            var fire = new FireRef(node, DummyPattern);
+            CollectionAssert.AreEqual(new[] {
+                new Expression("1+2"),
+                new Expression("3+4")
+            }, fire.Params);
+        }
+
+        [Test]
+        public void EvaluatesParamsAndInjectsAsNewValues()
+        {
+            var barPattern = new BulletPattern(@"
+              <bulletml>
+                <fire label=""bar"">
+                  <direction type=""absolute"">$1</direction>
+                  <speed>$2</speed>
+                  <bullet/>
+                </fire>
+              </bulletml>
+            ");
+
+            var node = XElement.Parse(@"
+              <fireRef label=""bar"">
+                <param>12.34</param>
+                <param>$2 + $rank + $rand</param>
+              </fireRef>
+            ");
+
+            var fire = new FireRef(node, barPattern);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            fire.Run(TestBullet, new[] { 1.2f, 2.3f, 3.4f });
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(MathHelper.ToRadians(12.34f), bullet.Direction, 0.00001f);
+            Assert.AreEqual(2.3f + Helpers.TestManager.TestRand + Helpers.TestManager.TestRank, bullet.Speed, 0.00001f);
         }
     }
 }

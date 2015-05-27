@@ -207,5 +207,71 @@ namespace Tamago.Tests
             TestManager.Update();
             Assert.AreEqual(2, TestManager.Bullets.Count);
         }
+
+        [Test]
+        public void ParamPassingToMakeCircles()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""cycle"">
+                  <repeat>
+                    <times>$1</times>
+                    <action>
+                      <fire>
+                        <direction type=""sequence"">360/$1</direction>
+                        <bullet/>
+                      </fire>
+                      <wait>$2</wait>
+                    </action>
+                  </repeat>
+                </action>
+
+                <action label=""circle"">
+                  <actionRef label=""cycle"">
+                    <param>$1</param>
+                    <param>0</param>
+                  </actionRef>
+                </action>
+
+                <action label=""top"">
+                  <actionRef label=""circle"">
+                    <param>12</param>
+                  </actionRef>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.Update();
+            Assert.AreEqual(13, TestManager.Bullets.Count);
+            TestManager.Bullets.ForEach(b =>
+                {
+                    Assert.AreEqual(0, b.X);
+                    Assert.AreEqual(0, b.Y);
+                });
+
+            TestManager.Update();
+            Assert.AreEqual(13, TestManager.Bullets.Count);
+            var x = new float[]{
+                0,
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 0,
+            };
+            var y = new float[]{
+                0,
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 0,
+            };
+
+            for (int i = 0; i < TestManager.Bullets.Count; i++)
+            {
+                Assert.AreEqual(x[i], TestManager.Bullets[i].X);
+                Assert.AreEqual(y[i], TestManager.Bullets[i].Y);
+            }
+        }
     }
 }

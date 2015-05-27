@@ -8,9 +8,12 @@ namespace Tamago
 {
     public class Bullet
     {
+        private static float[] EmptyArray = new float[0];
+
         internal IBulletManager BulletManager;
 
         public List<IAction> Actions { get; protected set; }
+        public float[] Params { get; protected set; }
         public bool IsTopLevel { get; protected set; }
         public bool IsVanished { get; set; }
         public bool IsCompleted
@@ -80,6 +83,18 @@ namespace Tamago
         }
 
         /// <summary>
+        /// Sets the expression parameters for actions encapsulated by this bullet.
+        /// </summary>
+        /// <param name="args">The parameters to use.</param>
+        public void SetParams(float[] args)
+        {
+            if (args == null) throw new ArgumentNullException("args");
+
+            Params = new float[args.Length];
+            Array.Copy(args, Params, args.Length);
+        }
+
+        /// <summary>
         /// Gets the angle in radians to point at the player.
         /// </summary>
         public float AimDirection
@@ -101,7 +116,7 @@ namespace Tamago
                 return;
 
             // actions are run before bullets move
-            Actions.ForEach(a => a.Run(this, new float[] { }));
+            Actions.ForEach(a => a.Run(this, Params ?? EmptyArray));
 
             // apply queued changes if they exist
             if (NewSpeed != null)

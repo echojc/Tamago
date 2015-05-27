@@ -160,9 +160,56 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
-        public void InjectsParams()
+        public void ParsesParamsAsExpressions()
         {
+            var node = XElement.Parse(@"
+              <bulletRef label=""foo"">
+                <param>1+2</param>
+                <param>3+4</param>
+              </bulletRef>
+            ");
+
+            var bullet = new BulletRef(node, DummyPattern);
+            CollectionAssert.AreEqual(new[] {
+                new Expression("1+2"),
+                new Expression("3+4")
+            }, bullet.Params);
+        }
+
+        [Test]
+        public void EvaluatesParamsAndInjectsAsNewValues()
+        {
+            var barPattern = new BulletPattern(@"
+              <bulletml>
+                <bullet label=""bar"">
+                  <action>
+                    <fire>
+                      <direction type=""absolute"">$1</direction>
+                      <speed>$2</speed>
+                      <bullet/>
+                    </fire>
+                  </action>
+                </bullet>
+              </bulletml>
+            ");
+
+            var node = XElement.Parse(@"
+              <bulletRef label=""bar"">
+                <param>12.34</param>
+                <param>$2 + $rank + $rand</param>
+              </bulletRef>
+            ");
+
+            var bulletRef = new BulletRef(node, barPattern);
+            var bullet = bulletRef.Create(TestBullet, new[] { 1.2f, 2.3f, 3.4f });
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            bullet.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+
+            var last = TestManager.Bullets.Last();
+            Assert.AreEqual(MathHelper.ToRadians(12.34f), last.Direction, 0.00001f);
+            Assert.AreEqual(2.3f + Helpers.TestManager.TestRand + Helpers.TestManager.TestRank, last.Speed, 0.00001f);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Tamago.Tests
@@ -109,17 +110,91 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
-        public void ParsesParamsRandRank()
+        public void ParsesRand()
         {
             var node = XElement.Parse(@"
               <repeat>
-                <times>$rank + $rand + $2</times>
-                <action/>
+                <times>$rand</times>
+                <action>
+                  <fire><bullet/></fire>
+                </action>
               </repeat>
             ");
 
             var repeat = new Repeat(node, DummyPattern);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.SetRand(2);
+            repeat.Run(TestBullet, EmptyArray);
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        public void ParsesRank()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>$rank</times>
+                <action>
+                  <fire><bullet/></fire>
+                </action>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node, DummyPattern);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.SetRank(3);
+            repeat.Run(TestBullet, EmptyArray);
+            Assert.AreEqual(4, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        public void ParsesParams()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>$2</times>
+                <action>
+                  <fire><bullet/></fire>
+                </action>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node, DummyPattern);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            repeat.Run(TestBullet, new[] { 1.2f, 2, 3.4f });
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+        }
+
+        [Test]
+        public void PassesEvalValuesToInnerAction()
+        {
+            var node = XElement.Parse(@"
+              <repeat>
+                <times>1</times>
+                <action>
+                  <fire>
+                    <direction type=""absolute"">$2</direction>
+                    <speed>$rank / $rand</speed>
+                    <bullet/>
+                  </fire>
+                </action>
+              </repeat>
+            ");
+
+            var repeat = new Repeat(node, DummyPattern);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.SetRand(1.23f);
+            TestManager.SetRank(7.89f);
+            repeat.Run(TestBullet, new[] { 1.2f, 123.4f, 3.4f });
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(MathHelper.ToRadians(123.4f), bullet.Direction);
+            Assert.AreEqual(7.89f / 1.23f, bullet.Speed, 0.00001f);
         }
 
         [Test]

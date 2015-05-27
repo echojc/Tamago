@@ -339,5 +339,97 @@ namespace Tamago.Tests
                 Assert.AreEqual(MathHelper.ToRadians(90), b4.Direction, 0.00001f);
             }
         }
+
+        [Test]
+        public void ThrowsArgumentNullOnSetParamsToNull()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top""/>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+            var root = TestManager.Bullets[0];
+            Assert.Throws<ArgumentNullException>(() => root.SetParams(null));
+        }
+
+        [Test]
+        public void ByDefaultParamsResolveToZero()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <fire>
+                    <direction type=""absolute"">$1</direction>
+                    <speed>$2</speed>
+                    <bullet/>
+                  </fire>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+            var root = TestManager.Bullets[0];
+
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            var b1 = TestManager.Bullets.Last();
+            Assert.AreEqual(0, b1.Direction);
+            Assert.AreEqual(0, b1.Speed);
+        }
+
+        [Test]
+        public void OutOfBoundsParamsResolveToZero()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <fire>
+                    <direction type=""absolute"">$1</direction>
+                    <speed>$2</speed>
+                    <bullet/>
+                  </fire>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            var root = TestManager.Bullets[0];
+            root.SetParams(new[] { 22.22f });
+
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            var b2 = TestManager.Bullets.Last();
+            Assert.AreEqual(MathHelper.ToRadians(22.22f), b2.Direction);
+            Assert.AreEqual(0, b2.Speed);
+        }
+
+        [Test]
+        public void UsesParameters()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <fire>
+                    <direction type=""absolute"">$1</direction>
+                    <speed>$2</speed>
+                    <bullet/>
+                  </fire>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            var root = TestManager.Bullets[0];
+            root.SetParams(new[] { 33.33f, 1.2f, 4.4f });
+
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            var b3 = TestManager.Bullets.Last();
+            Assert.AreEqual(MathHelper.ToRadians(33.33f), b3.Direction);
+            Assert.AreEqual(1.2f, b3.Speed);
+        }
     }
 }

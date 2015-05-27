@@ -74,7 +74,7 @@ namespace Tamago
 
             framesRunCount++;
             IsCompleted = framesRunCount >= duration;
-            return false;
+            return framesRunCount > duration;
         }
 
         /// <summary>

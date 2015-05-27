@@ -194,13 +194,17 @@ namespace Tamago.Tests
         public void ImplementsCopy()
         {
             var node = XElement.Parse(@"
-              <actionRef label=""foo""/>
+              <actionRef label=""foo"">
+                <param>1+2</param>
+                <param>3+4</param>
+              </actionRef>
             ");
 
             var action1 = new ActionRef(node, FooPattern);
             var action2 = (ActionRef)action1.Copy();
 
             Assert.AreEqual(action1.Label, action2.Label);
+            CollectionAssert.AreEqual(action1.Params, action2.Params);
 
             var foo = FooPattern.FindAction("foo");
             Assert.AreEqual(foo.Tasks.Count, action2.Tasks.Count);
@@ -215,9 +219,53 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
-        public void InjectsParams()
+        public void ParsesParamsAsExpressions()
         {
+            var node = XElement.Parse(@"
+              <actionRef label=""foo"">
+                <param>1+2</param>
+                <param>3+4</param>
+              </actionRef>
+            ");
+
+            var action = new ActionRef(node, DummyPattern);
+            CollectionAssert.AreEqual(new[] {
+                new Expression("1+2"),
+                new Expression("3+4")
+            }, action.Params);
+        }
+
+        [Test]
+        public void EvaluatesParamsAndInjectsAsNewValues()
+        {
+            var barPattern = new BulletPattern(@"
+              <bulletml>
+                <action label=""bar"">
+                  <fire>
+                    <direction type=""absolute"">$1</direction>
+                    <speed>$2</speed>
+                    <bullet/>
+                  </fire>
+                </action>
+              </bulletml>
+            ");
+
+            var node = XElement.Parse(@"
+              <actionRef label=""bar"">
+                <param>12.34</param>
+                <param>$2 + $rank + $rand</param>
+              </actionRef>
+            ");
+
+            var action = new ActionRef(node, barPattern);
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            action.Run(TestBullet, new[] { 1.2f, 2.3f, 3.4f });
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+
+            var bullet = TestManager.Bullets.Last();
+            Assert.AreEqual(MathHelper.ToRadians(12.34f), bullet.Direction, 0.00001f);
+            Assert.AreEqual(2.3f + Helpers.TestManager.TestRand + Helpers.TestManager.TestRank, bullet.Speed, 0.00001f);
         }
     }
 }

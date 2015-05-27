@@ -8,10 +8,17 @@ namespace Tamago.Tests.Helpers
 {
     public class TestManager : BulletManager
     {
-        private float _x, _y;
+        private float _x, _y, _rand, _rank;
 
         public const float TestRand = 0.1337f;
         public const float TestRank = 0.3246f;
+
+        public TestManager()
+            : base()
+        {
+            _rand = TestRand;
+            _rank = TestRank;
+        }
 
         public override float PlayerX
         {
@@ -25,12 +32,12 @@ namespace Tamago.Tests.Helpers
 
         public override float Rand
         {
-            get { return TestRand; }
+            get { return _rand; }
         }
 
         public override float Rank
         {
-            get { return TestRank; }
+            get { return _rank; }
         }
 
         public new List<Bullet> Bullets
@@ -42,6 +49,16 @@ namespace Tamago.Tests.Helpers
         {
             _x = x;
             _y = y;
+        }
+
+        public void SetRand(float rand)
+        {
+            _rand = rand;
+        }
+
+        public void SetRank(float rank)
+        {
+            _rank = rank;
         }
     }
 }

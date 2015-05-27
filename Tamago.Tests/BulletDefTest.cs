@@ -467,9 +467,37 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
-        public void ParsesEvalRandRank()
+        public void ParsesRandRank()
         {
+            var node = XElement.Parse(@"
+              <bullet>
+                <direction type=""absolute"">$rand</direction>
+                <speed>$rank</speed>
+              </bullet>
+            ");
+
+            var bulletRef = new BulletDef(node, DummyPattern);
+            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+
+            Assert.AreEqual(Helpers.TestManager.TestRank, bullet.Speed, 0.00001f);
+            Assert.AreEqual(MathHelper.ToRadians(Helpers.TestManager.TestRand), bullet.Direction, 0.00001f);
+        }
+
+        [Test]
+        public void ParsesParams()
+        {
+            var node = XElement.Parse(@"
+              <bullet>
+                <direction type=""absolute"">$1</direction>
+                <speed>$3</speed>
+              </bullet>
+            ");
+
+            var bulletRef = new BulletDef(node, DummyPattern);
+            var bullet = bulletRef.Create(TestBullet, new[] { 234.5f, 1.2f, 2.3f });
+
+            Assert.AreEqual(2.3f, bullet.Speed, 0.00001f);
+            Assert.AreEqual(MathHelper.ToRadians(234.5f), bullet.Direction, 0.00001f);
         }
     }
 }

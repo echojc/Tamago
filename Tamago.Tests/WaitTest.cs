@@ -62,14 +62,95 @@ namespace Tamago.Tests
         }
 
         [Test]
-        [Ignore]
-        public void ParsesEvalRandRank()
+        public void ParsesRand()
         {
             var node = XElement.Parse(@"
-              <wait>42 + 1</wait>
+              <wait>$rand</wait>
             ");
 
             var wait = new Wait(node);
+            var times = 7;
+
+            TestManager.SetRand(times);
+            for (int i = 0; i < times; i++)
+            {
+                Assert.False(wait.IsCompleted);
+                Assert.False(wait.Run(TestBullet, EmptyArray));
+            }
+
+            Assert.True(wait.IsCompleted);
+            Assert.True(wait.Run(TestBullet, EmptyArray));
+        }
+
+        [Test]
+        public void ParsesRank()
+        {
+            var node = XElement.Parse(@"
+              <wait>$rank</wait>
+            ");
+
+            var wait = new Wait(node);
+            var times = 5;
+
+            TestManager.SetRank(times);
+            for (int i = 0; i < times; i++)
+            {
+                Assert.False(wait.IsCompleted);
+                Assert.False(wait.Run(TestBullet, EmptyArray));
+            }
+
+            Assert.True(wait.IsCompleted);
+            Assert.True(wait.Run(TestBullet, EmptyArray));
+        }
+
+        [Test]
+        public void ParsesParams()
+        {
+            var node = XElement.Parse(@"
+              <wait>$rank</wait>
+            ");
+
+            var wait = new Wait(node);
+            var times = 11;
+            var array = new[] { 1.2f, times, 2.3f };
+
+            TestManager.SetRank(times);
+            for (int i = 0; i < times; i++)
+            {
+                Assert.False(wait.IsCompleted);
+                Assert.False(wait.Run(TestBullet, array));
+            }
+
+            Assert.True(wait.IsCompleted);
+            Assert.True(wait.Run(TestBullet, array));
+        }
+
+        [Test]
+        public void NoopsIfDurationIsZero()
+        {
+            var node = XElement.Parse(@"
+              <wait>0</wait>
+            ");
+
+            var wait = new Wait(node);
+            Assert.False(wait.IsCompleted);
+
+            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.IsCompleted);
+        }
+
+        [Test]
+        public void NoopsIfDurationIsLessThanZero()
+        {
+            var node = XElement.Parse(@"
+              <wait>-42</wait>
+            ");
+
+            var wait = new Wait(node);
+            Assert.False(wait.IsCompleted);
+
+            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.IsCompleted);
         }
 
         [Test]
