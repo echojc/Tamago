@@ -28,6 +28,22 @@ namespace Tamago.Tests
             Assert.Throws<ParseException>(() => new BulletPattern(xml));
         }
 
+        [Test]
+        public void ParsesVersion()
+        {
+            var xml = @"<bulletml version=""1""/>";
+            var pattern = new BulletPattern(xml);
+            Assert.AreEqual(1, pattern.Version);
+        }
+
+        [Test]
+        public void UsesLatestVersionIfMissing()
+        {
+            var xml = @"<bulletml/>";
+            var pattern = new BulletPattern(xml);
+            Assert.AreEqual(BulletPattern.LatestVersion, pattern.Version);
+        }
+
         #region Actions
 
         [Test]

@@ -16,6 +16,19 @@ namespace Tamago
         private Dictionary<string, BulletDef> Bullets;
 
         /// <summary>
+        /// The latest version of Tamago's BulletML supported by this
+        /// implementation.
+        /// </summary>
+        public const int LatestVersion = 1;
+
+        /// <summary>
+        /// The version of Tamago's BulletML to use when running this
+        /// pattern. Used for backwards compatibility when changes would
+        /// break existing patterns.
+        /// </summary>
+        public int Version { get; private set; }
+
+        /// <summary>
         /// Parses a BulletML string to create a usable internal representation of it.
         /// </summary>
         /// <param name="xml">The BulletML string.</param>
@@ -33,6 +46,17 @@ namespace Tamago
                 Actions = ParseLabelledNodes(root, "action", n => new ActionDef(n, this));
                 Fires = ParseLabelledNodes(root, "fire", n => new FireDef(n, this));
                 Bullets = ParseLabelledNodes(root, "bullet", n => new BulletDef(n, this));
+
+                var version = root.Attribute("version");
+                int intValue;
+                if (version != null && int.TryParse(version.Value, out intValue))
+                {
+                    Version = intValue;
+                }
+                else
+                {
+                    Version = LatestVersion;
+                }
             }
             catch (XmlException e)
             {
