@@ -51,6 +51,7 @@
     <Compile Include="ChangeSpeedTest.cs" />
     <Compile Include="DirectionTest.cs" />
     <Compile Include="ExpressionTest.cs" />
+    <Compile Include="FireDefComplexTest.cs" />
     <Compile Include="FireDefTest.cs" />
     <Compile Include="FireRefTest.cs" />
     <Compile Include="Helpers\TestManager.cs" />

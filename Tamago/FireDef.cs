@@ -151,6 +151,9 @@ namespace Tamago
                 newBullet.Direction = MathHelper.NormalizeAngle(result);
             }
 
+            bullet.FireSpeed = newBullet.Speed;
+            bullet.FireDirection = newBullet.Direction;
+
             IsCompleted = true;
             return true;
         }

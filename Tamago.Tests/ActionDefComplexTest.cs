@@ -251,26 +251,27 @@ namespace Tamago.Tests
                 });
 
             TestManager.Update();
+            var r32 = (float)(Math.Sqrt(3) / 2);
             Assert.AreEqual(13, TestManager.Bullets.Count);
             var x = new float[]{
                 0,
-                0, 0, 0,
-                0, 0, 0,
-                0, 0, 0,
-                0, 0, 0,
+                0.5f,   r32,  1,
+                 r32,  0.5f,  0,
+               -0.5f,  -r32, -1,
+                -r32, -0.5f,  0,
             };
             var y = new float[]{
                 0,
-                0, 0, 0,
-                0, 0, 0,
-                0, 0, 0,
-                0, 0, 0,
+                -r32, -0.5f,  0,
+                0.5f,   r32,  1,
+                 r32,  0.5f,  0,
+               -0.5f,  -r32, -1,
             };
 
             for (int i = 0; i < TestManager.Bullets.Count; i++)
             {
-                Assert.AreEqual(x[i], TestManager.Bullets[i].X);
-                Assert.AreEqual(y[i], TestManager.Bullets[i].Y);
+                Assert.AreEqual(x[i], TestManager.Bullets[i].X, 0.00001f);
+                Assert.AreEqual(y[i], TestManager.Bullets[i].Y, 0.00001f);
             }
         }
     }

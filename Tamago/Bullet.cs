@@ -157,5 +157,15 @@ namespace Tamago
         {
             IsVanished = true;
         }
+
+        #region Boilerplate
+
+        public override string ToString()
+        {
+            return string.Format("Bullet [X={0} Y={1} Direction={2} Speed={3}",
+                X, Y, Direction, Speed);
+        }
+
+        #endregion
     }
 }
