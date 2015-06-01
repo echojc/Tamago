@@ -79,7 +79,7 @@ namespace Tamago.Tests
 
             var action = new ActionRef(node, FooPattern);
             var underlying = action.Action;
-            var foo = FooPattern.FindAction("foo");
+            var foo = FooPattern.Actions["foo"];
 
             Assert.AreNotSame(foo, underlying);
             Assert.AreEqual(foo.Tasks.Count, underlying.Tasks.Count);
@@ -101,7 +101,7 @@ namespace Tamago.Tests
             ");
 
             var action = new ActionRef(node, FooPattern);
-            var foo = FooPattern.FindAction("foo");
+            var foo = FooPattern.Actions["foo"];
 
             Assert.AreEqual(foo.Tasks.Count, action.Tasks.Count);
             action.Tasks.Zip(foo.Tasks, (a, b) =>
@@ -206,7 +206,7 @@ namespace Tamago.Tests
             Assert.AreEqual(action1.Label, action2.Label);
             CollectionAssert.AreEqual(action1.Params, action2.Params);
 
-            var foo = FooPattern.FindAction("foo");
+            var foo = FooPattern.Actions["foo"];
             Assert.AreEqual(foo.Tasks.Count, action2.Tasks.Count);
             action2.Tasks.Zip(foo.Tasks, (a, b) =>
                 {

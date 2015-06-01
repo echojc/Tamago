@@ -26,7 +26,7 @@ namespace Tamago.Tests
         {
             var bullet = TestManager.CreateBullet();
             var pattern = new BulletPattern(xml);
-            bullet.SetPattern(pattern.FindAction(name), isTopLevel: true);
+            bullet.SetPattern(pattern.Actions[name], isTopLevel: true);
             return bullet;
         }
     }

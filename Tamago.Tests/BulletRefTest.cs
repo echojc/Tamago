@@ -83,7 +83,7 @@ namespace Tamago.Tests
             ");
 
             var bullet = new BulletRef(node, FooPattern);
-            var foo = FooPattern.FindBullet("foo");
+            var foo = FooPattern.Bullets["foo"];
 
             Assert.AreSame(foo, bullet.Bullet);
         }
@@ -96,7 +96,7 @@ namespace Tamago.Tests
             ");
 
             var bullet = new BulletRef(node, FooPattern);
-            var foo = FooPattern.FindBullet("foo");
+            var foo = FooPattern.Bullets["foo"];
             Assert.AreEqual(1, bullet.Actions.Count);
             Assert.AreEqual(1, foo.Actions.Count);
 
@@ -121,7 +121,7 @@ namespace Tamago.Tests
             ");
 
             var bullet = new BulletRef(node, FooPattern);
-            var foo = FooPattern.FindBullet("foo");
+            var foo = FooPattern.Bullets["foo"];
             Assert.AreEqual(foo.Speed, bullet.Speed);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 3), bullet.Speed);
         }
@@ -134,7 +134,7 @@ namespace Tamago.Tests
             ");
 
             var bullet = new BulletRef(node, FooPattern);
-            var foo = FooPattern.FindBullet("foo");
+            var foo = FooPattern.Bullets["foo"];
             Assert.AreEqual(foo.Direction, bullet.Direction);
             Assert.AreEqual(new Direction(DirectionType.Absolute, 150), bullet.Direction);
         }
@@ -147,7 +147,7 @@ namespace Tamago.Tests
             ");
 
             var bullet = new BulletRef(node, FooPattern);
-            var foo = FooPattern.FindBullet("foo");
+            var foo = FooPattern.Bullets["foo"];
 
             var bulletBullet = bullet.Create(TestBullet, EmptyArray);
             var fooBullet = foo.Create(TestBullet, EmptyArray);

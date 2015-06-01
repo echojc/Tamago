@@ -11,9 +11,20 @@ namespace Tamago
     /// </summary>
     public class BulletPattern
     {
-        private Dictionary<string, ActionDef> Actions;
-        private Dictionary<string, FireDef> Fires;
-        private Dictionary<string, BulletDef> Bullets;
+        /// <summary>
+        /// All top-level labelled &lt;action&gt; nodes in this pattern.
+        /// </summary>
+        public Dictionary<string, ActionDef> Actions;
+
+        /// <summary>
+        /// All top-level labelled &lt;fire&gt; nodes in this pattern.
+        /// </summary>
+        public Dictionary<string, FireDef> Fires;
+
+        /// <summary>
+        /// All top-level labelled &lt;bullet&gt; nodes in this pattern.
+        /// </summary>
+        public Dictionary<string, BulletDef> Bullets;
 
         /// <summary>
         /// The latest version of Tamago's BulletML supported by this
@@ -87,36 +98,6 @@ namespace Tamago
             {
                 throw new ParseException("Top level <" + node + "> cannot share the same label.", e);
             }
-        }
-
-        /// <summary>
-        /// Looks for the action with the given label.
-        /// </summary>
-        /// <param name="label">The action to find.</param>
-        /// <exception cref="KeyNotFoundException">If action does not exist.</exception>
-        public ActionDef FindAction(string label)
-        {
-            return Actions[label];
-        }
-
-        /// <summary>
-        /// Looks for the fire with the given label.
-        /// </summary>
-        /// <param name="label">The fire to find.</param>
-        /// <exception cref="KeyNotFoundException">If fire does not exist.</exception>
-        public FireDef FindFire(string label)
-        {
-            return Fires[label];
-        }
-
-        /// <summary>
-        /// Looks for the bullet with the given label.
-        /// </summary>
-        /// <param name="label">The bullet to find.</param>
-        /// <exception cref="KeyNotFoundException">If bullet does not exist.</exception>
-        public BulletDef FindBullet(string label)
-        {
-            return Bullets[label];
         }
     }
 }

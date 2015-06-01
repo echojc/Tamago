@@ -103,7 +103,7 @@ namespace Tamago.Tests
             ";
 
             var pattern = new BulletPattern(xml);
-            var action = pattern.FindAction("abc");
+            var action = pattern.Actions["abc"];
             Assert.AreEqual("abc", action.Label);
 
             var bullet = TestManager.CreateBullet();
@@ -115,19 +115,6 @@ namespace Tamago.Tests
 
             var created = TestManager.Bullets.Last();
             Assert.AreEqual(7, created.Speed);
-        }
-
-        [Test]
-        public void ThrowsKeyNotFoundExceptionIfActionDoesNotExist()
-        {
-            var xml = @"
-              <bulletml>
-                <action label=""top""/>
-              </bulletml>
-            ";
-
-            var pattern = new BulletPattern(xml);
-            Assert.Throws<KeyNotFoundException>(() => pattern.FindAction("abc"));
         }
 
         #endregion
@@ -197,28 +184,15 @@ namespace Tamago.Tests
 
             var pattern = new BulletPattern(xml);
 
-            var fire1 = pattern.FindFire("foo");
+            var fire1 = pattern.Fires["foo"];
             Assert.AreEqual("foo", fire1.Label);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 3), fire1.Speed);
             Assert.AreEqual(new Direction(DirectionType.Aim, 10), fire1.Direction);
 
-            var fire2 = pattern.FindFire("bar");
+            var fire2 = pattern.Fires["bar"];
             Assert.AreEqual("bar", fire2.Label);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 7), fire2.Speed);
             Assert.AreEqual(new Direction(DirectionType.Aim, 17), fire2.Direction);
-        }
-
-        [Test]
-        public void ThrowsKeyNotFoundExceptionIfFireDoesNotExist()
-        {
-            var xml = @"
-              <bulletml>
-                <action label=""top""/>
-              </bulletml>
-            ";
-
-            var pattern = new BulletPattern(xml);
-            Assert.Throws<KeyNotFoundException>(() => pattern.FindFire("abc"));
         }
 
         #endregion
@@ -283,28 +257,15 @@ namespace Tamago.Tests
 
             var pattern = new BulletPattern(xml);
 
-            var bullet1 = pattern.FindBullet("foo");
+            var bullet1 = pattern.Bullets["foo"];
             Assert.AreEqual("foo", bullet1.Label);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 3), bullet1.Speed);
             Assert.AreEqual(new Direction(DirectionType.Aim, 10), bullet1.Direction);
 
-            var bullet2 = pattern.FindBullet("bar");
+            var bullet2 = pattern.Bullets["bar"];
             Assert.AreEqual("bar", bullet2.Label);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 7), bullet2.Speed);
             Assert.AreEqual(new Direction(DirectionType.Aim, 17), bullet2.Direction);
-        }
-
-        [Test]
-        public void ThrowsKeyNotFoundExceptionIfBulletDoesNotExist()
-        {
-            var xml = @"
-              <bulletml>
-                <action label=""top""/>
-              </bulletml>
-            ";
-
-            var pattern = new BulletPattern(xml);
-            Assert.Throws<KeyNotFoundException>(() => pattern.FindBullet("abc"));
         }
 
         #endregion 

@@ -23,7 +23,7 @@ namespace Tamago
             get
             {
                 if (_fire == null)
-                    _fire = (FireDef)_pattern.FindFire(Label).Copy();
+                    _fire = (FireDef)_pattern.Fires[Label].Copy();
                 return _fire;
             }
         }

@@ -23,7 +23,7 @@ namespace Tamago
             get
             {
                 if (_action == null)
-                    _action = (ActionDef)_pattern.FindAction(Label).Copy();
+                    _action = (ActionDef)_pattern.Actions[Label].Copy();
                 return _action;
             }
         }
