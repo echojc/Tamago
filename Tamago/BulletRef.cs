@@ -23,7 +23,7 @@ namespace Tamago
             get
             {
                 if (_bullet == null)
-                    _bullet = (BulletDef)_pattern.Bullets[Label];
+                    _bullet = (BulletDef)_pattern.CopyBullet(Label);
                 return _bullet;
             }
         }

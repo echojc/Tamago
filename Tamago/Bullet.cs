@@ -10,7 +10,7 @@ namespace Tamago
     {
         private static float[] EmptyArray = new float[0];
 
-        internal IBulletManager BulletManager;
+        public IBulletManager BulletManager;
 
         public List<IAction> Actions { get; protected set; }
         public float[] Params { get; protected set; }
@@ -40,9 +40,6 @@ namespace Tamago
         public Bullet(IBulletManager manager)
         {
             BulletManager = manager;
-
-            X = 0;
-            Y = 0;
 
             Direction = 0;
             Speed = 0;
@@ -108,9 +105,12 @@ namespace Tamago
 
         /// <summary>
         /// Runs the associated actions for this bullet and updates position based on speed, direction, and velocities.
+        /// 
         /// This method should be called at 60 fps.
+        /// 
+        /// When overriding, it is recommended that <code>base.Update()</code> should be called before any custom code is executed.
         /// </summary>
-        public void Update()
+        public virtual void Update()
         {
             if (IsVanished)
                 return;

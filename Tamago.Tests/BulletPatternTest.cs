@@ -103,7 +103,7 @@ namespace Tamago.Tests
             ";
 
             var pattern = new BulletPattern(xml);
-            var action = pattern.Actions["abc"];
+            var action = pattern.CopyAction("abc");
             Assert.AreEqual("abc", action.Label);
 
             var bullet = TestManager.CreateBullet();
@@ -115,6 +115,31 @@ namespace Tamago.Tests
 
             var created = TestManager.Bullets.Last();
             Assert.AreEqual(7, created.Speed);
+        }
+
+        [Test]
+        public void CopiesActionsOnLookup()
+        {
+            var xml = @"
+              <bulletml>
+                <action label=""top"">
+                  <fire><speed>3</speed><bullet/></fire>
+                </action>
+              </bulletml>
+            ";
+
+            var pattern = new BulletPattern(xml);
+            var action1 = pattern.CopyAction("top");
+            Assert.AreEqual("top", action1.Label);
+
+            var bullet = TestManager.CreateBullet();
+            bullet.SetPattern(action1, isTopLevel: false);
+            TestManager.Update();
+
+            Assert.True(action1.IsCompleted);
+            var action2 = pattern.CopyAction("top");
+            Assert.False(action2.IsCompleted);
+            Assert.AreNotSame(action1, action2);
         }
 
         #endregion
@@ -184,15 +209,41 @@ namespace Tamago.Tests
 
             var pattern = new BulletPattern(xml);
 
-            var fire1 = pattern.Fires["foo"];
+            var fire1 = pattern.CopyFire("foo");
             Assert.AreEqual("foo", fire1.Label);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 3), fire1.Speed);
             Assert.AreEqual(new Direction(DirectionType.Aim, 10), fire1.Direction);
 
-            var fire2 = pattern.Fires["bar"];
+            var fire2 = pattern.CopyFire("bar");
             Assert.AreEqual("bar", fire2.Label);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 7), fire2.Speed);
             Assert.AreEqual(new Direction(DirectionType.Aim, 17), fire2.Direction);
+        }
+
+        [Test]
+        public void CopiesFiresOnLookup()
+        {
+            var xml = @"
+              <bulletml>
+                <fire label=""foo"">
+                  <speed>3</speed>
+                  <direction>10</direction>
+                  <bullet/>
+                </fire>
+              </bulletml>
+            ";
+
+            var pattern = new BulletPattern(xml);
+            var fire1 = pattern.CopyFire("foo");
+            Assert.AreEqual("foo", fire1.Label);
+
+            var bullet = TestManager.CreateBullet();
+            fire1.Run(bullet, EmptyArray);
+
+            Assert.True(fire1.IsCompleted);
+            var fire2 = pattern.CopyFire("foo");
+            Assert.False(fire2.IsCompleted);
+            Assert.AreNotSame(fire1, fire2);
         }
 
         #endregion
@@ -257,12 +308,12 @@ namespace Tamago.Tests
 
             var pattern = new BulletPattern(xml);
 
-            var bullet1 = pattern.Bullets["foo"];
+            var bullet1 = pattern.CopyBullet("foo");
             Assert.AreEqual("foo", bullet1.Label);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 3), bullet1.Speed);
             Assert.AreEqual(new Direction(DirectionType.Aim, 10), bullet1.Direction);
 
-            var bullet2 = pattern.Bullets["bar"];
+            var bullet2 = pattern.CopyBullet("bar");
             Assert.AreEqual("bar", bullet2.Label);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 7), bullet2.Speed);
             Assert.AreEqual(new Direction(DirectionType.Aim, 17), bullet2.Direction);

@@ -14,17 +14,17 @@ namespace Tamago
         /// <summary>
         /// All top-level labelled &lt;action&gt; nodes in this pattern.
         /// </summary>
-        public Dictionary<string, ActionDef> Actions;
+        internal Dictionary<string, ActionDef> Actions;
 
         /// <summary>
         /// All top-level labelled &lt;fire&gt; nodes in this pattern.
         /// </summary>
-        public Dictionary<string, FireDef> Fires;
+        internal Dictionary<string, FireDef> Fires;
 
         /// <summary>
         /// All top-level labelled &lt;bullet&gt; nodes in this pattern.
         /// </summary>
-        public Dictionary<string, BulletDef> Bullets;
+        internal Dictionary<string, BulletDef> Bullets;
 
         /// <summary>
         /// The latest version of Tamago's BulletML supported by this
@@ -98,6 +98,21 @@ namespace Tamago
             {
                 throw new ParseException("Top level <" + node + "> cannot share the same label.", e);
             }
+        }
+
+        public ActionDef CopyAction(string label)
+        {
+            return (ActionDef)Actions[label].Copy();
+        }
+
+        public FireDef CopyFire(string label)
+        {
+            return (FireDef)Fires[label].Copy();
+        }
+
+        public BulletDef CopyBullet(string label)
+        {
+            return Bullets[label];
         }
     }
 }

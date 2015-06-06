@@ -80,7 +80,7 @@ namespace Tamago.Tests
             ");
 
             var fire = new FireRef(node, FooPattern);
-            var foo = FooPattern.Fires["foo"];
+            var foo = FooPattern.CopyFire("foo");
 
             Assert.AreNotSame(foo, fire);
 
@@ -117,7 +117,7 @@ namespace Tamago.Tests
             ");
 
             var fire = new FireRef(node, FooPattern);
-            var foo = FooPattern.Fires["foo"];
+            var foo = FooPattern.CopyFire("foo");
             Assert.AreSame(foo.Bullet, fire.Bullet);
         }
 
@@ -129,7 +129,7 @@ namespace Tamago.Tests
             ");
 
             var fire = new FireRef(node, FooPattern);
-            var foo = FooPattern.Fires["foo"];
+            var foo = FooPattern.CopyFire("foo");
             Assert.AreEqual(foo.Speed, fire.Speed);
             Assert.AreEqual(new Speed(SpeedType.Absolute, 2), fire.Speed);
         }
@@ -142,7 +142,7 @@ namespace Tamago.Tests
             ");
 
             var fire = new FireRef(node, FooPattern);
-            var foo = FooPattern.Fires["foo"];
+            var foo = FooPattern.CopyFire("foo");
             Assert.AreEqual(foo.Direction, fire.Direction);
             Assert.AreEqual(new Direction(DirectionType.Absolute, 170), fire.Direction);
         }
