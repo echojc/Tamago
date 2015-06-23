@@ -135,7 +135,7 @@ namespace Tamago.Tests
             Assert.AreEqual(1, action.Tasks.Count);
             Assert.False(TestBullet.IsVanished);
 
-            Assert.True(action.Run(TestBullet, EmptyArray));
+            Assert.False(action.Run(TestBullet, EmptyArray));
             Assert.True(action.IsCompleted);
             Assert.True(TestBullet.IsVanished);
         }

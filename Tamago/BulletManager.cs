@@ -44,7 +44,14 @@ namespace Tamago
         {
             // spawned bullets run on the next frame
             for (int i = Bullets.Count - 1; i >= 0; i--)
-                Bullets[i].Update();
+            {
+                var b = Bullets[i];
+                b.Update();
+
+                // completed bullets should be removed
+                if (b.IsVanished)
+                    Bullets.RemoveAt(i);
+            }
         }
 
         /// <summary>

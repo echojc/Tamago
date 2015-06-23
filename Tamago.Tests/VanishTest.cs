@@ -55,6 +55,17 @@ namespace Tamago.Tests
         }
 
         [Test]
+        public void RunningReturnsFalseToImmediatelyStop()
+        {
+            var node = XElement.Parse(@"
+              <vanish/>
+            ");
+
+            var vanish = new Vanish(node);
+            Assert.False(vanish.Run(TestBullet, EmptyArray));
+        }
+
+        [Test]
         public void CompletesAfterRunning()
         {
             var node = XElement.Parse(@"
@@ -64,7 +75,7 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(vanish.IsCompleted);
 
-            Assert.True(vanish.Run(TestBullet, EmptyArray));
+            vanish.Run(TestBullet, EmptyArray);
             Assert.True(vanish.IsCompleted);
         }
 

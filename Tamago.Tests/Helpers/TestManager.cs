@@ -60,5 +60,18 @@ namespace Tamago.Tests.Helpers
         {
             _rank = rank;
         }
+
+        public override void Update()
+        {
+            // spawned bullets run on the next frame
+            // keep vanished bullets so we can check their final state
+            // TODO: do this properly?
+            for (int i = Bullets.Count - 1; i >= 0; i--)
+            {
+                var b = Bullets[i];
+                if (!b.IsVanished)
+                    b.Update();
+            }
+        }
     }
 }

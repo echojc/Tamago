@@ -274,5 +274,53 @@ namespace Tamago.Tests
                 Assert.AreEqual(y[i], TestManager.Bullets[i].Y, 0.00001f);
             }
         }
+
+        [Test]
+        public void VanishesImmediatelyHaltsExecution()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <fire>
+                    <direction type=""absolute"">90</direction>
+                    <bullet>
+                      <action>
+                        <fire>
+                          <direction type=""absolute"">270</direction>
+                          <bullet/>
+                        </fire>
+                        <vanish/>
+                        <fire>
+                          <direction type=""absolute"">280</direction>
+                          <bullet/>
+                        </fire>
+                      </action>
+                    </bullet>
+                  </fire>
+                  <vanish/>
+                  <fire>
+                    <direction type=""absolute"">180</direction>
+                    <bullet/>
+                  </fire>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+            Assert.True(TestManager.Bullets[0].IsVanished);
+            Assert.AreEqual(MathHelper.ToRadians(90), TestManager.Bullets[1].Direction);
+
+            TestManager.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+            Assert.AreEqual(MathHelper.ToRadians(90), TestManager.Bullets[1].Direction);
+            Assert.True(TestManager.Bullets[1].IsVanished);
+            Assert.AreEqual(MathHelper.ToRadians(270), TestManager.Bullets[2].Direction);
+
+            TestManager.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+            Assert.False(TestManager.Bullets[2].IsVanished);
+        }
     }
 }
