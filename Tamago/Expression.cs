@@ -14,6 +14,7 @@ namespace Tamago
         /// Parses an expression that can be evaluated later.
         /// </summary>
         /// <param name="input">The expression to parse</param>
+        /// <param name="version">The version of the spec to parse for.</param>
         public Expression(string input)
         {
             if (input == null)
@@ -85,9 +86,29 @@ namespace Tamago
         /// <returns>The result of evaluating this expression.</returns>
         public float Evaluate(float[] param, IBulletManager manager = null)
         {
-            if (param == null)
-                throw new ArgumentNullException("param");
-            return Evaluate(i => (i >= 1 && i <= param.Length) ? param[i-1] : 0, manager);
+            return Evaluate(param, _ => 0, manager);
+        }
+
+        /// <summary>
+        /// Evaluate the expression by looking up parameters as indexes in this array.
+        /// Note that the array is 0-based but parameters are 1-based, so <code>$1</code> resolves to <code>array[0]</code>.
+        /// Values that are out of range or indexes that are not ints will return the result of a call to the fallback function.
+        /// </summary>
+        /// <param name="param">The array to look up parameters with.</param>
+        /// <param name="fallback">The function to invoke if the index is out of range or is not an int.</param>
+        /// <param name="manager">Used to resolve <code>$rand</code> and <code>$rank</code>. If null, these variables will evaluate to 0.</param>
+        /// <returns>The result of evaluating this expression.</returns>
+        public float Evaluate(float[] param, Func<string, float> fallback, IBulletManager manager = null)
+        {
+            if (param == null) throw new ArgumentNullException("param");
+            if (fallback == null) throw new ArgumentNullException("fallback");
+
+            // create dictionary lookup
+            var dict = new Dictionary<string, float>();
+            for (int i = 1; i <= param.Length; i++)
+                dict.Add(i.ToString(), param[i - 1]);
+
+            return Evaluate(i => dict.ContainsKey(i) ? dict[i] : fallback(i), manager);
         }
 
         /// <summary>
@@ -96,7 +117,7 @@ namespace Tamago
         /// <param name="param">The function to call to look up parameters with.</param>
         /// <param name="manager">Used to resolve <code>$rand</code> and <code>$rank</code>. If null, these variables will evaluate to 0.</param>
         /// <returns>The result of evaluating this expression.</returns>
-        public float Evaluate(Func<int, float> param, IBulletManager manager = null)
+        public float Evaluate(Func<string, float> param, IBulletManager manager = null)
         {
             if (param == null)
                 throw new ArgumentNullException("param");
@@ -282,7 +303,7 @@ namespace Tamago
         }
 
         /// <summary>
-        /// var = /\$([0-9]+|rank|rand)/
+        /// var = /\$([0-9]+|rank|rand|i|times)/
         /// </summary>
         /// <returns>Index for the next token, or the negative of the index that failed to match.</returns>
         protected int ParseVariable(char[] input, int start, out Ast match)
@@ -300,6 +321,8 @@ namespace Tamago
 
             if (end != start) // matched
             {
+                // even though internally we convert it back to a string
+                // we parse int here anyway because it's easier than manually trimming, etc.
                 int arg;
                 if (!int.TryParse(new string(input, start, end - start), out arg))
                     return -start;
@@ -309,25 +332,48 @@ namespace Tamago
             }
 
             // match vars
-            if (input.Length >= start + 4 &&
-                input[start] == 'r' &&
-                input[start+1] == 'a' &&
-                input[start+2] == 'n')
+            if (CharArrayStartsWithString(input, start, "rank"))
             {
-                switch (input[start+3])
-                {
-                    case 'k':
-                        match = Function.Rank;
-                        return start + 4;
-                    case 'd':
-                        match = Function.Rand;
-                        return start + 4;
-                    default:
-                        return -start;
-                }
+                match = Function.Rank;
+                return start + 4;
+            }
+            else if (CharArrayStartsWithString(input, start, "rand"))
+            {
+                match = Function.Rand;
+                return start + 4;
+            }
+            else if (CharArrayStartsWithString(input, start, "i"))
+            {
+                match = new Param("i");
+                return start + 1;
+            }
+            else if (CharArrayStartsWithString(input, start, "times"))
+            {
+                match = new Param("times");
+                return start + 5;
             }
 
             return -start;
+        }
+
+        /// <summary>
+        /// Helper to match variables.
+        /// </summary>
+        /// <returns>True if the array starts with the same characters as the entire string.</returns>
+        private bool CharArrayStartsWithString(char[] array, int offset, string target)
+        {
+            var end = target.Length + offset;
+
+            if (array.Length < end)
+                return false;
+
+            for (int i = offset; i < end; i++)
+            {
+                if (array[i] != target[i - offset])
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -517,8 +563,13 @@ namespace Tamago
 
     public struct Param : Ast
     {
-        public int Index { get; private set; }
+        public string Index { get; private set; }
+
         public Param(int index)
+            : this(index.ToString())
+        { }
+
+        public Param(string index)
             : this()
         {
             Index = index;

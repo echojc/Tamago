@@ -15,7 +15,8 @@ namespace Tamago.Tests
         {
             Assert.Throws<ArgumentNullException>(() => new Expression(null));
             Assert.Throws<ArgumentNullException>(() => new Expression("1").Evaluate((float[])null));
-            Assert.Throws<ArgumentNullException>(() => new Expression("1").Evaluate((Func<int, float>)null));
+            Assert.Throws<ArgumentNullException>(() => new Expression("1").Evaluate((float[])null, (Func<string, float>)null));
+            Assert.Throws<ArgumentNullException>(() => new Expression("1").Evaluate((Func<string, float>)null));
         }
 
         [Test]
@@ -203,7 +204,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void ParsesParamsWithOutOfRangeBehevaiour()
+        public void ParsesParamsWithOutOfRangeBehaviour()
         {
             var expr1 = new Expression("$1 + $2");
             var expr2 = new Expression("$1");
@@ -212,6 +213,28 @@ namespace Tamago.Tests
             Assert.AreEqual(3.7f, expr1.Evaluate(new[] { 1.2f, 2.5f }), 0.00001f);
             Assert.AreEqual(0f, expr2.Evaluate(), 0.00001f);
             Assert.AreEqual(3.7f, expr3.Evaluate(new[] { 1.2f, 2.5f }), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesParamsWithFallbackBehaviour()
+        {
+            var expr1 = new Expression("$1 + $i + $times");
+            var expr2 = new Expression("$1");
+
+            Assert.AreEqual(7.9f, expr1.Evaluate(
+                new[] { 1.2f }, i =>
+                {
+                    switch (i)
+                    {
+                        case "i": return 2.5f;
+                        case "times": return 4.2f;
+                        default: return 0;
+                    }
+                }),
+                0.00001f);
+            Assert.AreEqual(1.2f, expr2.Evaluate(
+                EmptyArray, i => i == "i" ? 2.5f : 1.2f),
+                0.00001f);
         }
 
         [Test]
@@ -239,6 +262,20 @@ namespace Tamago.Tests
         {
             var expr = new Expression("$rank");
             Assert.AreEqual(Helpers.TestManager.TestRank, expr.Evaluate(_ => 0, TestManager), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesVarI()
+        {
+            var expr = new Expression("$i");
+            Assert.AreEqual(1.337f, expr.Evaluate(EmptyArray, i => i == "i" ? 1.337f : 0, TestManager), 0.00001f);
+        }
+
+        [Test]
+        public void ParsesVarTimes()
+        {
+            var expr = new Expression("$times");
+            Assert.AreEqual(1.337f, expr.Evaluate(EmptyArray, i => i == "times" ? 1.337f : 0, TestManager), 0.00001f);
         }
 
         [Test]
