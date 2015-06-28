@@ -128,8 +128,9 @@ namespace Tamago
         /// <param name="bullet">The bullet to run the tasks against.</param>
         /// <param name="args">Values for params in expressions.</param>
         /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
+        /// <param name="rest">Any other arguments for expressions.</param>
         /// <returns>True if no waiting is required, otherwise the result of any nested &lt;wait&gt; nodes</returns>
-        public bool Run(Bullet bullet, float[] args)
+        public bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -139,7 +140,7 @@ namespace Tamago
 
             for (int i = 0; i < _tasks.Count; i++)
             {
-                var isDone = _tasks[i].Run(bullet, args);
+                var isDone = _tasks[i].Run(bullet, args, rest);
 
                 if (!isDone)
                     return false;

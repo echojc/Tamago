@@ -9,11 +9,13 @@ namespace Tamago
     public class Bullet
     {
         private static float[] EmptyArray = new float[0];
+        private static Dictionary<string, float> EmptyDictionary = new Dictionary<string, float>();
 
         public IBulletManager BulletManager;
 
         public List<IAction> Actions { get; protected set; }
         public float[] Params { get; protected set; }
+        public Dictionary<string, float> Rest { get; protected set; }
         public bool IsTopLevel { get; protected set; }
         public bool IsVanished { get; set; }
         public bool IsCompleted
@@ -83,12 +85,15 @@ namespace Tamago
         /// Sets the expression parameters for actions encapsulated by this bullet.
         /// </summary>
         /// <param name="args">The parameters to use.</param>
-        public void SetParams(float[] args)
+        /// <param name="rest">The other parameters to use.</param>
+        public void SetParams(float[] args, Dictionary<string, float> rest)
         {
             if (args == null) throw new ArgumentNullException("args");
+            if (rest == null) throw new ArgumentNullException("rest");
 
             Params = new float[args.Length];
             Array.Copy(args, Params, args.Length);
+            Rest = new Dictionary<string, float>(rest);
         }
 
         /// <summary>
@@ -116,7 +121,7 @@ namespace Tamago
                 return;
 
             // actions are run before bullets move
-            Actions.ForEach(a => a.Run(this, Params ?? EmptyArray));
+            Actions.ForEach(a => a.Run(this, Params ?? EmptyArray, Rest ?? EmptyDictionary));
 
             // apply queued changes if they exist
             if (NewSpeed != null)

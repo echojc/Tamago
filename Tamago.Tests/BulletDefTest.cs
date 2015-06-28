@@ -54,7 +54,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            Assert.Throws<ArgumentNullException>(() => bulletRef.Create(null, EmptyArray));
+            Assert.Throws<ArgumentNullException>(() => bulletRef.Create(null));
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(1, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150), bullet.Direction);
@@ -82,7 +82,7 @@ namespace Tamago.Tests
             TestBullet.Y = 2.3f;
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(4.2f, bullet.X);
             Assert.AreEqual(2.3f, bullet.Y);
@@ -101,7 +101,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(2, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150), bullet.Direction);
@@ -117,7 +117,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(2, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150), bullet.Direction);
@@ -133,7 +133,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(4.5f, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150), bullet.Direction);
@@ -149,7 +149,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(3.5f, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150), bullet.Direction);
@@ -178,14 +178,14 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
             Assert.AreEqual(1, bulletRef.Actions.Count);
 
             var action = bulletRef.Actions[0];
             Assert.False(action.IsCompleted);
             Assert.AreEqual(1, action.Tasks.Count);
 
-            action.Run(bullet, EmptyArray);
+            action.Run(bullet);
             Assert.True(action.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
         }
@@ -206,9 +206,9 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet1 = bulletRef.Create(TestBullet, EmptyArray);
-            var bullet2 = bulletRef.Create(TestBullet, EmptyArray);
-            var bullet3 = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet1 = bulletRef.Create(TestBullet);
+            var bullet2 = bulletRef.Create(TestBullet);
+            var bullet3 = bulletRef.Create(TestBullet);
             bulletRef.Actions.ForEach(a => Assert.False(a.IsCompleted));
             Assert.False(bullet1.IsCompleted);
             Assert.False(bullet2.IsCompleted);
@@ -255,7 +255,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, fooPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             bullet.Update();
@@ -307,7 +307,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, fooPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             bullet.Update();
@@ -340,7 +340,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(1, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(195), bullet.Direction, 0.00001f);
@@ -356,7 +356,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(1, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(175), bullet.Direction, 0.00001f);
@@ -372,7 +372,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(1, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(30), bullet.Direction, 0.00001f);
@@ -388,7 +388,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(1, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(130), bullet.Direction, 0.00001f);
@@ -404,7 +404,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(1, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(230), bullet.Direction, 0.00001f);
@@ -421,7 +421,7 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(1.23f, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(150 + 88.9f), bullet.Direction, 0.00001f);
@@ -460,44 +460,59 @@ namespace Tamago.Tests
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
+            var bullet = bulletRef.Create(TestBullet);
 
             Assert.AreEqual(3, bullet.Speed);
             Assert.AreEqual(MathHelper.ToRadians(9), bullet.Direction, 0.00001f);
         }
 
         [Test]
-        public void ParsesRandRank()
+        public void EvalsParamsRankRandRest()
         {
             var node = XElement.Parse(@"
               <bullet>
-                <direction type=""absolute"">$rand</direction>
-                <speed>$rank</speed>
+                <direction type=""absolute"">$1 * $rank * $times</direction>
+                <speed>$3 * $rand * $i</speed>
+                <action>
+                  <fire>
+                    <speed>$2 * $rank * $i</speed>
+                    <bullet/>
+                  </fire>
+                </action>
               </bullet>
             ");
 
             var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, EmptyArray);
 
-            Assert.AreEqual(Helpers.TestManager.TestRank, bullet.Speed, 0.00001f);
-            Assert.AreEqual(MathHelper.ToRadians(Helpers.TestManager.TestRand), bullet.Direction, 0.00001f);
-        }
+            var args = new[] { 1.2f, 2.5f, 8.4f };
+            var rest = new Dictionary<string, float>() 
+            {
+                { "i", 4.2f },
+                { "times", 2.3f }
+            };
 
-        [Test]
-        public void ParsesParams()
-        {
-            var node = XElement.Parse(@"
-              <bullet>
-                <direction type=""absolute"">$1</direction>
-                <speed>$3</speed>
-              </bullet>
-            ");
+            var bullet = bulletRef.Create(TestBullet, args, rest);
+            Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            var bulletRef = new BulletDef(node, DummyPattern);
-            var bullet = bulletRef.Create(TestBullet, new[] { 234.5f, 1.2f, 2.3f });
+            var targetDir = args[0] * Helpers.TestManager.TestRank * rest["times"];
+            var targetSpeed = args[2] * Helpers.TestManager.TestRand * rest["i"];
+            var targetNestedSpeed = args[1] * Helpers.TestManager.TestRank * rest["i"];
 
-            Assert.AreEqual(2.3f, bullet.Speed, 0.00001f);
-            Assert.AreEqual(MathHelper.ToRadians(234.5f), bullet.Direction, 0.00001f);
+            Assert.AreEqual(
+                targetSpeed,
+                bullet.Speed,
+                0.00001f);
+            Assert.AreEqual(
+                MathHelper.ToRadians(targetDir),
+                bullet.Direction,
+                0.00001f);
+
+            bullet.Update();
+            Assert.AreEqual(3, TestManager.Bullets.Count);
+            Assert.AreEqual(
+                targetNestedSpeed,
+                TestManager.Bullets[2].Speed,
+                0.00001f);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Tamago
@@ -80,8 +81,9 @@ namespace Tamago
         /// <param name="bullet">The bullet to change the speed of.</param>
         /// <param name="args">Values for params in expressions.</param>
         /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
+        /// <param name="rest">Any other arguments for expressions.</param>
         /// <returns>True always</returns>
-        public bool Run(Bullet bullet, float[] args)
+        public bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -90,14 +92,14 @@ namespace Tamago
                 return true;
 
             // must be rounded down
-            int term = (int)Term.Evaluate(args, bullet.BulletManager);
+            int term = (int)Term.Evaluate(args, rest.GetValueOrDefault, bullet.BulletManager);
             
             if (isFirstRun)
             {
                 isFirstRun = false;
                 initialSpeed = bullet.Speed;
 
-                var speed = Speed.Value.Evaluate(args, bullet.BulletManager);
+                var speed = Speed.Value.Evaluate(args, rest.GetValueOrDefault, bullet.BulletManager);
                 switch (Speed.Type)
                 {
                     case SpeedType.Relative:

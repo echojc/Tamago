@@ -29,6 +29,6 @@ namespace Tamago
         /// </summary>
         /// <param name="bullet">The parent bullet to create this bullet from.</param>
         /// <param name="args">Values for params in expressions.</param>
-        Bullet Create(Bullet parent, float[] args);
+        Bullet Create(Bullet parent, float[] args, Dictionary<string, float> rest);
     }
 }

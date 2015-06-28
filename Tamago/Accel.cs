@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Tamago
@@ -95,8 +96,9 @@ namespace Tamago
         /// <param name="bullet">The bullet to change the velocities of.</param>
         /// <param name="args">Values for params in expressions.</param>
         /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
+        /// <param name="rest">Any other arguments for expressions.</param>
         /// <returns>True always</returns>
-        public bool Run(Bullet bullet, float[] args)
+        public bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -105,7 +107,7 @@ namespace Tamago
                 return true;
 
             // must be rounded down
-            int term = (int)Term.Evaluate(args, bullet.BulletManager);
+            int term = (int)Term.Evaluate(args, rest.GetValueOrDefault, bullet.BulletManager);
 
             if (isFirstRun)
             {
@@ -116,7 +118,7 @@ namespace Tamago
                 if (VelocityX != null)
                 {
                     Speed x = VelocityX.Value;
-                    var xvalue = x.Value.Evaluate(args, bullet.BulletManager);
+                    var xvalue = x.Value.Evaluate(args, rest.GetValueOrDefault, bullet.BulletManager);
                     switch (x.Type)
                     {
                         case SpeedType.Relative:
@@ -135,7 +137,7 @@ namespace Tamago
                 if (VelocityY != null)
                 {
                     Speed y = VelocityY.Value;
-                    var yvalue = y.Value.Evaluate(args, bullet.BulletManager);
+                    var yvalue = y.Value.Evaluate(args, rest.GetValueOrDefault, bullet.BulletManager);
                     switch (y.Type)
                     {
                         case SpeedType.Relative:

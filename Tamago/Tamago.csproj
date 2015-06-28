@@ -46,6 +46,7 @@
     <Compile Include="BulletRef.cs" />
     <Compile Include="ChangeDirection.cs" />
     <Compile Include="ChangeSpeed.cs" />
+    <Compile Include="DictionaryHelper.cs" />
     <Compile Include="Expression.cs" />
     <Compile Include="FireDef.cs" />
     <Compile Include="BulletManager.cs" />

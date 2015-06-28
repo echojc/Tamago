@@ -350,7 +350,8 @@ namespace Tamago.Tests
             ");
             Assert.AreEqual(1, TestManager.Bullets.Count);
             var root = TestManager.Bullets[0];
-            Assert.Throws<ArgumentNullException>(() => root.SetParams(null));
+            Assert.Throws<ArgumentNullException>(() => root.SetParams(null, new Dictionary<string, float>()));
+            Assert.Throws<ArgumentNullException>(() => root.SetParams(new float[] { }, null));
         }
 
         [Test]
@@ -379,13 +380,13 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void OutOfBoundsParamsResolveToZero()
+        public void OutOfBoundsAndUnknownParamsResolveToZero()
         {
             CreateTopLevelBullet(@"
               <bulletml>
                 <action label=""top"">
                   <fire>
-                    <direction type=""absolute"">$1</direction>
+                    <direction type=""absolute"">$i</direction>
                     <speed>$2</speed>
                     <bullet/>
                   </fire>
@@ -395,13 +396,13 @@ namespace Tamago.Tests
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             var root = TestManager.Bullets[0];
-            root.SetParams(new[] { 22.22f });
+            root.SetParams(new[] { 22.22f }, new Dictionary<string,float>());
 
             TestManager.Update();
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             var b2 = TestManager.Bullets.Last();
-            Assert.AreEqual(MathHelper.ToRadians(22.22f), b2.Direction);
+            Assert.AreEqual(0, b2.Direction);
             Assert.AreEqual(0, b2.Speed);
         }
 
@@ -412,7 +413,7 @@ namespace Tamago.Tests
               <bulletml>
                 <action label=""top"">
                   <fire>
-                    <direction type=""absolute"">$1</direction>
+                    <direction type=""absolute"">$i</direction>
                     <speed>$2</speed>
                     <bullet/>
                   </fire>
@@ -422,7 +423,12 @@ namespace Tamago.Tests
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             var root = TestManager.Bullets[0];
-            root.SetParams(new[] { 33.33f, 1.2f, 4.4f });
+            root.SetParams(
+                new[] { 33.33f, 1.2f, 4.4f },
+                new Dictionary<string, float>()
+                {
+                    { "i", 33.33f }
+                });
 
             TestManager.Update();
             Assert.AreEqual(2, TestManager.Bullets.Count);

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Tamago.Tests
@@ -80,7 +81,7 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeSpeed(node);
-            Assert.Throws<ArgumentNullException>(() => change.Run(null, EmptyArray));
+            Assert.Throws<ArgumentNullException>(() => change.Run(null));
         }
 
         [Test]
@@ -111,7 +112,7 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            change.Run(TestBullet, EmptyArray);
+            change.Run(TestBullet);
             Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(2.5f, TestBullet.Speed);
@@ -130,7 +131,7 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            change.Run(TestBullet, EmptyArray);
+            change.Run(TestBullet);
             Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(2.5f, TestBullet.Speed);
@@ -149,7 +150,7 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            change.Run(TestBullet, EmptyArray);
+            change.Run(TestBullet);
             Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed, TestBullet.Speed);
@@ -168,16 +169,16 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.True(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.True(change.IsCompleted);
         }
 
@@ -194,10 +195,10 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.True(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.True(change.IsCompleted);
         }
 
@@ -214,19 +215,19 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + (2.5f - DefaultSpeed) / 3, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + (2.5f - DefaultSpeed) / 3 * 2, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(2.5f, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(2.5f, TestBullet.Speed);
         }
@@ -244,19 +245,19 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + (2.5f - DefaultSpeed) / 3, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + (2.5f - DefaultSpeed) / 3 * 2, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(2.5f, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(2.5f, TestBullet.Speed);
         }
@@ -274,19 +275,19 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 2.5f / 3, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 2.5f / 3 * 2, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 2.5f, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 2.5f, TestBullet.Speed);
         }
@@ -304,19 +305,19 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 0.8f, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 1.6f, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 2.4f, TestBullet.Speed);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 2.4f, TestBullet.Speed);
         }
@@ -334,34 +335,34 @@ namespace Tamago.Tests
             var change = new ChangeSpeed(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 0.8f, TestBullet.Speed, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 1.6f, TestBullet.Speed, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 2.4f, TestBullet.Speed, 0.00001f);
 
             change.Reset();
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 3.2f, TestBullet.Speed, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 4.0f, TestBullet.Speed, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 4.8f, TestBullet.Speed, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultSpeed + 4.8f, TestBullet.Speed, 0.00001f);
         }
@@ -386,18 +387,30 @@ namespace Tamago.Tests
         {
             var node = XElement.Parse(@"
               <changeSpeed>
-                <speed type=""relative"">$rank + $rand</speed>
-                <term>$2</term>
+                <speed type=""relative"">$1 * $rank * $times</speed>
+                <term>$3 * $rand * $i</term>
               </changeSpeed>
             ");
 
-            var term = 2.5f;
             var change = new ChangeSpeed(node);
-            change.Run(TestBullet, new[] { 1.2f, term, 3.4f });
+
+            var args = new[] { 1.2f, 2.5f, 8.4f };
+            var rest = new Dictionary<string, float>() 
+            {
+                { "i", 4.2f },
+                { "times", 2.3f }
+            };
+            change.Run(TestBullet, args, rest);
+
+            var target = args[0] * Helpers.TestManager.TestRank * rest["times"];
+            var term = args[2] * Helpers.TestManager.TestRand * rest["i"];
 
             TestBullet.Update();
-            var expectedDelta = (Helpers.TestManager.TestRand + Helpers.TestManager.TestRank) / (int)term;
-            Assert.AreEqual(DefaultSpeed +  expectedDelta, TestBullet.Speed);
+            var expectedDelta = target / (int)term;
+            Assert.AreEqual(
+                DefaultSpeed +  expectedDelta,
+                TestBullet.Speed,
+                0.00001f);
         }
         
         [Test]

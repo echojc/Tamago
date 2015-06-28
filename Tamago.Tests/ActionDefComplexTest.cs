@@ -322,5 +322,59 @@ namespace Tamago.Tests
             Assert.AreEqual(3, TestManager.Bullets.Count);
             Assert.False(TestManager.Bullets[2].IsVanished);
         }
+
+        [Test]
+        public void ComplexParamPassingWithRepeatContextVars()
+        {
+            CreateTopLevelBullet(@"
+              <bulletml>
+                <action label=""top"">
+                  <actionRef label=""spray"">
+                    <param>20</param><!-- angle -->
+                    <param>4</param><!-- count -->
+                  </actionRef>
+                </action>
+                <action label=""spray"">
+                  <fire>
+                    <direction type=""absolute"">180</direction>
+                    <bullet>
+                      <action>
+                        <repeat>
+                          <times>$2</times>
+                          <action>
+                            <fire>
+                              <direction type=""aim"">$i * ($1 / ($times - 1)) - ($1 / 2)</direction>
+                              <bullet/>
+                            </fire>
+                          </action>
+                        </repeat>
+                        <vanish/>
+                      </action>
+                    </bullet>
+                  </fire>
+                </action>
+              </bulletml>
+            ");
+            Assert.AreEqual(1, TestManager.Bullets.Count);
+
+            TestManager.Update();
+            Assert.AreEqual(2, TestManager.Bullets.Count);
+            Assert.True(TestManager.Bullets[0].IsVanished);
+            Assert.False(TestManager.Bullets[1].IsVanished);
+
+            TestManager.Update();
+            Assert.AreEqual(6, TestManager.Bullets.Count);
+            Assert.True(TestManager.Bullets[1].IsVanished);
+            Assert.AreEqual(MathHelper.ToRadians(180), TestManager.Bullets[1].Direction);
+
+            var directions = new float[] { -10f, -10f / 3, 10f / 3, 10f };
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(
+                    MathHelper.ToRadians(180 + directions[i]),
+                    TestManager.Bullets[i + 2].Direction,
+                    0.00001f);
+            }
+        }
     }
 }

@@ -233,7 +233,7 @@ namespace Tamago.Tests
                 }),
                 0.00001f);
             Assert.AreEqual(1.2f, expr2.Evaluate(
-                EmptyArray, i => i == "i" ? 2.5f : 1.2f),
+                new float[] { }, i => i == "i" ? 2.5f : 1.2f),
                 0.00001f);
         }
 
@@ -268,14 +268,14 @@ namespace Tamago.Tests
         public void ParsesVarI()
         {
             var expr = new Expression("$i");
-            Assert.AreEqual(1.337f, expr.Evaluate(EmptyArray, i => i == "i" ? 1.337f : 0, TestManager), 0.00001f);
+            Assert.AreEqual(1.337f, expr.Evaluate(new float[] { }, i => i == "i" ? 1.337f : 0, TestManager), 0.00001f);
         }
 
         [Test]
         public void ParsesVarTimes()
         {
             var expr = new Expression("$times");
-            Assert.AreEqual(1.337f, expr.Evaluate(EmptyArray, i => i == "times" ? 1.337f : 0, TestManager), 0.00001f);
+            Assert.AreEqual(1.337f, expr.Evaluate(new float[] { }, i => i == "times" ? 1.337f : 0, TestManager), 0.00001f);
         }
 
         [Test]

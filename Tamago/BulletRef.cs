@@ -94,14 +94,17 @@ namespace Tamago
         /// Creates a bullet from the context of the parent bullet using the underlying bullet.
         /// </summary>
         /// <param name="bullet">The parent bullet to create this bullet from.</param>
-        public Bullet Create(Bullet parent, float[] args)
+        /// <param name="args">Values for params in expressions.</param>
+        /// <param name="rest">Any other arguments for expressions.</param>
+        public Bullet Create(Bullet parent, float[] args, Dictionary<string, float> rest)
         {
+            var bullet = Bullet.Create(parent, args, rest);
+
             float[] newArgs = new float[_params.Length];
             for (int i = 0; i < newArgs.Length; i++)
-                newArgs[i] = _params[i].Evaluate(args, parent.BulletManager);
+                newArgs[i] = _params[i].Evaluate(args, rest.GetValueOrDefault, parent.BulletManager);
 
-            var bullet = Bullet.Create(parent, args);
-            bullet.SetParams(newArgs);
+            bullet.SetParams(newArgs, new Dictionary<string, float>());
             return bullet;
         }
     }

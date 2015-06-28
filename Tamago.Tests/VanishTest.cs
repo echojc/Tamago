@@ -37,7 +37,7 @@ namespace Tamago.Tests
             ");
 
             var vanish = new Vanish(node);
-            Assert.Throws<ArgumentNullException>(() => vanish.Run(null, EmptyArray));
+            Assert.Throws<ArgumentNullException>(() => vanish.Run(null));
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(TestBullet.IsVanished);
 
-            vanish.Run(TestBullet, EmptyArray);
+            vanish.Run(TestBullet);
             Assert.True(TestBullet.IsVanished);
         }
 
@@ -62,7 +62,7 @@ namespace Tamago.Tests
             ");
 
             var vanish = new Vanish(node);
-            Assert.False(vanish.Run(TestBullet, EmptyArray));
+            Assert.False(vanish.Run(TestBullet));
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(vanish.IsCompleted);
 
-            vanish.Run(TestBullet, EmptyArray);
+            vanish.Run(TestBullet);
             Assert.True(vanish.IsCompleted);
         }
 
@@ -89,11 +89,11 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(vanish.IsCompleted);
 
-            vanish.Run(TestBullet, EmptyArray);
+            vanish.Run(TestBullet);
             Assert.True(TestBullet.IsVanished);
 
             TestBullet.IsVanished = false;
-            vanish.Run(TestBullet, EmptyArray);
+            vanish.Run(TestBullet);
             Assert.False(TestBullet.IsVanished);
         }
 
@@ -107,12 +107,12 @@ namespace Tamago.Tests
             var vanish = new Vanish(node);
             Assert.False(vanish.IsCompleted);
 
-            vanish.Run(TestBullet, EmptyArray);
+            vanish.Run(TestBullet);
             Assert.True(TestBullet.IsVanished);
 
             vanish.Reset();
             TestBullet.IsVanished = false;
-            vanish.Run(TestBullet, EmptyArray);
+            vanish.Run(TestBullet);
             Assert.True(TestBullet.IsVanished);
         }
         

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Tamago.Tests
@@ -47,7 +48,7 @@ namespace Tamago.Tests
             ");
 
             var wait = new Wait(node);
-            Assert.Throws<ArgumentNullException>(() => wait.Run(null, EmptyArray));
+            Assert.Throws<ArgumentNullException>(() => wait.Run(null));
         }
 
         [Test]
@@ -62,7 +63,7 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void ParsesRand()
+        public void EvalsRand()
         {
             var node = XElement.Parse(@"
               <wait>$rand</wait>
@@ -75,15 +76,15 @@ namespace Tamago.Tests
             for (int i = 0; i < times; i++)
             {
                 Assert.False(wait.IsCompleted);
-                Assert.False(wait.Run(TestBullet, EmptyArray));
+                Assert.False(wait.Run(TestBullet));
             }
 
             Assert.True(wait.IsCompleted);
-            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.Run(TestBullet));
         }
 
         [Test]
-        public void ParsesRank()
+        public void EvalsRank()
         {
             var node = XElement.Parse(@"
               <wait>$rank</wait>
@@ -96,25 +97,24 @@ namespace Tamago.Tests
             for (int i = 0; i < times; i++)
             {
                 Assert.False(wait.IsCompleted);
-                Assert.False(wait.Run(TestBullet, EmptyArray));
+                Assert.False(wait.Run(TestBullet));
             }
 
             Assert.True(wait.IsCompleted);
-            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.Run(TestBullet));
         }
 
         [Test]
-        public void ParsesParams()
+        public void EvalsParams()
         {
             var node = XElement.Parse(@"
-              <wait>$rank</wait>
+              <wait>$2</wait>
             ");
 
             var wait = new Wait(node);
             var times = 11;
             var array = new[] { 1.2f, times, 2.3f };
 
-            TestManager.SetRank(times);
             for (int i = 0; i < times; i++)
             {
                 Assert.False(wait.IsCompleted);
@@ -123,6 +123,30 @@ namespace Tamago.Tests
 
             Assert.True(wait.IsCompleted);
             Assert.True(wait.Run(TestBullet, array));
+        }
+
+        [Test]
+        public void EvalsRest()
+        {
+            var node = XElement.Parse(@"
+              <wait>$i</wait>
+            ");
+
+            var wait = new Wait(node);
+            var times = 3;
+            var rest = new Dictionary<string, float>()
+            {
+                { "i", times }
+            };
+
+            for (int i = 0; i < times; i++)
+            {
+                Assert.False(wait.IsCompleted);
+                Assert.False(wait.Run(TestBullet, rest: rest));
+            }
+
+            Assert.True(wait.IsCompleted);
+            Assert.True(wait.Run(TestBullet, rest: rest));
         }
 
         [Test]
@@ -135,7 +159,7 @@ namespace Tamago.Tests
             var wait = new Wait(node);
             Assert.False(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.Run(TestBullet));
             Assert.True(wait.IsCompleted);
         }
 
@@ -149,7 +173,7 @@ namespace Tamago.Tests
             var wait = new Wait(node);
             Assert.False(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.Run(TestBullet));
             Assert.True(wait.IsCompleted);
         }
 
@@ -163,13 +187,13 @@ namespace Tamago.Tests
             var wait = new Wait(node);
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet, EmptyArray));
+            Assert.False(wait.Run(TestBullet));
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet, EmptyArray));
+            Assert.False(wait.Run(TestBullet));
             Assert.True(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.Run(TestBullet));
         }
 
         [Test]
@@ -182,13 +206,13 @@ namespace Tamago.Tests
             var wait = new Wait(node);
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet, EmptyArray));
+            Assert.False(wait.Run(TestBullet));
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet, EmptyArray));
+            Assert.False(wait.Run(TestBullet));
             Assert.True(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.Run(TestBullet));
         }
 
         [Test]
@@ -201,24 +225,24 @@ namespace Tamago.Tests
             var wait = new Wait(node);
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet, EmptyArray));
+            Assert.False(wait.Run(TestBullet));
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet, EmptyArray));
+            Assert.False(wait.Run(TestBullet));
             Assert.True(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.Run(TestBullet));
 
             wait.Reset();
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet, EmptyArray));
+            Assert.False(wait.Run(TestBullet));
             Assert.False(wait.IsCompleted);
 
-            Assert.False(wait.Run(TestBullet, EmptyArray));
+            Assert.False(wait.Run(TestBullet));
             Assert.True(wait.IsCompleted);
 
-            Assert.True(wait.Run(TestBullet, EmptyArray));
+            Assert.True(wait.Run(TestBullet));
         }
 
         [Test]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Tamago
@@ -93,8 +94,9 @@ namespace Tamago
         /// <param name="bullet">The parent bullet firing this bullet.</param>
         /// <param name="args">Values for params in expressions.</param>
         /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
+        /// <param name="rest">Any other arguments for expressions.</param>
         /// <returns>True always</returns>
-        public bool Run(Bullet bullet, float[] args)
+        public bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -103,13 +105,13 @@ namespace Tamago
                 return true;
 
             // create bullet from definition
-            var newBullet = Bullet.Create(bullet, args);
+            var newBullet = Bullet.Create(bullet, args, rest);
 
             // override with fire attributes
             if (Speed != null)
             {
                 Speed s = Speed.Value;
-                var speed = s.Value.Evaluate(args, bullet.BulletManager);
+                var speed = s.Value.Evaluate(args, rest.GetValueOrDefault, bullet.BulletManager);
                 switch (s.Type)
                 {
                     case SpeedType.Relative:
@@ -130,7 +132,7 @@ namespace Tamago
                 Direction d = Direction.Value;
 
                 float result;
-                var direction = MathHelper.ToRadians(d.Value.Evaluate(args, bullet.BulletManager));
+                var direction = MathHelper.ToRadians(d.Value.Evaluate(args, rest.GetValueOrDefault, bullet.BulletManager));
                 switch (d.Type)
                 {
                     case DirectionType.Relative:

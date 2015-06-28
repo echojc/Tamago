@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Tamago
@@ -45,8 +46,9 @@ namespace Tamago
         /// <param name="bullet">The bullet to vanish.</param>
         /// <param name="args">Values for params in expressions.</param>
         /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
+        /// <param name="rest">Any other arguments for expressions.</param>
         /// <returns>False always</returns>
-        public bool Run(Bullet bullet, float[] args)
+        public bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");

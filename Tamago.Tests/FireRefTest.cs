@@ -88,22 +88,22 @@ namespace Tamago.Tests
             Assert.False(fire.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet, EmptyArray);
+            fire.Run(TestBullet);
             Assert.False(foo.IsCompleted);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet, EmptyArray);
+            fire.Run(TestBullet);
             Assert.False(foo.IsCompleted);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            foo.Run(TestBullet, EmptyArray);
+            foo.Run(TestBullet);
             Assert.True(foo.IsCompleted);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
 
-            foo.Run(TestBullet, EmptyArray);
+            foo.Run(TestBullet);
             Assert.True(foo.IsCompleted);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
@@ -157,7 +157,7 @@ namespace Tamago.Tests
             var fire = new FireRef(node, FooPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet, EmptyArray);
+            fire.Run(TestBullet);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             var bullet = TestManager.Bullets.Last();
@@ -175,7 +175,7 @@ namespace Tamago.Tests
             var fire = new FireRef(node, FooPattern);
             Assert.False(fire.IsCompleted);
 
-            fire.Run(TestBullet, EmptyArray);
+            fire.Run(TestBullet);
             Assert.True(fire.IsCompleted);
         }
 
@@ -190,22 +190,22 @@ namespace Tamago.Tests
             Assert.False(fire.IsCompleted);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet, EmptyArray);
+            fire.Run(TestBullet);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet, EmptyArray);
+            fire.Run(TestBullet);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             fire.Reset();
             Assert.False(fire.IsCompleted);
 
-            fire.Run(TestBullet, EmptyArray);
+            fire.Run(TestBullet);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet, EmptyArray);
+            fire.Run(TestBullet);
             Assert.True(fire.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
         }
@@ -232,11 +232,11 @@ namespace Tamago.Tests
             Assert.False(fire1.IsCompleted);
             Assert.False(fire2.IsCompleted);
 
-            fire1.Run(TestBullet, EmptyArray);
+            fire1.Run(TestBullet);
             Assert.True(fire1.IsCompleted);
             Assert.False(fire2.IsCompleted);
 
-            fire2.Run(TestBullet, EmptyArray);
+            fire2.Run(TestBullet);
             Assert.True(fire1.IsCompleted);
             Assert.True(fire2.IsCompleted);
         }
@@ -259,13 +259,13 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void EvaluatesParamsAndInjectsAsNewValues()
+        public void EvaluatesParamsAndReplacesAllExistingValues()
         {
             var barPattern = new BulletPattern(@"
               <bulletml>
                 <fire label=""bar"">
                   <direction type=""absolute"">$1</direction>
-                  <speed>$2</speed>
+                  <speed>$2 + $i</speed>
                   <bullet/>
                 </fire>
               </bulletml>
@@ -273,7 +273,7 @@ namespace Tamago.Tests
 
             var node = XElement.Parse(@"
               <fireRef label=""bar"">
-                <param>12.34</param>
+                <param>12.34 + $i</param>
                 <param>$2 + $rank + $rand</param>
               </fireRef>
             ");
@@ -281,12 +281,20 @@ namespace Tamago.Tests
             var fire = new FireRef(node, barPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            fire.Run(TestBullet, new[] { 1.2f, 2.3f, 3.4f });
+            var args = new[] { 1.2f, 2.3f, 3.4f };
+            var rest = new Dictionary<string, float>()
+            {
+                { "i", 4.2f }
+            };
+            fire.Run(TestBullet, args, rest);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
+            var targetDir = 12.34f + rest["i"];
+            var targetSpeed = args[1] + Helpers.TestManager.TestRand + Helpers.TestManager.TestRank;
+
             var bullet = TestManager.Bullets.Last();
-            Assert.AreEqual(MathHelper.ToRadians(12.34f), bullet.Direction, 0.00001f);
-            Assert.AreEqual(2.3f + Helpers.TestManager.TestRand + Helpers.TestManager.TestRank, bullet.Speed, 0.00001f);
+            Assert.AreEqual(MathHelper.ToRadians(targetDir), bullet.Direction, 0.00001f);
+            Assert.AreEqual(targetSpeed, bullet.Speed, 0.00001f);
         }
     }
 }

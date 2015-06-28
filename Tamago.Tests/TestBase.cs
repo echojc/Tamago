@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace Tamago.Tests
 {
@@ -7,8 +8,6 @@ namespace Tamago.Tests
     public abstract class TestBase
     {
         internal Helpers.TestManager TestManager;
-
-        internal static readonly float[] EmptyArray = new float[] { };
 
         /// <summary>
         /// Allows tests to construct internal nodes directly.
@@ -28,6 +27,25 @@ namespace Tamago.Tests
             var pattern = new BulletPattern(xml);
             bullet.SetPattern(pattern.CopyAction(name), isTopLevel: true);
             return bullet;
+        }
+    }
+
+    public static class TestHelper
+    {
+        public static bool Run(this ITask task, Bullet bullet, float[] args = null, Dictionary<string, float> rest = null)
+        {
+            return task.Run(
+                bullet,
+                args ?? new float[] { },
+                rest ?? new Dictionary<string, float>());
+        }
+
+        public static Bullet Create(this IBulletDefinition bulletDef, Bullet bullet, float[] args = null, Dictionary<string, float> rest = null)
+        {
+            return bulletDef.Create(
+                bullet,
+                args ?? new float[] { },
+                rest ?? new Dictionary<string, float>());
         }
     }
 }

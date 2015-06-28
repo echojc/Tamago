@@ -28,7 +28,7 @@ namespace Tamago
         /// <param name="bullet">The bullet to run this task on.</param>
         /// <param name="args">Values for params in expressions.</param>
         /// <returns>True if following tasks should be run, otherwise false.</returns>
-        bool Run(Bullet bullet, float[] args);
+        bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest);
 
         /// <summary>
         /// Copies this task and resets it.

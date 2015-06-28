@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Tamago
@@ -79,8 +80,9 @@ namespace Tamago
         /// <param name="bullet">The bullet to run the tasks against.</param>
         /// <param name="args">Values for params in expressions.</param>
         /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
+        /// <param name="rest">Any other arguments for expressions.</param>
         /// <returns>True if no waiting is required, otherwise the result of the nested action.</returns>
-        public bool Run(Bullet bullet, float[] args)
+        public bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest)
         {
             if (bullet == null)
                 throw new ArgumentNullException("bullet");
@@ -89,11 +91,15 @@ namespace Tamago
                 return true;
 
             // must be rounded down
-            int times = (int)Times.Evaluate(args, bullet.BulletManager);
+            int times = (int)Times.Evaluate(args, rest.GetValueOrDefault, bullet.BulletManager);
 
             while (!(IsCompleted = timesRunCount >= times))
             {
-                var isDone = Action.Run(bullet, args);
+                // write current loop values into vars
+                rest["times"] = times;
+                rest["i"] = timesRunCount;
+
+                var isDone = Action.Run(bullet, args, rest);
 
                 // if the action waits, we also stop immediately
                 if (!isDone)

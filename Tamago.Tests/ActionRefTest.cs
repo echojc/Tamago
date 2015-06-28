@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -125,14 +126,14 @@ namespace Tamago.Tests
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             // <wait>1</wait>
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
             // <fire/>
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.AreEqual(2, TestManager.Bullets.Count);
         }
 
@@ -147,14 +148,14 @@ namespace Tamago.Tests
             Assert.False(action.IsCompleted);
 
             // <wait>1</wait>
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.False(action.IsCompleted);
 
             // <fire/>
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.True(action.IsCompleted);
 
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.True(action.IsCompleted);
         }
 
@@ -167,8 +168,8 @@ namespace Tamago.Tests
 
             var action = new ActionRef(node, FooPattern);
 
-            action.Run(TestBullet, EmptyArray);
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
+            action.Run(TestBullet);
             Assert.True(action.IsCompleted);
 
             action.Reset();
@@ -176,16 +177,16 @@ namespace Tamago.Tests
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             // <wait>1</wait>
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.False(action.IsCompleted);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
             // <fire/>
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.True(action.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
 
-            action.Run(TestBullet, EmptyArray);
+            action.Run(TestBullet);
             Assert.True(action.IsCompleted);
             Assert.AreEqual(3, TestManager.Bullets.Count);
         }
@@ -236,14 +237,14 @@ namespace Tamago.Tests
         }
 
         [Test]
-        public void EvaluatesParamsAndInjectsAsNewValues()
+        public void EvaluatesParamsAndReplacesAllExistingValues()
         {
             var barPattern = new BulletPattern(@"
               <bulletml>
                 <action label=""bar"">
                   <fire>
                     <direction type=""absolute"">$1</direction>
-                    <speed>$2</speed>
+                    <speed>$2 + $i</speed>
                     <bullet/>
                   </fire>
                 </action>
@@ -252,7 +253,7 @@ namespace Tamago.Tests
 
             var node = XElement.Parse(@"
               <actionRef label=""bar"">
-                <param>12.34</param>
+                <param>12.34 + $i</param>
                 <param>$2 + $rank + $rand</param>
               </actionRef>
             ");
@@ -260,12 +261,20 @@ namespace Tamago.Tests
             var action = new ActionRef(node, barPattern);
             Assert.AreEqual(1, TestManager.Bullets.Count);
 
-            action.Run(TestBullet, new[] { 1.2f, 2.3f, 3.4f });
+            var args = new[] { 1.2f, 2.3f, 3.4f };
+            var rest = new Dictionary<string, float>()
+            {
+                { "i", 4.2f }
+            };
+            action.Run(TestBullet, args, rest);
             Assert.AreEqual(2, TestManager.Bullets.Count);
 
+            var targetDir = 12.34f + rest["i"];
+            var targetSpeed = args[1] + Helpers.TestManager.TestRand + Helpers.TestManager.TestRank;
+
             var bullet = TestManager.Bullets.Last();
-            Assert.AreEqual(MathHelper.ToRadians(12.34f), bullet.Direction, 0.00001f);
-            Assert.AreEqual(2.3f + Helpers.TestManager.TestRand + Helpers.TestManager.TestRank, bullet.Speed, 0.00001f);
+            Assert.AreEqual(MathHelper.ToRadians(targetDir), bullet.Direction, 0.00001f);
+            Assert.AreEqual(targetSpeed, bullet.Speed, 0.00001f);
         }
     }
 }

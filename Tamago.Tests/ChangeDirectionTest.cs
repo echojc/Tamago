@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Tamago.Tests
@@ -82,7 +83,7 @@ namespace Tamago.Tests
             ");
 
             var change = new ChangeDirection(node);
-            Assert.Throws<ArgumentNullException>(() => change.Run(null, EmptyArray));
+            Assert.Throws<ArgumentNullException>(() => change.Run(null));
         }
 
         [Test]
@@ -114,7 +115,7 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            change.Run(TestBullet, EmptyArray);
+            change.Run(TestBullet);
             Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(100), TestBullet.Direction);
@@ -133,7 +134,7 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            change.Run(TestBullet, EmptyArray);
+            change.Run(TestBullet);
             Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(100), TestBullet.Direction);
@@ -152,7 +153,7 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            change.Run(TestBullet, EmptyArray);
+            change.Run(TestBullet);
             Assert.True(change.IsCompleted);
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection, TestBullet.Direction);
@@ -171,16 +172,16 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.True(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.True(change.IsCompleted);
         }
 
@@ -197,10 +198,10 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.True(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             Assert.True(change.IsCompleted);
         }
 
@@ -217,28 +218,28 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultDirection + (DefaultAimDirection + MathHelper.ToRadians(20) - DefaultDirection) / 3,
                 TestBullet.Direction,
                 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultDirection + (DefaultAimDirection + MathHelper.ToRadians(20) - DefaultDirection) / 3 * 2,
                 TestBullet.Direction,
                 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultAimDirection + MathHelper.ToRadians(20),
                 TestBullet.Direction,
                 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultAimDirection + MathHelper.ToRadians(20),
@@ -259,19 +260,19 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + (MathHelper.ToRadians(100) - DefaultDirection) / 3, TestBullet.Direction);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + (MathHelper.ToRadians(100) - DefaultDirection) / 3 * 2, TestBullet.Direction);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(100), TestBullet.Direction);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(100), TestBullet.Direction);
         }
@@ -289,28 +290,28 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultDirection + MathHelper.ToRadians(50) / 3,
                 TestBullet.Direction,
                 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultDirection + MathHelper.ToRadians(50) / 3 * 2,
                 TestBullet.Direction,
                 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultDirection + MathHelper.ToRadians(50),
                 TestBullet.Direction,
                 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(
                 DefaultDirection + MathHelper.ToRadians(50),
@@ -331,19 +332,19 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(13), TestBullet.Direction);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(26), TestBullet.Direction);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(39), TestBullet.Direction);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(39), TestBullet.Direction);
         }
@@ -361,34 +362,34 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(13), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(26), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(39), TestBullet.Direction, 0.00001f);
 
             change.Reset();
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(52), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(65), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(78), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(78), TestBullet.Direction, 0.00001f);
         }
@@ -408,20 +409,20 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(170), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             // only way to compare across the boundary
             Assert.LessOrEqual(MathHelper.NormalizeAngle(MathHelper.ToRadians(180) - TestBullet.Direction), 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(-170), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(-160), TestBullet.Direction, 0.00001f);
 
@@ -442,20 +443,20 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(-170), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             // only way to compare across the boundary
             Assert.LessOrEqual(MathHelper.NormalizeAngle(MathHelper.ToRadians(180) - TestBullet.Direction), 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(170), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(160), TestBullet.Direction, 0.00001f);
         }
@@ -475,11 +476,11 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(-110.005f), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(-20.01f), TestBullet.Direction, 0.00001f);
         }
@@ -499,11 +500,11 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(110.005f), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(20.01f), TestBullet.Direction, 0.00001f);
         }
@@ -523,11 +524,11 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(-70.005f), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(19.99f), TestBullet.Direction, 0.00001f);
         }
@@ -547,11 +548,11 @@ namespace Tamago.Tests
             var change = new ChangeDirection(node);
             Assert.False(change.IsCompleted);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(70.005f), TestBullet.Direction, 0.00001f);
 
-            Assert.True(change.Run(TestBullet, EmptyArray));
+            Assert.True(change.Run(TestBullet));
             TestBullet.Update();
             Assert.AreEqual(MathHelper.ToRadians(-19.99f), TestBullet.Direction, 0.00001f);
         }
@@ -576,18 +577,30 @@ namespace Tamago.Tests
         {
             var node = XElement.Parse(@"
               <changeDirection>
-                <direction type=""relative"">$rank + $rand</direction>
-                <term>$2</term>
+                <direction type=""relative"">$1 * $rank * $times</direction>
+                <term>$3 * $rand * $i</term>
               </changeDirection>
             ");
 
-            var term = 2.5f;
             var change = new ChangeDirection(node);
-            change.Run(TestBullet, new[] { 1.2f, term, 3.4f });
+
+            var args = new[] { 1.2f, 2.5f, 8.4f };
+            var rest = new Dictionary<string, float>() 
+            {
+                { "i", 4.2f },
+                { "times", 2.3f }
+            };
+            change.Run(TestBullet, args, rest);
+
+            var target = args[0] * Helpers.TestManager.TestRank * rest["times"];
+            var term = args[2] * Helpers.TestManager.TestRand * rest["i"];
 
             TestBullet.Update();
-            var expectedDelta = MathHelper.ToRadians(Helpers.TestManager.TestRand + Helpers.TestManager.TestRank) / (int)term;
-            Assert.AreEqual(DefaultDirection + expectedDelta, TestBullet.Direction);
+            var expectedDelta = MathHelper.ToRadians(target) / (int)term;
+            Assert.AreEqual(
+                DefaultDirection + expectedDelta,
+                TestBullet.Direction,
+                0.00001f);
         }
         
         [Test]

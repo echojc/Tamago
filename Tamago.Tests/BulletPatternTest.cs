@@ -238,7 +238,7 @@ namespace Tamago.Tests
             Assert.AreEqual("foo", fire1.Label);
 
             var bullet = TestManager.CreateBullet();
-            fire1.Run(bullet, EmptyArray);
+            fire1.Run(bullet);
 
             Assert.True(fire1.IsCompleted);
             var fire2 = pattern.CopyFire("foo");
