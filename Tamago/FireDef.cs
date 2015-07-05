@@ -93,7 +93,6 @@ namespace Tamago
         /// </summary>
         /// <param name="bullet">The parent bullet firing this bullet.</param>
         /// <param name="args">Values for params in expressions.</param>
-        /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
         /// <param name="rest">Any other arguments for expressions.</param>
         /// <returns>True always</returns>
         public bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest)

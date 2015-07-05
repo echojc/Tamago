@@ -79,7 +79,6 @@ namespace Tamago
         /// </summary>
         /// <param name="bullet">The bullet to run the tasks against.</param>
         /// <param name="args">Values for params in expressions.</param>
-        /// <param name="manager">BulletManager for <see cref="Rand"/> and <see cref="Rank"/> in expressions.</param>
         /// <param name="rest">Any other arguments for expressions.</param>
         /// <returns>True if no waiting is required, otherwise the result of the nested action.</returns>
         public bool Run(Bullet bullet, float[] args, Dictionary<string, float> rest)
