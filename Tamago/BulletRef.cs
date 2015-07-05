@@ -98,14 +98,11 @@ namespace Tamago
         /// <param name="rest">Any other arguments for expressions.</param>
         public Bullet Create(Bullet parent, float[] args, Dictionary<string, float> rest)
         {
-            var bullet = Bullet.Create(parent, args, rest);
-
             float[] newArgs = new float[_params.Length];
             for (int i = 0; i < newArgs.Length; i++)
                 newArgs[i] = _params[i].Evaluate(args, rest.GetValueOrDefault, parent.BulletManager);
 
-            bullet.SetParams(newArgs, new Dictionary<string, float>());
-            return bullet;
+            return Bullet.Create(parent, newArgs, new Dictionary<string, float>());
         }
     }
 }

@@ -182,6 +182,8 @@ namespace Tamago.Tests
             var barPattern = new BulletPattern(@"
               <bulletml>
                 <bullet label=""bar"">
+                  <speed>$3</speed>
+                  <direction type=""absolute"">$4</direction>
                   <action>
                     <fire>
                       <direction type=""absolute"">$1</direction>
@@ -197,17 +199,22 @@ namespace Tamago.Tests
               <bulletRef label=""bar"">
                 <param>12.34 + $i</param>
                 <param>$2 + $rank + $rand</param>
+                <param>$4</param>
+                <param>$3</param>
               </bulletRef>
             ");
 
             var bulletRef = new BulletRef(node, barPattern);
-            var args = new[] { 1.2f, 2.3f, 3.4f };
+            var args = new[] { 1.2f, 2.3f, 3.4f, 4.5f };
             var rest = new Dictionary<string, float>()
             {
                 { "i", 4.2f }
             };
             var bullet = bulletRef.Create(TestBullet, args, rest);
             Assert.AreEqual(2, TestManager.Bullets.Count);
+            Assert.AreSame(TestManager.Bullets.Last(), bullet);
+            Assert.AreEqual(args[3], bullet.Speed);
+            Assert.AreEqual(MathHelper.ToRadians(args[2]), bullet.Direction, 0.00001f);
 
             bullet.Update();
             Assert.AreEqual(3, TestManager.Bullets.Count);
