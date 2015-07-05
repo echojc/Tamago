@@ -106,7 +106,9 @@ namespace Tamago
                         targetDirection = bullet.Direction + direction;
                         break;
                     case DirectionType.Sequence:
-                        targetDirection = bullet.Direction + (direction * Math.Max(0, term));
+                        // we cache the sequence value 
+                        // this can't be interpolated because we normalise the target value
+                        targetDirection = direction;
                         break;
                     case DirectionType.Absolute:
                         targetDirection = direction;
@@ -118,12 +120,24 @@ namespace Tamago
                 }
 
                 // denormalise target so we can lerp
+                // this also guarantees shortest path
                 targetDirection = initialDirection + MathHelper.NormalizeAngle(targetDirection - initialDirection);
             }
 
             framesRunCount++;
-            var ratio = term <= 0 ? 1 : (float)framesRunCount / term;
-            bullet.NewDirection = initialDirection + (targetDirection - initialDirection) * ratio;
+            if (Direction.Type == DirectionType.Sequence)
+            {
+                // we cached the per-frame delta in targetDirection in the first run block
+                // this gets around normalisation of the target value
+                // we also don't run if term <= 0 as per the specs
+                if (term > 0)
+                    bullet.NewDirection = MathHelper.NormalizeAngle(bullet.Direction + targetDirection);
+            }
+            else
+            {
+                var ratio = term <= 0 ? 1 : (float)framesRunCount / term;
+                bullet.NewDirection = initialDirection + (targetDirection - initialDirection) * ratio;
+            }
             IsCompleted = framesRunCount >= term;
 
             return true;

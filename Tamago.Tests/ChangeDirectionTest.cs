@@ -322,9 +322,11 @@ namespace Tamago.Tests
         [Test]
         public void RunsCorrectlyDirectionSequence()
         {
+            // this value is _big_ on purpose
+            // we need to make sure total rotations greater than 360 degrees work
             var node = XElement.Parse(@"
               <changeDirection>
-                <direction type=""sequence"">13</direction>
+                <direction type=""sequence"">270</direction>
                 <term>3</term>
               </changeDirection>
             ");
@@ -334,19 +336,19 @@ namespace Tamago.Tests
 
             Assert.True(change.Run(TestBullet));
             TestBullet.Update();
-            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(13), TestBullet.Direction);
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(270), TestBullet.Direction, 0.00001f);
 
             Assert.True(change.Run(TestBullet));
             TestBullet.Update();
-            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(26), TestBullet.Direction);
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(540), TestBullet.Direction, 0.00001f);
 
             Assert.True(change.Run(TestBullet));
             TestBullet.Update();
-            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(39), TestBullet.Direction);
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(810), TestBullet.Direction, 0.00001f);
 
             Assert.True(change.Run(TestBullet));
             TestBullet.Update();
-            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(39), TestBullet.Direction);
+            Assert.AreEqual(DefaultDirection + MathHelper.ToRadians(810), TestBullet.Direction, 0.00001f);
         }
 
         [Test]
